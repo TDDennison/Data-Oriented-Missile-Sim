@@ -5,7 +5,8 @@ Data-Oriented Missile Simulation
 DOMSim is a two-stage, ballistic missile simulation that has been built primarily following data-oriented software design techniques. The core functionality utilizes a data-oriented Entity Component System, component based objects, and the idea of existential processing in order to limit the number and size of data objects in memory. Limiting these allows for more efficient use of CPU cache memory which ultimately improves software performance.
 
 # Execution 
-The order of algorithm execution is user-defined and sequential; all algorithms run in the order they are defined, and one at a time. Doing so allows for efficient use of the instruction cache, as well as ensuring that each simulation run is deterministic and repeatable.
+The simulation is managed by the Simulation class. This class handles the interactions between Systems and Component Managers, it is the executive data manager of a simulation run. The Simulation object handles the execution of algorithms, as well as registration of entities and components with Systems and Component Managers.
+The order of algorithm execution is user-defined (using configuration files) and sequential; all algorithms run in the order they are defined, and one at a time. Doing so allows for efficient use of the instruction cache, as well as ensuring that each simulation run is deterministic and repeatable.
 
 # Physics Engine
 The physics engine is built using a summation of forces and moments exerted on a body which are integrated into their derived properties over the lifetime of a simulation run. 
