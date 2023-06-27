@@ -14,7 +14,7 @@ The physics engine is built using a summation of forces and moments exerted on a
 # Simulation Configuration
 Simulation configuration is handled through the configuration files (TBD) prior to starting a simulation run.
 
-# Component Management
+# Components
 Components are intended to be small groups of plain-old-data (POD) structures limited to only the data necesary to comprise a component.
 
 For example:
@@ -53,6 +53,10 @@ struct TransformComponent {
 
 This allows alogrithms to load less unnecessary data from main memory into RAM or cache memory, which in turn allows for faster processing of algorithms.
 The component data is then managed efficiently for tightly packed, non-fragmented storage by Component Managers, further increasing runtime performance.
-When data is tightly packed, the CPU can accurately pre-fetch data that is soon to be used allowing for cache lines to be more efficiently used. An example of how component management works is illustrated below.
+
+NOTE: For each component type (MassComponent, MovementComponent, etc.) there should be an associated component manager type (MassManager, MovementManager, etc.).
+
+# Component Management
+Component Managers keep the component data tightly stored in memory. When data is tightly packed, the CPU can accurately pre-fetch data that is soon to be used allowing for cache lines to be more efficiently used. An example of how component management works is illustrated below.
 
 ![ComponentManager](https://github.com/TDDennison/DOMSim/assets/54010305/7fe2d458-e86a-4095-ab7b-48c777fc9b20)
