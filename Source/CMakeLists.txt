@@ -13,3 +13,4 @@ set(DOMSIM_SOURCES
     Systems/BoosterSystem.cpp)
 
 add_executable(${EXECUTABLE_NAME} ${DOMSIM_SOURCES})
+target_compile_features(${EXECUTABLE_NAME} PRIVATE cxx_std_17)
