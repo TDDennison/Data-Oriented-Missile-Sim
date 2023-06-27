@@ -1,0 +1,134 @@
+5/3/2023
+===============================================================================================================
+Created HelperMethods file, that doesn't have helper methods, just some testing scripts really. Fix this up.
+
+Worked on having two boosters aggregate their forces and reference an aggregate mass.
+    - ComponentManager.Destroy method needs to be figured out. Currently added a hacky if-statement in BoosterSystem
+    
+    - To Do:
+        - Figure out how to create a new entity when a booster separates so that it can be tracked as well.
+
+
+Components are enabled/disabled by registering/unregistering entities from each system.
+
+Changes between systems need to be queued and executed at the end of each timestep by the simulation object.
+
+====================================================================================================
+
+5/8/2023
+===== COMPLETE =====
+// QUESTION:
+// 
+// Does logging happen on the ComponentManager or the Systems?
+//     If on systems, there is th epotential for duplicate logging to happen for entities that belong to multiple systems.
+//     It should probably be done on the managers then.
+//     How do we correlate entity IDs with entity data if the managers don't have knowledge of the entities?
+//     Each ComponentManager has an entityMap that holds all of the currently available entities.
+// 
+//     !!!LOGGING SYSTEM PATTERN FIGURED OUT!!!
+
+
+
+Entity-Component Name Correlation System
+Each entity with carry a 2-byte unsigned short field that will designate its overall missile association and component of that missile.
+The first byte will designate which missile the component belongs to. This byte will mirror the entity ID of that missile.
+The second byte will designate which component system of that missile the entity is.
+The byte designations are as follows.
+
+Entity Designator -> 0b | 0000  0000 | 0000  0000
+                        | Missile    | Component  |
+
+Missile Component Designators - 0x0000 through 0x00FF -> Bits 0 - 7 values 0 to 255
+    First Stage Solid Rocket Motor  - 0x0001 -> 0b00000001 -> 1
+    Second Stage Solid Rocket Motor - 0x0002 -> 0b00000010 -> 2
+
+Missile Designator            - 0x0100 through 0xFF00 -> Bits 8-11 values 256 to 3840
+    Missile 1 - 0x0100 -> 0b0000000100000000 -> 256
+    Missile 1 - 0x0200 -> 0b0000001000000000 -> 257
+    .
+    .
+    .
+    Missile 255 - 0xFF00 -> 0b1111111100000000 -> 65280
+
+Example:
+    Entity ID 1:
+        Entity Designator: 0x0100 -> Missile 1
+    Entity ID 2:
+        Entity Designator: 0x0101 -> Missile 1 First Stage Booster
+    Entity ID 3:
+        Entity Designator: 0x0102 -> Missile 1 Second Stage Booster
+
+
+
+
+5/14/23
+===============================================================================================================
+Created CommandLineParser and associated files. Currently set up to parse input file paths.
+Created Configurations singleton class to hold all necessary configuration data for a given run.
+
+
+
+5/29/23
+===============================================================================================================
+Implemented mathematics of rotations according to book. This created some testing/double-checking TODOs.
+Added typedef of real. It can be set to either float or double based upon compile definitions in CMake.
+
+
+
+
+
+
+
+
+
+
+
+DESIGN GOALS/REQUIREMENTS
+===============================================================================================================
+DOMSim shall model a ballistic, two-stage rocket with a dummy payload mass.
+DOMSim shall allow for each of the Euler, Runge-Kutta 2, and Runge-Kutta 4 integration methods.
+DOMSim shall incorporate an internal system to monte-carlo input data.
+DOMSim shall incorporate an internal system for parsing simulation configuration files.
+
+
+
+TODO LIST:
+===============================================================================================================
+[x] - Create Euler integration method.
+[] - Create Runge-Kutta 2 integration method.
+[] - Create Runge-Kutta 4 integration method.
+[x] - Create accurate gravity calculations.
+[x] - Create basic ballistic mass test for physics system validation.
+[x] - Create basic projectile motion tests for physics system validation.
+[] - Create .cpp files for each .h file. Add files to cmake as well.
+[] - Create action queue for end of timestep actions such as starting second stage motor in the next timestep.
+        -- This prevents things like the first stage booster separating, and the second stage booster starting to burn in the same timestep.
+        -- Action Factory?
+[] - Create system of correlating entity/component ids and human readable descriptions of those entities/Components
+[x] - Create logging system.
+[x] - Figure out accurate FS to SS separation/entity creation.
+        -- The first stage booster system needs to create the second stage entity with the correct properties and register it with the proper system and manager.
+[] - Create system to monte-carlo input data.
+[] - Create sytem to parse input files.
+        -- Need to define input file format.
+        -- [] - Create Entity factory.
+        -- [] - Create Component factory.
+[x] - Figure out how to run models at different rates in a data oriented fashion (minimize if-statements)
+[] - Figure out how to give each missile a launch signal at any given time
+[] - Unit test Matrix3 class.
+[] - Add more descriptive comments to Matrix3 class.
+[] - Unit test Matrix4 class.
+[] - Add more descriptive comments to Matrix4 class.
+[] - Unit test Quaternion class.
+[] - Add more descriptive comments to Quaternion class.
+[x] - Make sure quaternion is updated accordingly either during integration or as a result of integration.
+[x] - Unit test the integration system.
+    - Paying special attention to the rotations/quaternions
+[] - Create logic so that when an entity is created, it is registered with the correct managers and components.
+    - Accumulator manager
+    - Mass manager
+    - Movement manager
+    - Transform manager
+
+[x] - Earth System needs to use accumulator components instead of manipulation acceleration directly.
+    
