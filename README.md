@@ -54,7 +54,7 @@ struct TransformComponent {
 This allows alogrithms to load less unnecessary data from main memory into RAM or cache memory, which in turn allows for faster processing of algorithms.
 The component data is then managed efficiently for tightly packed, non-fragmented storage by Component Managers, further increasing runtime performance.
 
-NOTE: For each component type (MassComponent, MovementComponent, etc.) there should be an associated component manager type (MassManager, MovementManager, etc.).
+<b>NOTE: For each component type (MassComponent, MovementComponent, etc.) there should be an associated component manager type (MassManager, MovementManager, etc.).<b>
 
 # Component Management
 Component Managers keep the component data tightly stored in memory. When data is tightly packed, the CPU can accurately pre-fetch data that is soon to be used allowing for cache lines to be more efficiently used. An example of how component management works is illustrated below.
