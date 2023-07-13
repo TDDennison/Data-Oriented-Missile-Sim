@@ -35,16 +35,16 @@ struct MassComponent {
   Matrix inertiaTensor;
 }
 
+struct TransformComponent {
+  double position;
+  Quaternion orientation;
+}
+
 struct MovementComponent {
   double velocity;
   double angularVelocity;
   double acceleration;
   double angularAcceleration;
-}
-
-struct TransformComponent {
-  double position;
-  Quaternion orientation;
 }
 ```
 
