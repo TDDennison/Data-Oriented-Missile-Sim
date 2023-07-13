@@ -62,7 +62,15 @@ Component Managers keep the component data tightly stored in memory. When data i
 The core functionality of DOMSim is built using an Entity Component System (ECS). An entity is merely a unique number identifier that can represent any object (physical or non-physical) in the simulation. An entity is comprised of any number of components describing its properties. For example, an entity can be created representing a full-stack missile. The entity would have a unique identifier and be comprised of the components that describe a physical object; MassComponent, MovementComponet, TransformComponent etc. Entities can be created or destroyed at any appropriate time during the course of a simulation run. This means that if modeling an impact, where debris fields are created, each piece of debris would likely become its own unique entitiy with components to describe its physical properties.
 
 # Systems
-Describe systems here...
+Systems can be any algorithms (or groups of related algorithms) that act on entity component data in desired ways. 
+
+For example a BoosterSystem would compute thrust from burned mass, decrement the total propellant mass left, and the thrust force to the total accumulation of forces for the given entity.
+
+Another example might be a NavigationGuidanceControlSystem. This system would take inputs of entity component data that represent an IMU sensor measurement, and give outputs of control commands to actuators component data. The actuator component datawould then be ingested by the desired actuator system (potentially a ThrustVectorControllerSystem) to steer the missile.
+
+Entities can be registered and unregistered from systems at any appropriate time during a simulation run. This should be done by utilizing the appropriate function calls in the Simulation object. All systems have a reference to the single Simulation object inorder to use this functionality. 
+
+Registering and unregistering an entity from a system is how the simulation emulates turning a model on or off. For example, if a missile is in a first stage boost mode, the entity representing that missile will be registered with the first stage boostersystem only. It will not be registered with the second stage booster system until it is time for the second stage booster system algorithmsto act on the given entity (likely after first stage burnout and stage separation has occured), at which point the entity would beunregistered from the first stage booster system also.
 
 # Physics Engine
 The physics engine is built using a summation of forces and moments exerted on a body which are integrated into their derived properties over the lifetime of a simulation run.
