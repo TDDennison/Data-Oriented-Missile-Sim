@@ -74,3 +74,5 @@ Registering and unregistering an entity from a system is how the simulation emul
 
 # Physics Engine
 The physics engine is built using a summation of forces and moments exerted on a body which are integrated into their derived properties over the lifetime of a simulation run.
+
+Systems will act on entity component data, and any forces that are produced are added to the entity's AccumulatorComponent data. This data is ingested by the IntegrationSystem to produce linear and rotational accelerations. These accelerations are then integrated into their respective velocities and positions to complete a Six Degrees Of Freedom simulation of physical objects.
