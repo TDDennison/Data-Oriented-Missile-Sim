@@ -70,7 +70,7 @@ Another example might be a NavigationGuidanceControlSystem. This system would ta
 
 Entities can be registered and unregistered from systems at any appropriate time during a simulation run. This should be done by utilizing the appropriate function calls in the Simulation object. All systems have a reference to the single Simulation object inorder to use this functionality. 
 
-Registering and unregistering an entity from a system is how the simulation emulates turning a model on or off. For example, if a missile is in a first stage boost mode, the entity representing that missile will be registered with the first stage boostersystem only. It will not be registered with the second stage booster system until it is time for the second stage booster system algorithmsto act on the given entity (likely after first stage burnout and stage separation has occured), at which point the entity would beunregistered from the first stage booster system also.
+Registering and unregistering an entity from a system is how the simulation emulates turning a model on or off. For example, if a missile is in a first stage boost mode, the entity representing that missile will be registered with the first stage booster system only. It will not be registered with the second stage booster system until it is time for the second stage booster system algorithms to act on the given entity (likely after first stage burnout and stage separation has occured), at which point the entity would beunregistered from the first stage booster system also.
 
 # Physics Engine
 The physics engine is built using a summation of forces and moments exerted on a body which are integrated into their derived properties over the lifetime of a simulation run.
