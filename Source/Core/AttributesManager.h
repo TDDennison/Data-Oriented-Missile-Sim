@@ -92,8 +92,8 @@ class AttributesManager
         int lastIndex = dataVector.size();
         dataMap[attributeName] = lastIndex;
         typeMap[attributeName] = type;
-        const unsigned char* ptr = reinterpret_cast<const unsigned char*>(&value);
-        SetAttribute(attributeName, value);
+        const char* ptr = reinterpret_cast<const char*>(&value);
+        SetAttribute(attributeName, ptr);
     }
 
     private:

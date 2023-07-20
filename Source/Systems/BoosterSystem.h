@@ -54,8 +54,8 @@ class BoosterSystem : public System
             std::cout << "Booster System adding attributes." << std::endl;
             AttributesManager *attributesManager = AttributesManager::GetInstance();
 
-            attributesManager->AddAttribute<bool>("TestBool", true);
-            attributesManager->AddAttribute<int>("TestInt", (999.999));
+            attributesManager->AddAttribute<bool>("TestBool", AttributeType::BOOLEAN, true);
+            attributesManager->AddAttribute<int>("TestInt", AttributeType::INT32, (999.999));
 
             bool attr = attributesManager->GetAttribute<int>("TestBool");
             int attr2 = attributesManager->GetAttribute<int>("TestInt");
