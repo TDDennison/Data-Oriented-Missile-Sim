@@ -5,8 +5,11 @@
 #include <fstream>
 #include <iostream>
 
+#include "../../Core/AttributesManager.h"
+
 const std::string WHITESPACE = " ";
 const std::string COMMENT_DELIMITER = "//";
+const std::string COLON_DELIMITER = ":";
 
 // Parse the designated input file for simulation configuration.
 class InputFileParser
@@ -60,28 +63,30 @@ class InputFileParser
         RightTrim(s);
     }
 
-
-
-
-
-
-
-
-
-
-
     bool TryParse(std::filesystem::path filePath) 
     {
         // Open the file for parsing.
         std::ifstream inFile(filePath.string());
         if (!inFile.is_open()) { return false; }
 
+        AttributesManager *attributesManager = AttributesManager::GetInstance();
         std::string line;
         while(!inFile.eof())
         {
             line = GetLine(inFile);
             
-            // Look for 
+            // Find the colon separator and separate the attribute name from the value.
+            size_t colonIndex = line.find_first_of(COLON_DELIMITER);
+            if (!(colonIndex == std::string::npos)) 
+            {
+                std::string attributeName = line.substr(0, colonIndex);
+                std::string value = line.substr(colonIndex, line.length() - colonIndex);
+
+                attributesManager->SetAttribute(attributeName.c_str(), value.c_str());
+                std::cout << "attributeName: " << attributeName << std::endl;
+                std::cout << "value: " << value << std::endl;
+            }
+
         }
 
         return true;

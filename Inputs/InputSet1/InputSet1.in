@@ -1,6 +1,6 @@
 
-MaxTime 100       // seconds
-SimTopRate    500 // Hz
+MaxTime: 100       // seconds
+SimTopRate:    500 // Hz
 
 
 
@@ -8,6 +8,6 @@ SimTopRate    500 // Hz
 
 Missile:
     SolidRocketMotorComponent:
-        inertMass; 500
-        propellantMass;
-        thrust;
+        inertMass: 500
+        propellantMass:
+        thrust:
