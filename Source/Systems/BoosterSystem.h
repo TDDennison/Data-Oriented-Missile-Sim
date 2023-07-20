@@ -11,6 +11,7 @@
 #include "../Components/SolidRocketMotorComponent.h"
 #include "../Components/TransformComponent.h"
 
+#include "../Core/AttributesManager.h"
 #include "../Core/TypeDefinitions.h"
 
 #include "../Managers/AccumulatorManager.h"
@@ -42,6 +43,28 @@ class BoosterSystem : public System
     void AddSrmComponent(Entity& entity, SolidRocketMotorComponent& SrmComponent);
 
     private:
+
+    // Private class used to register attributes prior to runtime starting.
+    // This is done through the use of static construction of this class.
+    class BoosterSystemAttributes
+    {
+        public:
+        BoosterSystemAttributes()
+        {
+            std::cout << "Booster System adding attributes." << std::endl;
+            AttributesManager *attributesManager = AttributesManager::GetInstance();
+
+            attributesManager->AddAttribute<bool>("TestBool", true);
+            attributesManager->AddAttribute<int>("TestInt", (999.999));
+
+            bool attr = attributesManager->GetAttribute<int>("TestBool");
+            int attr2 = attributesManager->GetAttribute<int>("TestInt");
+            std::cout << "Got attribute: " << attr << std::endl;
+            std::cout << "Got attribute: " << attr2 << std::endl;
+        }
+    };
+
+    inline static const BoosterSystemAttributes bsm{}; // Static constructor used to register attributes before main() is started.
 
     BoosterType boosterType_;
     AccumulatorManager* accumulatorManager_;
