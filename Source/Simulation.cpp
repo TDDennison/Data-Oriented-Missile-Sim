@@ -138,7 +138,7 @@ void Simulation::RegisterSystem_TestSoftwareSystem()
 void Simulation::Update(real dt)
 {
     // Tell the systems to update
-    real totalSimRunTime = 0.0;
+    real totalSimRunTime = 1.0;
     real time = 0.0;
     while (time < totalSimRunTime)
     {

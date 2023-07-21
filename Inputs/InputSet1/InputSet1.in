@@ -1,6 +1,6 @@
 
 MaxTime: 100       // seconds
-SimTopRate:    500 // Hz
+SimTopRate: 500 // Hz
 
 
 
@@ -11,3 +11,4 @@ Missile:
         inertMass: 500
         propellantMass:
         thrust:
+        TestInt: 0000999

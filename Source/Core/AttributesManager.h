@@ -4,6 +4,7 @@
 #include <cstring>
 #include <iostream>
 #include <map>
+#include <sstream>
 #include <vector>
 
 #include "../Utilities.h"
@@ -23,20 +24,20 @@ class AttributesManager
 
     // Get the data associated with the attribute.
     template<typename T>
-    T GetAttribute(const char * attributeName)
+    T GetAttribute(const char *attributeName)
     {
         // Find the attribute in the attribute map.
         if (dataMap.find(attributeName) == dataMap.end())
         {
             // Throw an exception because the attribute has not been defined.
+            std::cout << "Could not find attribute by name: " << attributeName << std::endl;
         }
 
         // Cast the attribute to the desired type.
         unsigned char bytes[sizeof(T)];
-
         int index = dataMap[attributeName];
-        for (size_t i = 0; i < sizeof(T); ++i){
-            bytes[i] = dataVector.at(index + i);
+        for (int i = 0; i < sizeof(T); ++i){
+            bytes[i] = dataVector[index + i];
         }
 
         // Copy the data out in bytes.
@@ -55,32 +56,48 @@ class AttributesManager
             typeMap.find(attributeName) == typeMap.end())
         {
             // Throw an exception because the attribute has not been defined.
+            std::cout << "Attribute has not been registered: " << attributeName << std::endl;
+            return;
         }
 
+        std::stringstream ss(value);
         switch(typeMap[attributeName])
         {
             case AttributeType::BOOLEAN:
             {
-                SetData<bool>(attributeName, value);
+                bool temp;
+                ss >> temp;
+                SetData<bool>(attributeName, temp);
                 break;
+            }
+            case AttributeType::INT32:
+            {
+                int temp;
+                ss >> temp;
+                SetData<int>(attributeName, temp);
+                break;
+            }
+            default:
+            {
+                std::cout << "Unhandled attribute type!" << std::endl;
             }
         }
     }
 
     template<typename T>
-    void SetData(const char *attributeName, const char *value)
+    void SetData(const char *attributeName, T value)
     {
         int index = dataMap[attributeName];
         const unsigned char* ptr = reinterpret_cast<const unsigned char*>(&value);
 
-        for (size_t i = 0; i < sizeof(T); ++i){
-            dataVector.at(index + i) = *(ptr + i);
+        for (int i = 0; i < sizeof(T); ++i){
+            dataVector[index + i] = *(ptr + i);
         }
     }
 
     // Add a new attribute to the map with the given data.
     template<typename T>
-    void AddAttribute(const char * attributeName, AttributeType type, T value)
+    void AddAttribute(const char *attributeName, AttributeType type, T value)
     {
         // If the attribute is already in the map, throw an exception.
         if (dataMap.find(attributeName) != dataMap.end())
@@ -92,17 +109,20 @@ class AttributesManager
         int lastIndex = dataVector.size();
         dataMap[attributeName] = lastIndex;
         typeMap[attributeName] = type;
-        const char* ptr = reinterpret_cast<const char*>(&value);
-        SetAttribute(attributeName, ptr);
+
+        // Cast the value to bytes and set them into the vector.
+        const unsigned char* ptr = reinterpret_cast<const unsigned char*>(&value);
+        for (size_t i = 0; i < sizeof(T); ++i){
+            dataVector.push_back(*(ptr + i));
+        }    
     }
 
     private:
     AttributesManager(){};
     inline static AttributesManager* instance = nullptr;
 
-    // <ATTRIBUTE NAME, ATTRIBUTE TYPE, ATTRIBUTE VALUE ADDRESS, ATTRIBUTE DESCRIPTION>
-    std::map<const char *, int> dataMap;
-    std::map<const char *, AttributeType> typeMap;
+    std::map<std::string, int> dataMap{};
+    std::map<std::string, AttributeType> typeMap{};
     std::vector<unsigned char> dataVector{};
 };
 

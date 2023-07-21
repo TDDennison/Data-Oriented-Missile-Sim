@@ -80,11 +80,10 @@ class InputFileParser
             if (!(colonIndex == std::string::npos)) 
             {
                 std::string attributeName = line.substr(0, colonIndex);
-                std::string value = line.substr(colonIndex, line.length() - colonIndex);
+                std::string value = line.substr(colonIndex + 1, line.length() - colonIndex);
+                TrimWhitespaceFromEnds(value);
 
                 attributesManager->SetAttribute(attributeName.c_str(), value.c_str());
-                std::cout << "attributeName: " << attributeName << std::endl;
-                std::cout << "value: " << value << std::endl;
             }
 
         }
