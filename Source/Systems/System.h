@@ -5,6 +5,7 @@
 #include <iostream>
 #include <vector>
 
+#include "../Constants.h"
 #include "../Entity.h"
 
 #include "../Core/TypeDefinitions.h"
