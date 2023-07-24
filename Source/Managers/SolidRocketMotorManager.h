@@ -34,7 +34,7 @@ class SolidRocketMotorManager : public ComponentManager<SolidRocketMotorComponen
             SolidRocketMotorComponent srmComponent = componentData.data[index];
 
             std::cout << "     Entity: " << key << std::endl;
-            std::cout << "          Component ID: " << srmComponent.componentId << std::endl;
+            std::cout << "          Component ID: " << srmComponent.getId() << std::endl;
             std::cout << "          interMass: " << srmComponent.inertMass << std::endl;
             std::cout << "          propellantMass: " << srmComponent.propellantMass << std::endl;
             std::cout << "          thrust: " << srmComponent.thrust << std::endl;

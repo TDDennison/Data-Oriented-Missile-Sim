@@ -20,7 +20,7 @@ class MovementManager : public ComponentManager<MovementComponent, MaxComponents
             MovementComponent moveComponent = componentData.data[index];
 
             std::cout << "     Entity: " << key << std::endl;
-            std::cout << "          Component ID: " << moveComponent.componentId << std::endl;
+            std::cout << "          Component ID: " << moveComponent.getId() << std::endl;
             std::cout << "          velocity.x: " << moveComponent.velocity_eci.x << std::endl;
             std::cout << "          velocity.y: " << moveComponent.velocity_eci.y << std::endl;
             std::cout << "          velocity.z: " << moveComponent.velocity_eci.z << std::endl;

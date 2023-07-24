@@ -6,6 +6,10 @@
 
 struct ClockComponent : public Component
 {
+    // Constructors
+    ClockComponent() : Component(DEFAULT_COMPONENT_ID) {}
+    ClockComponent(uint16_t id) : Component(id) {}
+
     // The current time of the clock component. In units of seconds.
     real time;
 };

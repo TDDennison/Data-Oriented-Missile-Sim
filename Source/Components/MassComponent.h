@@ -8,6 +8,10 @@
 
 struct MassComponent : public Component
 {
+    // Constructors
+    MassComponent() : Component(DEFAULT_COMPONENT_ID) {}
+    MassComponent(uint16_t id) : Component(id) {}
+
     real mass; // kg
 
     // The position of the entity's center of gravity in the ECI frame.

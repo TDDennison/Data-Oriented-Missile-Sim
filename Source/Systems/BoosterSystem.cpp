@@ -62,12 +62,11 @@ void BoosterSystem::Update(real dt) {
                 newId = ComponentUtilities::CreateComponentId(entity.id, ComponentUtilities::FIRST_STAGE_SRM);
 
                 // Create the new SRM component to track in the second stage booster system.
-                SolidRocketMotorComponent newSrmComponent;
+                SolidRocketMotorComponent newSrmComponent(ComponentUtilities::CreateComponentId(entity.id, ComponentUtilities::SECOND_STAGE_SRM));
                 newSrmComponent.thrust = 100.0;
                 newSrmComponent.inertMass = 400.0;
                 newSrmComponent.propellantMass = 100.0;
 
-                ComponentUtilities::SetComponentId(newSrmComponent, entity.id, ComponentUtilities::SECOND_STAGE_SRM);
 
                 simulation_->RegisterEntity_SecondStageBoosterSystem(entity, newSrmComponent); 
             }
@@ -80,14 +79,14 @@ void BoosterSystem::Update(real dt) {
             newAcc.torqueAccumulator_eci = accComponent.torqueAccumulator_eci;
 
             newMass.mass = srmComponent.inertMass;
-            newMass.componentId = newId;
+            newMass.getId() = newId;
 
             newMove.velocity_eci = movementComponent.velocity_eci;
             newMove.acceleration_eci = movementComponent.acceleration_eci;
-            newMove.componentId = newId;
+            newMove.getId() = newId;
 
             newTrans.position_eci = oldTrans.position_eci;
-            newTrans.componentId = newId;
+            newTrans.getId() = newId;
 
             // 5) Register new entity with correct managers and systems
             simulation_->RegisterComponent_AccumulatorManager(newEntity, newAcc);

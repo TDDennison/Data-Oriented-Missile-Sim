@@ -27,7 +27,7 @@ class AccumulatorManager : public ComponentManager<AccumulatorComponent, MaxComp
             AccumulatorComponent accumulatorComponent = componentData.data[index];
 
             std::cout << "     Entity: " << key << std::endl;
-            std::cout << "          Component ID: " << accumulatorComponent.componentId << std::endl;
+            std::cout << "          Component ID: " << accumulatorComponent.getId() << std::endl;
             std::cout << "          Accumulated force x: " << accumulatorComponent.forceAccumulator_eci.x << std::endl;
             std::cout << "          Accumulated force y: " << accumulatorComponent.forceAccumulator_eci.y << std::endl;
             std::cout << "          Accumulated force z: " << accumulatorComponent.forceAccumulator_eci.z << std::endl;

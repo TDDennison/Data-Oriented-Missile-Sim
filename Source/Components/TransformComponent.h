@@ -8,6 +8,10 @@
 
 struct TransformComponent : public Component
 {
+    // Constructors
+    TransformComponent() : Component(DEFAULT_COMPONENT_ID) {}
+    TransformComponent(uint16_t id) : Component(id) {}
+
     // The position of the origin of the missile station frame in ECI.
     Vector3 position_eci; 
 

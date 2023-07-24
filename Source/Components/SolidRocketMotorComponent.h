@@ -6,6 +6,10 @@
 
 struct SolidRocketMotorComponent : public Component
 {
+    // Constructor
+    SolidRocketMotorComponent() : Component(DEFAULT_COMPONENT_ID) {}
+    SolidRocketMotorComponent(uint16_t id) : Component(id) {}
+
     real inertMass;
     real propellantMass;
     real thrust;

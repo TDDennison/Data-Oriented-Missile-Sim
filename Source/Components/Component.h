@@ -3,9 +3,22 @@
 
 #include <bitset>
 
-struct Component
+// Number of bits that comprise a component ID.
+static inline const int COMPONENT_ID_FIELD_SIZE = 16;
+static inline const uint16_t DEFAULT_COMPONENT_ID = 0x0000;
+
+class Component
 {
-    std::bitset<16> componentId = 0x0000;
+    public:
+    // Constructors
+    Component() : id_(DEFAULT_COMPONENT_ID) {}
+    Component(uint16_t id) : id_(id) {}
+
+    inline std::bitset<COMPONENT_ID_FIELD_SIZE> getId() { return id_; }
+    void setId(uint16_t id) { id_ = id; }
+
+    private:
+    std::bitset<COMPONENT_ID_FIELD_SIZE> id_ = 0x0000;
 };
 
 #endif //COMPONENT_H

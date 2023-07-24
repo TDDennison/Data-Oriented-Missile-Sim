@@ -9,18 +9,15 @@ namespace ComponentUtilities
     {
         ACCUMULATOR = 0,
         AGGREGATE,
+        CLOCK,
         FIRST_STAGE_SRM,
         SECOND_STAGE_SRM,
+        TEST_SOFTWARE,
     };
 
     inline unsigned short CreateComponentId(unsigned int missileId, unsigned short compDesignator)
     {
         return (missileId << 8) | compDesignator;
-    }
-
-    inline void SetComponentId(Component& component, unsigned int missileId, unsigned short compDesignator)
-    {
-        component.componentId = CreateComponentId(missileId, compDesignator);
     }
 }
 

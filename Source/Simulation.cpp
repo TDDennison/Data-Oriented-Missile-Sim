@@ -13,6 +13,11 @@ Simulation::Simulation()
     accumulatorManager_ = new AccumulatorManager(massManager_, transformManager_);
 
     loggingSystem_ = new LoggingSystem();
+
+    // Get needed data from attributes.
+    AttributesManager *attrManager = AttributesManager::GetInstance();
+    maxTime_ = attrManager->GetAttribute<int>(Constants::SIMULATION_MAX_TIME);
+    rate_ = attrManager->GetAttribute<int>(Constants::SIMULATION_TOP_RATE);
 };
 
 Simulation::~Simulation() 
@@ -135,12 +140,12 @@ void Simulation::RegisterSystem_TestSoftwareSystem()
     testSoftwareSystem_ = new TestSoftwareSystem(clockManager_, testSoftwareManager_);
 }
 
-void Simulation::Update(real dt)
+void Simulation::Update()
 {
     // Tell the systems to update
-    real totalSimRunTime = 1.0;
     real time = 0.0;
-    while (time < totalSimRunTime)
+    double dt = 1.0 / (double)rate_;
+    while (time <= maxTime_)
     {
         firstStageBoosterSystem_->Update(dt);
         secondStageBoosterSystem_->Update(dt);

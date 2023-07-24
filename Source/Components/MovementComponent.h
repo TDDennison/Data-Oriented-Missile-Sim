@@ -6,6 +6,10 @@
 
 struct MovementComponent : public Component
 {
+    // Constructors
+    MovementComponent() : Component(DEFAULT_COMPONENT_ID) {}
+    MovementComponent(uint16_t id) : Component(id) {}
+
     Vector3 velocity_eci;             // The linear velocity of the entity in ECI.
     Vector3 acceleration_eci;         // The linear acceleration of the entity in ECI.
     Vector3 angular_velocity_eci;     // The angular velocity of the entity in ECI.

@@ -79,40 +79,36 @@ void CreateBoosterWithPayload()
     Entity abstractMissile1 = EntityManager::CreateEntity();
     Entity abstractMissile2 = EntityManager::CreateEntity();
 
-    AccumulatorComponent accumComp1;
-    ComponentUtilities::SetComponentId(accumComp1, abstractMissile1.id, ComponentUtilities::ACCUMULATOR);
+    AccumulatorComponent accumComp1(ComponentUtilities::CreateComponentId(abstractMissile1.id, ComponentUtilities::ACCUMULATOR));
     simulation.RegisterComponent_AccumulatorManager(abstractMissile1, accumComp1);
 
-    AccumulatorComponent accumComp2;
-    ComponentUtilities::SetComponentId(accumComp2, abstractMissile2.id, ComponentUtilities::ACCUMULATOR);
+    AccumulatorComponent accumComp2(ComponentUtilities::CreateComponentId(abstractMissile2.id, ComponentUtilities::ACCUMULATOR));
     simulation.RegisterComponent_AccumulatorManager(abstractMissile2, accumComp2);
 
     // ===========================================
 
     // Set up the first booster's physical properties
-    SolidRocketMotorComponent srmComponent11;
+    SolidRocketMotorComponent srmComponent11(ComponentUtilities::CreateComponentId(abstractMissile1.id, ComponentUtilities::FIRST_STAGE_SRM));
     srmComponent11.thrust = 100.0;
     srmComponent11.inertMass = 400.0;
     srmComponent11.propellantMass = 100.0;
 
-    ComponentUtilities::SetComponentId(srmComponent11, abstractMissile1.id, ComponentUtilities::FIRST_STAGE_SRM);
     simulation.RegisterEntity_FirstStageBoosterSystem(abstractMissile1, srmComponent11);
 
     // ============================================
 
     // Set up the first booster's physical properties
-    SolidRocketMotorComponent srmComponent21;
+    SolidRocketMotorComponent srmComponent21(ComponentUtilities::CreateComponentId(abstractMissile2.id, ComponentUtilities::FIRST_STAGE_SRM));
     srmComponent21.thrust = 100.0;
     srmComponent21.inertMass = 400.0;
     srmComponent21.propellantMass = 30.0;
 
-    ComponentUtilities::SetComponentId(srmComponent21, abstractMissile2.id, ComponentUtilities::FIRST_STAGE_SRM);
     simulation.RegisterEntity_SecondStageBoosterSystem(abstractMissile2, srmComponent21);
 
     // ============================================
 
     // Set up the second booster's physical properties
-    SolidRocketMotorComponent srmComponent12;
+    SolidRocketMotorComponent srmComponent12(ComponentUtilities::CreateComponentId(abstractMissile1.id, ComponentUtilities::SECOND_STAGE_SRM));
     srmComponent12.thrust = 100.0;
     srmComponent12.inertMass = 400.0;
     srmComponent12.propellantMass = 100.0;
@@ -120,19 +116,15 @@ void CreateBoosterWithPayload()
     // =============================================
 
     // Set up the aggregate physical properties
-    MassComponent aggregateMass1;
+    MassComponent aggregateMass1(ComponentUtilities::CreateComponentId(abstractMissile1.id, ComponentUtilities::AGGREGATE));
     aggregateMass1.mass = srmComponent11.inertMass + srmComponent11.propellantMass + srmComponent12.inertMass + srmComponent12.propellantMass;
 
-    TransformComponent aggregateTrans1;
+    TransformComponent aggregateTrans1(ComponentUtilities::CreateComponentId(abstractMissile1.id, ComponentUtilities::AGGREGATE));
     aggregateTrans1.position_eci = {1000000.0, 0.0, 0.0};
 
-    MovementComponent aggregateMovement1;
+    MovementComponent aggregateMovement1(ComponentUtilities::CreateComponentId(abstractMissile1.id, ComponentUtilities::AGGREGATE));
     aggregateMovement1.velocity_eci = {0.0, 0.0, 0.0};
     aggregateMovement1.acceleration_eci = {0.0, 0.0, 0.0};
-
-    ComponentUtilities::SetComponentId(aggregateMass1, abstractMissile1.id, ComponentUtilities::AGGREGATE);
-    ComponentUtilities::SetComponentId(aggregateTrans1, abstractMissile1.id, ComponentUtilities::AGGREGATE);
-    ComponentUtilities::SetComponentId(aggregateMovement1, abstractMissile1.id, ComponentUtilities::AGGREGATE);
 
     simulation.RegisterComponent_MassManager(abstractMissile1, aggregateMass1);
     simulation.RegisterComponent_MovementManager(abstractMissile1, aggregateMovement1);
@@ -142,19 +134,15 @@ void CreateBoosterWithPayload()
     simulation.RegisterEntity_IntegrationSystem(abstractMissile1);
 
     // ============================================
-    MassComponent aggregateMass2;
+    MassComponent aggregateMass2(ComponentUtilities::CreateComponentId(abstractMissile2.id, ComponentUtilities::AGGREGATE));
     aggregateMass2.mass = srmComponent21.inertMass + srmComponent21.propellantMass;
 
-    TransformComponent aggregateTrans2;
+    TransformComponent aggregateTrans2(ComponentUtilities::CreateComponentId(abstractMissile2.id, ComponentUtilities::AGGREGATE));
     aggregateTrans2.position_eci = {1000000.0, 0.0, 0.0};
 
-    MovementComponent aggregateMovement2;
+    MovementComponent aggregateMovement2(ComponentUtilities::CreateComponentId(abstractMissile2.id, ComponentUtilities::AGGREGATE));
     aggregateMovement2.velocity_eci = {0.0, 0.0, 0.0};
     aggregateMovement2.acceleration_eci = {0.0, 0.0, 0.0};
-
-    ComponentUtilities::SetComponentId(aggregateMass2, abstractMissile2.id, ComponentUtilities::AGGREGATE);
-    ComponentUtilities::SetComponentId(aggregateTrans2, abstractMissile2.id, ComponentUtilities::AGGREGATE);
-    ComponentUtilities::SetComponentId(aggregateMovement2, abstractMissile2.id, ComponentUtilities::AGGREGATE);
 
     simulation.RegisterComponent_MassManager(abstractMissile2, aggregateMass2);
     simulation.RegisterComponent_MovementManager(abstractMissile2, aggregateMovement2);
@@ -165,15 +153,14 @@ void CreateBoosterWithPayload()
 
     simulation.RegisterSystem_TestSoftwareSystem();
 
-    SoftwareComponent testSoftwareComponent;
+    SoftwareComponent testSoftwareComponent(ComponentUtilities::CreateComponentId(abstractMissile2.id, ComponentUtilities::TEST_SOFTWARE));
     testSoftwareComponent.executionFrequency = 0.05;
     simulation.RegisterEntity_TestSoftwareSystem(abstractMissile1, testSoftwareComponent);
 
-    ClockComponent clockComponent;
+    ClockComponent clockComponent(ComponentUtilities::CreateComponentId(abstractMissile1.id, ComponentUtilities::CLOCK));
     clockComponent.time = 0.0;
     simulation.RegisterComponent_ClockManager(abstractMissile1, clockComponent);
 
-    float dt = 1.0 / 500.0;
-    simulation.Update(dt);
+    simulation.Update();
 };
 

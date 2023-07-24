@@ -22,16 +22,11 @@ class IntegrationSystem_Euler_Tests
     
     static void IntegrationSystem_Euler_Test_BasicFallingObject_XDirection()
     {
-        AccumulatorManager accumulatorManager;
         MassManager massManager;
         MovementManager movementManager;
         TransformManager transformManager;
-        IntegrationSystem_Euler integrationSystem;
-
-        integrationSystem.accumulatorManager = &accumulatorManager;
-        integrationSystem.transformManager = &transformManager;
-        integrationSystem.massManager = &massManager;
-        integrationSystem.movementManager = &movementManager;
+        AccumulatorManager accumulatorManager(&massManager, &transformManager);
+        IntegrationSystem_Euler integrationSystem(&accumulatorManager, &massManager, &movementManager, &transformManager);
 
         // Create the entity and its components.
         Entity entity = EntityManager::CreateEntity();
@@ -117,16 +112,11 @@ class IntegrationSystem_Euler_Tests
 
     static void IntegrationSystem_Euler_Test_BasicFallingObject_YDirection()
     {
-        AccumulatorManager accumulatorManager;
         MassManager massManager;
         MovementManager movementManager;
         TransformManager transformManager;
-        IntegrationSystem_Euler integrationSystem;
-
-        integrationSystem.accumulatorManager = &accumulatorManager;
-        integrationSystem.transformManager = &transformManager;
-        integrationSystem.massManager = &massManager;
-        integrationSystem.movementManager = &movementManager;
+        AccumulatorManager accumulatorManager(&massManager, &transformManager);
+        IntegrationSystem_Euler integrationSystem(&accumulatorManager, &massManager, &movementManager, &transformManager);
 
         // Create the entity and its components.
         Entity entity = EntityManager::CreateEntity();
@@ -212,16 +202,11 @@ class IntegrationSystem_Euler_Tests
 
     static void IntegrationSystem_Euler_Test_BasicFallingObject_ZDirection()
     {
-        AccumulatorManager accumulatorManager;
         MassManager massManager;
         MovementManager movementManager;
         TransformManager transformManager;
-        IntegrationSystem_Euler integrationSystem;
-
-        integrationSystem.accumulatorManager = &accumulatorManager;
-        integrationSystem.transformManager = &transformManager;
-        integrationSystem.massManager = &massManager;
-        integrationSystem.movementManager = &movementManager;
+        AccumulatorManager accumulatorManager(&massManager, &transformManager);
+        IntegrationSystem_Euler integrationSystem(&accumulatorManager, &massManager, &movementManager, &transformManager);
 
         // Create the entity and its components.
         Entity entity = EntityManager::CreateEntity();
@@ -306,16 +291,11 @@ class IntegrationSystem_Euler_Tests
 
     static void IntegrationSystem_Euler_Test_SimpleProjectileMotion_2Dimensions()
     {
-        AccumulatorManager accumulatorManager;
         MassManager massManager;
         MovementManager movementManager;
         TransformManager transformManager;
-        IntegrationSystem_Euler integrationSystem;
-
-        integrationSystem.accumulatorManager = &accumulatorManager;
-        integrationSystem.transformManager = &transformManager;
-        integrationSystem.massManager = &massManager;
-        integrationSystem.movementManager = &movementManager;
+        AccumulatorManager accumulatorManager(&massManager, &transformManager);
+        IntegrationSystem_Euler integrationSystem(&accumulatorManager, &massManager, &movementManager, &transformManager);
 
         // Create the entity and its components.
         Entity entity = EntityManager::CreateEntity();
@@ -402,16 +382,11 @@ class IntegrationSystem_Euler_Tests
 
     static void IntegrationSystem_Euler_Test_XAxis_PiRotation()
     {
-        AccumulatorManager accumulatorManager;
         MassManager massManager;
         MovementManager movementManager;
         TransformManager transformManager;
-        IntegrationSystem_Euler integrationSystem;
-
-        integrationSystem.accumulatorManager = &accumulatorManager;
-        integrationSystem.transformManager = &transformManager;
-        integrationSystem.massManager = &massManager;
-        integrationSystem.movementManager = &movementManager;
+        AccumulatorManager accumulatorManager(&massManager, &transformManager);
+        IntegrationSystem_Euler integrationSystem(&accumulatorManager, &massManager, &movementManager, &transformManager);
 
         // Create the entity and its components.
         Entity entity = EntityManager::CreateEntity();
@@ -474,16 +449,11 @@ class IntegrationSystem_Euler_Tests
 
     static void IntegrationSystem_Euler_Test_YAxis_PiRotation()
     {
-        AccumulatorManager accumulatorManager;
         MassManager massManager;
         MovementManager movementManager;
         TransformManager transformManager;
-        IntegrationSystem_Euler integrationSystem;
-
-        integrationSystem.accumulatorManager = &accumulatorManager;
-        integrationSystem.transformManager = &transformManager;
-        integrationSystem.massManager = &massManager;
-        integrationSystem.movementManager = &movementManager;
+        AccumulatorManager accumulatorManager(&massManager, &transformManager);
+        IntegrationSystem_Euler integrationSystem(&accumulatorManager, &massManager, &movementManager, &transformManager);
 
         // Create the entity and its components.
         Entity entity = EntityManager::CreateEntity();
@@ -546,16 +516,11 @@ class IntegrationSystem_Euler_Tests
 
     static void IntegrationSystem_Euler_Test_ZAxis_PiRotation()
     {
-        AccumulatorManager accumulatorManager;
         MassManager massManager;
         MovementManager movementManager;
         TransformManager transformManager;
-        IntegrationSystem_Euler integrationSystem;
-
-        integrationSystem.accumulatorManager = &accumulatorManager;
-        integrationSystem.transformManager = &transformManager;
-        integrationSystem.massManager = &massManager;
-        integrationSystem.movementManager = &movementManager;
+        AccumulatorManager accumulatorManager(&massManager, &transformManager);
+        IntegrationSystem_Euler integrationSystem(&accumulatorManager, &massManager, &movementManager, &transformManager);
 
         // Create the entity and its components.
         Entity entity = EntityManager::CreateEntity();

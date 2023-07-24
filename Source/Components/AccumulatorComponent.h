@@ -6,6 +6,10 @@
 
 struct AccumulatorComponent : public Component
 {
+    // Constructors
+    AccumulatorComponent() : Component(DEFAULT_COMPONENT_ID) {}
+    AccumulatorComponent(uint16_t id) : Component(id) {}
+
     // Holds the accumulated forces for an entity in a frame defined in the ECI frame.
     Vector3 forceAccumulator_eci;
 
