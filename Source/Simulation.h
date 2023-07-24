@@ -58,7 +58,7 @@ class Simulation
             AttributesManager *attributesManager = AttributesManager::GetInstance();
 
             attributesManager->AddAttribute<int>(Constants::SIMULATION_MAX_TIME, AttributeType::INT32, Constants::DEFAULT_INT32);
-            attributesManager->AddAttribute<int>(Constants::SIMULATION_TOP_RATE, AttributeType::INT32, Constants::DEFAULT_INT32);
+            attributesManager->AddAttribute<double>(Constants::SIMULATION_TOP_RATE, AttributeType::DOUBLE, Constants::DEFAULT_DOUBLE);
         }
     };
 
@@ -70,7 +70,7 @@ class Simulation
 
     // The frequency that the simulation runs at.
     // Set this property using the input file attributes.
-    int rate_ = 0;
+    double rate_ = 0.0;
 
     AccumulatorManager* accumulatorManager_;
     ClockManager* clockManager_;

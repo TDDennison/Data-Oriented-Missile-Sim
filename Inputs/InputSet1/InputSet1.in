@@ -1,6 +1,6 @@
 
 Simulation Max Time: 500 // seconds
-Simulation Top Rate: 50   // Hz
+Simulation Top Rate: 5000   // Hz
 
 Missile:
     SolidRocketMotorComponent:

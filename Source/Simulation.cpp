@@ -17,7 +17,7 @@ Simulation::Simulation()
     // Get needed data from attributes.
     AttributesManager *attrManager = AttributesManager::GetInstance();
     maxTime_ = attrManager->GetAttribute<int>(Constants::SIMULATION_MAX_TIME);
-    rate_ = attrManager->GetAttribute<int>(Constants::SIMULATION_TOP_RATE);
+    rate_ = attrManager->GetAttribute<double>(Constants::SIMULATION_TOP_RATE);
 };
 
 Simulation::~Simulation() 

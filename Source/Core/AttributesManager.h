@@ -70,11 +70,75 @@ class AttributesManager
                 SetData<bool>(attributeName, temp);
                 break;
             }
+            case AttributeType::UINT8:
+            {
+                uint8_t temp;
+                ss >> temp;
+                SetData<uint8_t>(attributeName, temp);
+                break;
+            }
+            case AttributeType::UINT16:
+            {
+                uint16_t temp;
+                ss >> temp;
+                SetData<uint16_t>(attributeName, temp);
+                break;
+            }
+            case AttributeType::UINT64:
+            {
+                uint64_t temp;
+                ss >> temp;
+                SetData<uint64_t>(attributeName, temp);
+                break;
+            }
+            case AttributeType::UINT32:
+            {
+                uint32_t temp;
+                ss >> temp;
+                SetData<uint32_t>(attributeName, temp);
+                break;
+            }
+            case AttributeType::INT8:
+            {
+                int8_t temp;
+                ss >> temp;
+                SetData<int8_t>(attributeName, temp);
+                break;
+
+            }
+            case AttributeType::INT16:
+            {
+                int16_t temp;
+                ss >> temp;
+                SetData<int16_t>(attributeName, temp);
+                break;
+            }
             case AttributeType::INT32:
             {
-                int temp;
+                int32_t temp;
                 ss >> temp;
-                SetData<int>(attributeName, temp);
+                SetData<int32_t>(attributeName, temp);
+                break;
+            }
+            case AttributeType::INT64:
+            {
+                int64_t temp;
+                ss >> temp;
+                SetData<int64_t>(attributeName, temp);
+                break;
+            }
+            case AttributeType::FLOAT:
+            {
+                float temp;
+                ss >> temp;
+                SetData<float>(attributeName, temp);
+                break;
+            }
+            case AttributeType::DOUBLE:
+            {
+                double temp;
+                ss >> temp;
+                SetData<double>(attributeName, temp);
                 break;
             }
             default:
