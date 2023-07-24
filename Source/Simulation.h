@@ -1,6 +1,8 @@
 #ifndef SIMULATION_H
 #define SIMULATION_H
 
+#include <vector>
+
 #include "Entity.h"
 #include "Components/SolidRocketMotorComponent.h"
 #include "Managers/ClockManager.h"
@@ -19,6 +21,8 @@ class BoosterSystem;
 // This class manages the communication between systems.
 class Simulation
 {
+    typedef std::vector<System*> SystemCollection;
+
     public:
     Simulation();
     ~Simulation();
@@ -57,6 +61,7 @@ class Simulation
             std::cout << "Configurations adding attributes." << std::endl;
             AttributesManager *attributesManager = AttributesManager::GetInstance();
 
+            attributesManager->AddAttribute<uint32_t>(Constants::INTEGRATION_SYSTEM_TYPE, AttributeType::UINT32, Constants::DEFAULT_UINT8);
             attributesManager->AddAttribute<int>(Constants::SIMULATION_MAX_TIME, AttributeType::INT32, Constants::DEFAULT_INT32);
             attributesManager->AddAttribute<double>(Constants::SIMULATION_TOP_RATE, AttributeType::DOUBLE, Constants::DEFAULT_DOUBLE);
         }
@@ -72,6 +77,9 @@ class Simulation
     // Set this property using the input file attributes.
     double rate_ = 0.0;
 
+    // Collection of system pointers used to enforce order of execution.
+    SystemCollection systems{};
+
     AccumulatorManager* accumulatorManager_;
     ClockManager* clockManager_;
     MassManager* massManager_;
@@ -81,7 +89,7 @@ class Simulation
     BoosterSystem* firstStageBoosterSystem_;
     BoosterSystem* secondStageBoosterSystem_;
     EarthSystem* earthSystem_;
-    IntegrationSystem_Euler* integrationSystem_;
+    System* integrationSystem_;
     LoggingSystem* loggingSystem_;
     TestSoftwareSystem* testSoftwareSystem_;
 };

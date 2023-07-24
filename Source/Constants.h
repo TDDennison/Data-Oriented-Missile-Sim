@@ -18,6 +18,8 @@ class Constants
     inline static const float DEFAULT_FLOAT = 0.0f;
     inline static const double DEFAULT_DOUBLE = 0.0;
 
+    // Valid input set property designators.
+    inline static const char *INTEGRATION_SYSTEM_TYPE = "Integration System Type";
     inline static const char *SIMULATION_MAX_TIME = "Simulation Max Time";
     inline static const char *SIMULATION_TOP_RATE = "Simulation Top Rate";
 };

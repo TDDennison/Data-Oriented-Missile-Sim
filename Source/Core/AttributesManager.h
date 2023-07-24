@@ -84,18 +84,18 @@ class AttributesManager
                 SetData<uint16_t>(attributeName, temp);
                 break;
             }
-            case AttributeType::UINT64:
-            {
-                uint64_t temp;
-                ss >> temp;
-                SetData<uint64_t>(attributeName, temp);
-                break;
-            }
             case AttributeType::UINT32:
             {
                 uint32_t temp;
                 ss >> temp;
                 SetData<uint32_t>(attributeName, temp);
+                break;
+            }
+            case AttributeType::UINT64:
+            {
+                uint64_t temp;
+                ss >> temp;
+                SetData<uint64_t>(attributeName, temp);
                 break;
             }
             case AttributeType::INT8:

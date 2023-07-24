@@ -1,6 +1,6 @@
-
-Simulation Max Time: 500 // seconds
-Simulation Top Rate: 5000   // Hz
+Integration System Type: 1  // 1 = Euler, 2 = Runge-Kutta 2, 3 = Runge-Kutta 4
+Simulation Max Time: 500    // seconds
+Simulation Top Rate: 500   // Hz
 
 Missile:
     SolidRocketMotorComponent:

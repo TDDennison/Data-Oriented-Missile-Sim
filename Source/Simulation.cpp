@@ -1,3 +1,5 @@
+#include <exception>
+
 #include "Simulation.h"
 
 Simulation::Simulation()
@@ -28,6 +30,7 @@ Simulation::~Simulation()
     delete movementManager_;
     delete testSoftwareManager_;
     delete transformManager_;
+    delete integrationSystem_;
     delete loggingSystem_;
 }
 
@@ -122,22 +125,58 @@ void Simulation::RegisterSystem_Booster(BoosterType type)
             break;
         }
     }
+
+    // Add the system to the collection of systems.
+    systems.push_back(boosterSystem);
 }
 
 // Register a new earth system using the given managers.
 void Simulation::RegisterSystem_Earth()
 {
     earthSystem_ = new EarthSystem(*accumulatorManager_, *massManager_, *transformManager_);
+
+    // Add the system to the collection of systems.
+    systems.push_back(earthSystem_);
 }
 
 void Simulation::RegisterSystem_Integration()
 {
-    integrationSystem_ = new IntegrationSystem_Euler(accumulatorManager_, massManager_, movementManager_, transformManager_);
+    // Set up the integration system based on inputs.
+    AttributesManager *attrManager = AttributesManager::GetInstance();
+    uint32_t integrationType = attrManager->GetAttribute<uint32_t>(Constants::INTEGRATION_SYSTEM_TYPE);
+    std::cout << integrationType << std::endl;
+    std::cout << static_cast<IntegrationSystemType>(integrationType) << std::endl;
+    switch(static_cast<IntegrationSystemType>(integrationType))
+    {
+        case IntegrationSystemType::EULER:
+        {
+            integrationSystem_ = new IntegrationSystem_Euler(accumulatorManager_, massManager_, movementManager_, transformManager_);
+            break;
+        }
+        case IntegrationSystemType::RUNGE_KUTTA_2:
+        {
+            throw std::invalid_argument("Runge-Kutta 2 integration system has not yet been developed.");
+            break;
+        }
+        case IntegrationSystemType::RUNGE_KUTTA_4:
+        {
+            throw std::invalid_argument("Runge-Kutta 4 integration system has not yet been developed.");
+            break;
+        }
+        default:
+        {
+            throw std::invalid_argument("Integration system has not been defined in input set.");
+            break;
+        }
+    }
 }
 
 void Simulation::RegisterSystem_TestSoftwareSystem()
 {
     testSoftwareSystem_ = new TestSoftwareSystem(clockManager_, testSoftwareManager_);
+
+    // Add the system to the collection of systems.
+    systems.push_back(testSoftwareSystem_);
 }
 
 void Simulation::Update()
