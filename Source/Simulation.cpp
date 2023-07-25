@@ -213,17 +213,31 @@ void Simulation::Update()
     double dt = 1.0 / (double)rate_;
     while (time <= maxTime_ + dt) // + dt to get the final timestep logged.
     {
+        // Order of execution for systems
+        // 1) Logging system
+        // 2) Physics systems
+        // 3) Software systems
+        // 4) Integration system
+
+        // 1) Logging system.
+        // ==================================================
+        std::cout << "===== Time: " << time << " =====" << std::endl;
+        // Tell the systems to log their data.
+        //loggingSystem_->WriteAllLogs(time);
+
+        // 1) Physics systems.
+        // ==================================================
+        earthSystem_->Update(dt); // Earth system should always run with the physics systems, in no particular order.
+
         // Update all of the systems whose execution order can change.
         for (System *system : systems)
         {
             system->Update(dt);
         }
         
+        // 4) Integration systems
+        // ==================================================
         integrationSystem_->Update(dt);
-
-        std::cout << "===== Time: " << time << " =====" << std::endl;
-        // Tell the systems to log their data.
-        //loggingSystem_->WriteAllLogs(time);
 
         testSoftwareSystem_->Update(dt);
         clockManager_->UpdateClocks(dt);
