@@ -51,12 +51,13 @@ void BoosterSystem::Update(real dt) {
 
             // 4) New data comes from old data
             unsigned short newId;
-            AccumulatorComponent newAcc;
-            MassComponent newMass;
-            MovementComponent newMove;
+            AccumulatorComponent &newAcc = accumulatorManager_->Lookup(newEntity);
+            MassComponent &newMass = massManager_->Lookup(newEntity);
+            MovementComponent &newMove = movementManager_->Lookup(newEntity);
+            TransformComponent &newTrans = transformManager_->Lookup(newEntity);
+
             MovementComponent& movementComponent = movementManager_->Lookup(entity);
             TransformComponent& oldTrans = transformManager_->Lookup(entity);
-            TransformComponent newTrans;
 
             if (boosterType_ == FIRST_STAGE) { 
                 newId = ComponentUtilities::CreateComponentId(entity.id, ComponentUtilities::FIRST_STAGE_SRM);
@@ -77,24 +78,17 @@ void BoosterSystem::Update(real dt) {
 
             newAcc.forceAccumulator_eci = accComponent.forceAccumulator_eci;
             newAcc.torqueAccumulator_eci = accComponent.torqueAccumulator_eci;
+            newAcc.setId(newId);
 
             newMass.mass = srmComponent.inertMass;
-            newMass.getId() = newId;
+            newMass.setId(newId);
 
             newMove.velocity_eci = movementComponent.velocity_eci;
             newMove.acceleration_eci = movementComponent.acceleration_eci;
-            newMove.getId() = newId;
+            newMove.setId(newId);
 
             newTrans.position_eci = oldTrans.position_eci;
-            newTrans.getId() = newId;
-
-            // 5) Register new entity with correct managers and systems
-            simulation_->RegisterComponent_AccumulatorManager(newEntity, newAcc);
-            simulation_->RegisterComponent_MassManager(newEntity, newMass);
-            simulation_->RegisterComponent_MovementManager(newEntity, newMove);
-            simulation_->RegisterComponent_TransformManager(newEntity, newTrans);
-            simulation_->RegisterEntity_EarthSystem(newEntity);
-            simulation_->RegisterEntity_IntegrationSystem(newEntity);
+            newTrans.setId(newId);
 
             // If this is a second stage booster system, all that will be left in the abstract missile component properties
             // are the properties that apply to the payload.

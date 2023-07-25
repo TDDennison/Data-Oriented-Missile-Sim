@@ -21,7 +21,7 @@ public:
   virtual void Update(real dt) {};
   
   // This entity fits our current requirements
-  void RegisterEntity(Entity entity) {
+  inline void RegisterEntity(Entity entity) {
     registeredEntities.push_back(entity);
   }
   
@@ -54,6 +54,12 @@ public:
     }
 
     entitiesToRemove.clear();
+  }
+
+  // Compares two intervals according to starting times.
+  static bool compareExecutionOrder(System *s1, System *s2)
+  {
+    return (s1->executionOrder_ < s2->executionOrder_);
   }
 
   uint16_t executionOrder_ = Constants::DEFAULT_UINT16;

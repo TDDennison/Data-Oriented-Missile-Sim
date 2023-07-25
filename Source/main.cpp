@@ -69,21 +69,17 @@ int main(int argc, char** argv)
 // Trying to figure out how to aggregate masses and decrement individuals masses as well.
 void CreateBoosterWithPayload()
 {
+    std::cout << "Creating Booster With Payload" << std::endl;
+
     LoggingSystem loggingSystem;
 
     // Create the simulation object.
-    Simulation simulation;
+    Simulation &simulation = *Simulation::GetInstance();
     simulation.Initialize();
 
     // One entity per physical object and one entity for the abstract aggregate object?
     Entity abstractMissile1 = EntityManager::CreateEntity();
     Entity abstractMissile2 = EntityManager::CreateEntity();
-
-    AccumulatorComponent accumComp1(ComponentUtilities::CreateComponentId(abstractMissile1.id, ComponentUtilities::ACCUMULATOR));
-    simulation.RegisterComponent_AccumulatorManager(abstractMissile1, accumComp1);
-
-    AccumulatorComponent accumComp2(ComponentUtilities::CreateComponentId(abstractMissile2.id, ComponentUtilities::ACCUMULATOR));
-    simulation.RegisterComponent_AccumulatorManager(abstractMissile2, accumComp2);
 
     // ===========================================
 
@@ -115,38 +111,32 @@ void CreateBoosterWithPayload()
 
     // =============================================
 
+    std::cout << "Setting up aggregate physical properties." << std::endl;
+
     // Set up the aggregate physical properties
-    MassComponent aggregateMass1(ComponentUtilities::CreateComponentId(abstractMissile1.id, ComponentUtilities::AGGREGATE));
+    MassComponent &aggregateMass1 = MassManager::GetInstance()->Lookup(abstractMissile1);
     aggregateMass1.mass = srmComponent11.inertMass + srmComponent11.propellantMass + srmComponent12.inertMass + srmComponent12.propellantMass;
 
-    TransformComponent aggregateTrans1(ComponentUtilities::CreateComponentId(abstractMissile1.id, ComponentUtilities::AGGREGATE));
+    TransformComponent &aggregateTrans1 = TransformManager::GetInstance()->Lookup(abstractMissile1);
     aggregateTrans1.position_eci = {1000000.0, 0.0, 0.0};
 
-    MovementComponent aggregateMovement1(ComponentUtilities::CreateComponentId(abstractMissile1.id, ComponentUtilities::AGGREGATE));
+    MovementComponent &aggregateMovement1 = MovementManager::GetInstance()->Lookup(abstractMissile1);
     aggregateMovement1.velocity_eci = {0.0, 0.0, 0.0};
     aggregateMovement1.acceleration_eci = {0.0, 0.0, 0.0};
-
-    simulation.RegisterComponent_MassManager(abstractMissile1, aggregateMass1);
-    simulation.RegisterComponent_MovementManager(abstractMissile1, aggregateMovement1);
-    simulation.RegisterComponent_TransformManager(abstractMissile1, aggregateTrans1);
 
     simulation.RegisterEntity_EarthSystem(abstractMissile1);
     simulation.RegisterEntity_IntegrationSystem(abstractMissile1);
 
     // ============================================
-    MassComponent aggregateMass2(ComponentUtilities::CreateComponentId(abstractMissile2.id, ComponentUtilities::AGGREGATE));
+    MassComponent &aggregateMass2 = MassManager::GetInstance()->Lookup(abstractMissile2);
     aggregateMass2.mass = srmComponent21.inertMass + srmComponent21.propellantMass;
 
-    TransformComponent aggregateTrans2(ComponentUtilities::CreateComponentId(abstractMissile2.id, ComponentUtilities::AGGREGATE));
+    TransformComponent &aggregateTrans2= TransformManager::GetInstance()->Lookup(abstractMissile2);
     aggregateTrans2.position_eci = {1000000.0, 0.0, 0.0};
 
-    MovementComponent aggregateMovement2(ComponentUtilities::CreateComponentId(abstractMissile2.id, ComponentUtilities::AGGREGATE));
+    MovementComponent &aggregateMovement2 = MovementManager::GetInstance()->Lookup(abstractMissile2);
     aggregateMovement2.velocity_eci = {0.0, 0.0, 0.0};
     aggregateMovement2.acceleration_eci = {0.0, 0.0, 0.0};
-
-    simulation.RegisterComponent_MassManager(abstractMissile2, aggregateMass2);
-    simulation.RegisterComponent_MovementManager(abstractMissile2, aggregateMovement2);
-    simulation.RegisterComponent_TransformManager(abstractMissile2, aggregateTrans2);
 
     simulation.RegisterEntity_EarthSystem(abstractMissile2);
     simulation.RegisterEntity_IntegrationSystem(abstractMissile2);

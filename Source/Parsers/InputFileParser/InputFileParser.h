@@ -83,7 +83,10 @@ class InputFileParser
                 std::string value = line.substr(colonIndex + 1, line.length() - colonIndex);
                 TrimWhitespaceFromEnds(value);
 
-                attributesManager->SetAttribute(attributeName.c_str(), value.c_str());
+                // If there is no value associated with the name, don't try to set it.
+                if (!value.empty()) {
+                    attributesManager->SetAttribute(attributeName.c_str(), value.c_str());
+                }
             }
 
         }

@@ -61,7 +61,7 @@ class BoosterSystem : public System
         }
     };
 
-    inline static const Attributes bsm{}; // Static constructor used to register attributes before main() is started.
+    inline static const Attributes attributes{}; // Static constructor used to register attributes before main() is started.
 
     BoosterType boosterType_;
     AccumulatorManager* accumulatorManager_;

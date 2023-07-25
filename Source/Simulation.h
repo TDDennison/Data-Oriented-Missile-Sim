@@ -6,7 +6,6 @@
 #include "Entity.h"
 #include "Components/SolidRocketMotorComponent.h"
 #include "Managers/ClockManager.h"
-#include "Managers/EntityManager.h"
 #include "Managers/MassManager.h"
 #include "Managers/MovementManager.h"
 #include "Managers/TransformManager.h"
@@ -18,13 +17,16 @@
 
 class BoosterSystem;
 
-// This class manages the communication between systems.
+// Singleton class manages the executive level of communication between systems, managers and components.
 class Simulation
 {
     typedef std::vector<System*> SystemCollection;
 
     public:
-    Simulation();
+    inline static Simulation* GetInstance() {
+        if(instance == nullptr) { instance = new Simulation(); }
+        return instance;
+    }
     ~Simulation();
 
     void Initialize();
@@ -50,6 +52,8 @@ class Simulation
     void Update();
 
     private:
+    Simulation();
+    inline static Simulation* instance = nullptr;
 
     // Private class used to register attributes prior to runtime starting.
     // This is done through the use of static construction of this class.
@@ -80,18 +84,18 @@ class Simulation
     // Collection of system pointers used to enforce order of execution.
     SystemCollection systems{};
 
-    AccumulatorManager* accumulatorManager_;
-    ClockManager* clockManager_;
-    MassManager* massManager_;
-    MovementManager* movementManager_;
-    TestSoftwareManager* testSoftwareManager_;
-    TransformManager* transformManager_;
-    BoosterSystem* firstStageBoosterSystem_;
-    BoosterSystem* secondStageBoosterSystem_;
-    EarthSystem* earthSystem_;
-    System* integrationSystem_;
-    LoggingSystem* loggingSystem_;
-    TestSoftwareSystem* testSoftwareSystem_;
+    AccumulatorManager* accumulatorManager_ = nullptr;
+    ClockManager* clockManager_ = nullptr;
+    MassManager* massManager_ = nullptr;
+    MovementManager* movementManager_ = nullptr;
+    TestSoftwareManager* testSoftwareManager_ = nullptr;
+    TransformManager* transformManager_ = nullptr;
+    BoosterSystem* firstStageBoosterSystem_ = nullptr;
+    BoosterSystem* secondStageBoosterSystem_ = nullptr;
+    EarthSystem* earthSystem_ = nullptr;
+    System* integrationSystem_ = nullptr;
+    LoggingSystem* loggingSystem_ = nullptr;
+    TestSoftwareSystem* testSoftwareSystem_ = nullptr;
 };
 
 #endif //SIMULATION_H

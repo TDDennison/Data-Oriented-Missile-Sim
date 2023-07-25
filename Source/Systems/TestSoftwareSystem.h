@@ -12,6 +12,15 @@ class TestSoftwareSystem : public System
 
     TestSoftwareSystem(ClockManager* clockManager, TestSoftwareManager* tswManager) : clockManager_(clockManager), testSoftwareManager_(tswManager) { }
 
+    void Initialize() override {
+        // Grab the necessary attribtues.
+        AttributesManager *attributesManager = AttributesManager::GetInstance();
+
+        executionOrder_ = attributesManager->GetAttribute<uint16_t>(Constants::EXECUTION_ORDER_TEST_SOFTWARE_SYSTEM);
+
+        std::cout << "Test Software System execution order is: " << executionOrder_ << std::endl;
+    }
+
     void Update(real dt) override {
         for (auto & entity : registeredEntities) {
             SoftwareComponent& softwareComponent = testSoftwareManager_->Lookup(entity);
@@ -36,6 +45,22 @@ class TestSoftwareSystem : public System
     }
 
     private:
+
+    // Private class used to register attributes prior to runtime starting.
+    // This is done through the use of static construction of this class.
+    class Attributes
+    {
+        public:
+        Attributes()
+        {
+            std::cout << "Test Software System adding attributes." << std::endl;
+            AttributesManager *attributesManager = AttributesManager::GetInstance();
+
+            attributesManager->AddAttribute<uint16_t>(Constants::EXECUTION_ORDER_TEST_SOFTWARE_SYSTEM, AttributeType::UINT16, Constants::DEFAULT_UINT16);
+        }
+    };
+
+    inline static const Attributes attributes{}; // Static constructor used to register attributes before main() is started.
 
     ClockManager* clockManager_;
     TestSoftwareManager* testSoftwareManager_;  

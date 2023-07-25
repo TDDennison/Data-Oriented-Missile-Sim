@@ -11,6 +11,7 @@
 #include "../Components/MovementComponent.h"
 #include "../Components/TransformComponent.h"
 
+#include "../Core/AttributesManager.h"
 #include "../Core/TypeDefinitions.h"
 
 #include "../Managers/AccumulatorManager.h"
@@ -23,13 +24,19 @@
 class EarthSystem : public System
 {
     public:
+    inline static EarthSystem* GetInstance() {
+        if(instance == nullptr) { instance = new EarthSystem(*AccumulatorManager::GetInstance(), *MassManager::GetInstance(), *TransformManager::GetInstance()); }
+        return instance;
+    }
 
-    EarthSystem(AccumulatorManager& accumulatorManager,
-                MassManager& massManager,
-                TransformManager& transformManager) : 
-                accumulatorManager_(accumulatorManager),
-                massManager_(massManager),
-                transformManager_(transformManager) {};
+    void Initialize() override {
+        // Grab the necessary attribtues.
+        AttributesManager *attributesManager = AttributesManager::GetInstance();
+
+        executionOrder_ = attributesManager->GetAttribute<uint16_t>(Constants::EXECUTION_ORDER_EARTH_SYSTEM);
+
+        std::cout << "Earth system execution order is: " << executionOrder_ << std::endl;
+    }
     
     void Update(real dt) override {
         for (auto & entity : registeredEntities) {
@@ -65,9 +72,33 @@ class EarthSystem : public System
 
     private:
 
+    EarthSystem(AccumulatorManager& accumulatorManager,
+                MassManager& massManager,
+                TransformManager& transformManager) : 
+                accumulatorManager_(accumulatorManager),
+                massManager_(massManager),
+                transformManager_(transformManager),
+                System() {};
+    inline static EarthSystem* instance = nullptr;
+
+    // Private class used to register attributes prior to runtime starting.
+    // This is done through the use of static construction of this class.
+    class Attributes
+    {
+        public:
+        Attributes()
+        {
+            std::cout << "Earth System adding attributes." << std::endl;
+            AttributesManager *attributesManager = AttributesManager::GetInstance();
+
+            attributesManager->AddAttribute<uint16_t>(Constants::EXECUTION_ORDER_EARTH_SYSTEM, AttributeType::UINT16, Constants::DEFAULT_UINT16);
+        }
+    };
+
+    inline static const Attributes attributes{}; // Static constructor used to register attributes before main() is started.
+
     AccumulatorManager& accumulatorManager_;
     MassManager& massManager_;
     TransformManager& transformManager_;
-
 };
 #endif //EARTH_SYSTEM_H

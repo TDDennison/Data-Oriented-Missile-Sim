@@ -6,6 +6,15 @@ set(DOMSIM_SOURCES
     Simulation.h
     Simulation.cpp
 
+    Managers/EntityManager.h
+    Managers/EntityManager.cpp
+    Managers/MassManager.h
+    Managers/MassManager.cpp
+    Managers/MovementManager.h
+    Managers/MovementManager.cpp
+    Managers/TransformManager.h
+    Managers/TransformManager.cpp
+
     Parsers/CommandLineParser/CommandLineParser.h
     Parsers/CommandLineParser/CommandLineParser.cpp
 

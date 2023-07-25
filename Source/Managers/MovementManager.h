@@ -9,28 +9,12 @@ class MovementManager : public ComponentManager<MovementComponent, MaxComponents
 {
     public:
 
-    void WriteToLog(float time)
-    {
-        std::cout << "===== MovementManager Log t = " << time << " =====" << std::endl;
-        for(std::map<unsigned int, unsigned int>::iterator iter = entityMap.begin(); iter != entityMap.end(); ++iter)
-        {
-            unsigned int key =  iter->first;
+    static MovementManager* GetInstance();
+    void WriteToLog(float time);
 
-            unsigned int index = entityMap[key];            
-            MovementComponent moveComponent = componentData.data[index];
-
-            std::cout << "     Entity: " << key << std::endl;
-            std::cout << "          Component ID: " << moveComponent.getId() << std::endl;
-            std::cout << "          velocity.x: " << moveComponent.velocity_eci.x << std::endl;
-            std::cout << "          velocity.y: " << moveComponent.velocity_eci.y << std::endl;
-            std::cout << "          velocity.z: " << moveComponent.velocity_eci.z << std::endl;
-            std::cout << "          acceleration.x: " << moveComponent.acceleration_eci.x << std::endl;
-            std::cout << "          acceleration.y: " << moveComponent.acceleration_eci.y << std::endl;
-            std::cout << "          acceleration.z: " << moveComponent.acceleration_eci.z << std::endl;
-        }
-
-        std::cout << std::endl;
-    }
+    private:
+    MovementManager(){};
+    inline static MovementManager* instance = nullptr;
 };
 
 #endif //MOVEMENT_MANAGER_H

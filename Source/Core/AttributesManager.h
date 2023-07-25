@@ -30,7 +30,9 @@ class AttributesManager
         if (dataMap.find(attributeName) == dataMap.end())
         {
             // Throw an exception because the attribute has not been defined.
-            std::cout << "Could not find attribute by name: " << attributeName << std::endl;
+            std::string error = "Could not find attribute by name: ";
+            error.append(attributeName);
+            throw std::invalid_argument(error);
         }
 
         // Cast the attribute to the desired type.
@@ -55,9 +57,10 @@ class AttributesManager
         if (dataMap.find(attributeName) == dataMap.end() ||
             typeMap.find(attributeName) == typeMap.end())
         {
-            // Throw an exception because the attribute has not been defined.
-            std::cout << "Attribute has not been registered: " << attributeName << std::endl;
-            return;
+            // Throw an exception because the attribute has not been registered.
+            std::string error = "Attribute has not been registered: ";
+            error.append(attributeName);
+            throw std::invalid_argument(error);
         }
 
         std::stringstream ss(value);
@@ -166,7 +169,10 @@ class AttributesManager
         // If the attribute is already in the map, throw an exception.
         if (dataMap.find(attributeName) != dataMap.end())
         {
-            // Throw an exception because the attribute has not been defined.
+            // Throw an exception because the attribute has already been registered.
+            std::string error = "Attribute has already been registered: ";
+            error.append(attributeName);
+            throw std::invalid_argument(error);
         }
 
         // Set the attribute name and the index into the data map.

@@ -7,7 +7,8 @@ namespace ComponentUtilities
 {
     enum ComponentDesignators
     {
-        ACCUMULATOR = 0,
+        NONE = 0,
+        ACCUMULATOR,
         AGGREGATE,
         CLOCK,
         FIRST_STAGE_SRM,

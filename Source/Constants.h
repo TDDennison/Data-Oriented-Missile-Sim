@@ -19,6 +19,8 @@ class Constants
     inline static const double DEFAULT_DOUBLE = 0.0;
 
     // Valid input set property designators.
+    inline static const char *EXECUTION_ORDER_EARTH_SYSTEM = "Earth System Execution Order";
+    inline static const char *EXECUTION_ORDER_TEST_SOFTWARE_SYSTEM = "Test Software System Execution Order";
     inline static const char *INTEGRATION_SYSTEM_TYPE = "Integration System Type";
     inline static const char *SIMULATION_MAX_TIME = "Simulation Max Time";
     inline static const char *SIMULATION_TOP_RATE = "Simulation Top Rate";

@@ -13,8 +13,10 @@
 class AccumulatorManager : public ComponentManager<AccumulatorComponent, MaxComponents>
 {
     public:
-
-    AccumulatorManager(MassManager *massManager, TransformManager *transformManager) : massManager_(massManager), transformManager_(transformManager) {}
+    static AccumulatorManager* GetInstance() {
+        if(instance == nullptr) { instance = new AccumulatorManager(MassManager::GetInstance(), TransformManager::GetInstance()); }
+        return instance;
+    }
 
     void WriteToLog(float time)
     {
@@ -78,6 +80,9 @@ class AccumulatorManager : public ComponentManager<AccumulatorComponent, MaxComp
     }
 
     private:
+    AccumulatorManager(MassManager *massManager, TransformManager *transformManager) : massManager_(massManager), transformManager_(transformManager) {}
+    inline static AccumulatorManager* instance = nullptr;
+
     MassManager* massManager_;
     TransformManager* transformManager_;
 };

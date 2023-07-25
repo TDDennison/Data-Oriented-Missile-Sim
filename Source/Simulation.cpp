@@ -5,15 +5,13 @@
 Simulation::Simulation()
 {
     // Initialize the managers that MUST be around for the simulation to run the physics engine.
-    // TODO: Consider making these singletons.
+    accumulatorManager_ = AccumulatorManager::GetInstance();
+    massManager_ = MassManager::GetInstance();
+    movementManager_ = MovementManager::GetInstance();
+    transformManager_ = TransformManager::GetInstance();
+
     clockManager_ = new ClockManager;
-    massManager_ = new MassManager;
-    movementManager_ = new MovementManager;
-    transformManager_ = new TransformManager;
     testSoftwareManager_ = new TestSoftwareManager;
-
-    accumulatorManager_ = new AccumulatorManager(massManager_, transformManager_);
-
     loggingSystem_ = new LoggingSystem();
 
     // Get needed data from attributes.
@@ -36,12 +34,13 @@ Simulation::~Simulation()
 
 void Simulation::Initialize()
 {
+    // Register systems.
     RegisterSystem_Booster(BoosterType::FIRST_STAGE);
     RegisterSystem_Booster(BoosterType::SECOND_STAGE);
-
     RegisterSystem_Earth();
     RegisterSystem_Integration();
 
+    // Initialize systems
     InitializeLoggingSystem();
 }
 
@@ -54,26 +53,46 @@ void Simulation::InitializeLoggingSystem()
     loggingSystem_->transformManager = transformManager_;
 }
 
+/**
+ * @brief Register an Accumulator Component with the Accumulator Manager.
+ * 
+ * @note This method should only ever be called by the EntityManager class when entities are created.
+*/
 void Simulation::RegisterComponent_AccumulatorManager(Entity entity, AccumulatorComponent& accumulatorComponent)
 {
     accumulatorManager_->Add(entity, accumulatorComponent);
 }
 
-void Simulation::RegisterComponent_ClockManager(Entity entity, ClockComponent& clockComponent)
-{
-    clockManager_->Add(entity, clockComponent);
-}
-
+/**
+ * @brief Register a Mass Component with the Mass Manager.
+ * 
+ * @note This method should only ever be called by the EntityManager class when entities are created.
+*/
 void Simulation::RegisterComponent_MassManager(Entity entity, MassComponent& massComponent) {
     massManager_->Add(entity, massComponent);
 }
 
+/**
+ * @brief Register a Movement Component with the Movement Manager.
+ * 
+ * @note This method should only ever be called by the EntityManager class when entities are created.
+*/
 void Simulation::RegisterComponent_MovementManager(Entity entity, MovementComponent& movementComponent) {
     movementManager_->Add(entity, movementComponent);
 }
 
+/**
+ * @brief Register a Transform Component with the Transform Manager.
+ * 
+ * @note This method should only ever be called by the EntityManager class when entities are created.
+*/
 void Simulation::RegisterComponent_TransformManager(Entity entity, TransformComponent& transformComponent) {
     transformManager_->Add(entity, transformComponent);
+}
+
+void Simulation::RegisterComponent_ClockManager(Entity entity, ClockComponent& clockComponent)
+{
+    clockManager_->Add(entity, clockComponent);
 }
 
 // Register an entity with the Earth system.
@@ -133,7 +152,7 @@ void Simulation::RegisterSystem_Booster(BoosterType type)
 // Register a new earth system using the given managers.
 void Simulation::RegisterSystem_Earth()
 {
-    earthSystem_ = new EarthSystem(*accumulatorManager_, *massManager_, *transformManager_);
+    earthSystem_ = EarthSystem::GetInstance();
 
     // Add the system to the collection of systems.
     systems.push_back(earthSystem_);
@@ -144,8 +163,6 @@ void Simulation::RegisterSystem_Integration()
     // Set up the integration system based on inputs.
     AttributesManager *attrManager = AttributesManager::GetInstance();
     uint32_t integrationType = attrManager->GetAttribute<uint32_t>(Constants::INTEGRATION_SYSTEM_TYPE);
-    std::cout << integrationType << std::endl;
-    std::cout << static_cast<IntegrationSystemType>(integrationType) << std::endl;
     switch(static_cast<IntegrationSystemType>(integrationType))
     {
         case IntegrationSystemType::EULER:
@@ -181,14 +198,27 @@ void Simulation::RegisterSystem_TestSoftwareSystem()
 
 void Simulation::Update()
 {
+    std::cout << "In simulation update" << std::endl;
+    // Initialize all of the systems.
+    for (System *system : systems)
+    {
+        system->Initialize();
+    }
+
+    // Sort the systems based on user defined execution order.
+    std::sort(systems.begin(), systems.end(), System::compareExecutionOrder);
+
     // Tell the systems to update
     real time = 0.0;
     double dt = 1.0 / (double)rate_;
-    while (time <= maxTime_)
+    while (time <= maxTime_ + dt) // + dt to get the final timestep logged.
     {
-        firstStageBoosterSystem_->Update(dt);
-        secondStageBoosterSystem_->Update(dt);
-        earthSystem_->Update(dt);
+        // Update all of the systems whose execution order can change.
+        for (System *system : systems)
+        {
+            system->Update(dt);
+        }
+        
         integrationSystem_->Update(dt);
 
         std::cout << "===== Time: " << time << " =====" << std::endl;

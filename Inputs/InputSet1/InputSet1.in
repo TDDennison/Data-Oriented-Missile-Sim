@@ -1,10 +1,14 @@
+Simulation Max Time: 100    // seconds
+Simulation Top Rate: 100   // Hz
+
 Integration System Type: 1  // 1 = Euler, 2 = Runge-Kutta 2, 3 = Runge-Kutta 4
-Simulation Max Time: 500    // seconds
-Simulation Top Rate: 500   // Hz
+
+Earth System Execution Order: 2
+Test Software System Execution Order: 1
 
 Missile:
     SolidRocketMotorComponent:
-        inertMass: 500
-        propellantMass:
-        thrust:
-        TestInt: 0000999
+        // inertMass: 500
+        // propellantMass:
+        // thrust:
+        // TestInt: 0000999

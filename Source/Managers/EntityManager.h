@@ -9,12 +9,7 @@ class EntityManager
 {
     public:
 
-    static Entity CreateEntity()
-    {
-        Entity entity = { nextId };
-        ++nextId;
-        return entity;
-    };
+    static Entity CreateEntity();
 
     private:
     inline static unsigned int nextId = 1;
