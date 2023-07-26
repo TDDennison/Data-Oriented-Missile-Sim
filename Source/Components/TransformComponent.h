@@ -13,13 +13,13 @@ struct TransformComponent : public Component
     TransformComponent(uint16_t id) : Component(id) {}
 
     // The position of the origin of the missile station frame in ECI.
-    Vector3 position_eci; 
+    Vector3 position_eci{}; 
 
     // The angular orientation of the entity in ECI.
-    Quaternion orientation_eci; 
+    Quaternion orientation_eci{}; 
 
     // Holds a transform matrix for converting body space into world space and vice versa.
-    Matrix4 transformMatrix;
+    Matrix4 transformMatrix{};
 };
 
 #endif //TRANSFORM_COMPONENT_H

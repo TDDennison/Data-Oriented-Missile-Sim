@@ -11,10 +11,10 @@ struct AccumulatorComponent : public Component
     AccumulatorComponent(uint16_t id) : Component(id) {}
 
     // Holds the accumulated forces for an entity in a frame defined in the ECI frame.
-    Vector3 forceAccumulator_eci;
+    Vector3 forceAccumulator_eci{};
 
     // Holds the accumulated torques for an entity in a frame defined in the ECI frame.
-    Vector3 torqueAccumulator_eci;
+    Vector3 torqueAccumulator_eci{};
 };
 
 #endif //ACCUMULATOR_COMPONENT_H

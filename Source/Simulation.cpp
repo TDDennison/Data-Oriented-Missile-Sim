@@ -1,7 +1,9 @@
 #include <exception>
+#include <vector>
 
 #include "Simulation.h"
 #include "Components/Utilities.h"
+#include "Core/Configurations.h"
 
 Simulation::Simulation()
 {
@@ -238,45 +240,57 @@ void Simulation::RegisterSystem_TestSoftwareSystem()
 
 void Simulation::CreateMissiles()
 {
-    // Create the abstract missile entity.
-    Entity missileEntity = EntityManager::CreateEntity();
+    std::vector<std::pair<float, float>> missileLocations = Configurations::GetInstance()->GetMissileStartingLocations();
+    std::cout << "There are " << missileLocations.size() << " missile locations parsed." << std::endl;
 
-    // Create the first stage booster.
-    SolidRocketMotorComponent &firstStageComponent = CreateFirstStageBoosterComponent(missileEntity);
-    RegisterEntity_FirstStageBoosterSystem(missileEntity, firstStageComponent);
+    // TODO: Convert the lat/lon pairs into ECI positions/orientations to use for instantiating missile properties here.
+    for (auto location : missileLocations)
+    {
+        std::cout << location.first << " " << location.second << std::endl;
+        // Create the abstract missile entity.
+        Entity missileEntity = EntityManager::CreateEntity();
 
-    // Create the second stage booster. 
-    // NOTE: DO NOT REGISTER THE ENTITY WITH THE SECOND STAGE SYSTEM!
-    //       THIS HAPPENS AFTER THE FIRST STAGE HAS BURNED OUT AND SEPARATED.
-    SolidRocketMotorComponent &secondStageComponent = CreateSecondStageBoosterComponent(missileEntity);
+        // Create the first stage booster.
+        SolidRocketMotorComponent &firstStageComponent = CreateFirstStageBoosterComponent(missileEntity);
+        RegisterEntity_FirstStageBoosterSystem(missileEntity, firstStageComponent);
 
-
-
-
-    // Aggregate the total mass of the missile.
-    MassComponent &missileMass = massManager_->Lookup(missileEntity);
-    missileMass.mass += firstStageComponent.inertMass + firstStageComponent.propellantMass;
-    missileMass.mass += secondStageComponent.inertMass + secondStageComponent.propellantMass;
-
-    // Set up the position of the missile. This is the position in the ECI frame of the origin of the missile-station frame.
-    TransformComponent &missileTrans = transformManager_->Lookup(missileEntity);
-    missileTrans.position_eci = {1000000.0, 0.0, 0.0}; // TODO: THIS NEEDS TO BE PASSED INTO THIS FUNCTION AND RETREIVED FROM THE INPUT FILES.
-    missileTrans.orientation_eci = {1.0, 1.0, 1.0, 1.0}; // TODO: THIS NEEDS TO BE CALCULATED FROM THE POSITION. THE MISSILE SHOULD BE ORIENTED NORMAL TO THE SURFACE OF THE EARTH.
-
-    // Set up the acceleration and velocity of the missile.
-    MovementComponent &missileMovement = movementManager_->Lookup(missileEntity);
-    missileMovement.velocity_eci = {0.0, 0.0, 0.0};
-    missileMovement.angular_velocity_eci = {0.0, 0.0, 0.0};
-    missileMovement.acceleration_eci = {0.0, 0.0, 0.0};
-    missileMovement.angular_acceleration_eci = {0.0, 0.0, 0.0};
+        // Create the second stage booster. 
+        // NOTE: DO NOT REGISTER THE ENTITY WITH THE SECOND STAGE SYSTEM!
+        //       THIS HAPPENS AFTER THE FIRST STAGE HAS BURNED OUT AND SEPARATED.
+        SolidRocketMotorComponent &secondStageComponent = CreateSecondStageBoosterComponent(missileEntity);
 
 
-    // Create the test software component. 
-    // TODO: THIS IS JUST FOR TESTING. THIS SHOULD BE REMOVED WHEN NECESSARY
-    CreateTestSoftwareComponent(missileEntity);
 
-    // Create the clock component for the missile.
-    CreateClockComponent(missileEntity);
+
+        // Aggregate the total mass of the missile.
+        MassComponent &missileMass = massManager_->Lookup(missileEntity);
+        missileMass.mass += firstStageComponent.inertMass + firstStageComponent.propellantMass;
+        missileMass.mass += secondStageComponent.inertMass + secondStageComponent.propellantMass;
+
+        // Set up the position of the missile. This is the position in the ECI frame of the origin of the missile-station frame.
+        TransformComponent &missileTrans = transformManager_->Lookup(missileEntity);
+
+        // TODO: CONVERT LAT/LON LOCATION TO ECI AND COMPUTE ORIENTATION HERE.
+        Vector3 position_ecef = HelperMethods::LLAtoECEF(location.first, location.second, 0.0); // Position always starts on the surface of the earth.
+
+        missileTrans.position_eci = position_ecef; // ECI and ECEF are inline prior to the start of the simulation run.
+        missileTrans.orientation_eci = {1.0, 1.0, 1.0, 1.0}; // TODO: THIS NEEDS TO BE CALCULATED FROM THE POSITION. THE MISSILE SHOULD BE ORIENTED NORMAL TO THE SURFACE OF THE EARTH.
+
+        // Set up the acceleration and velocity of the missile.
+        MovementComponent &missileMovement = movementManager_->Lookup(missileEntity);
+        missileMovement.velocity_eci = {0.0, 0.0, 0.0};
+        missileMovement.angular_velocity_eci = {0.0, 0.0, 0.0};
+        missileMovement.acceleration_eci = {0.0, 0.0, 0.0};
+        missileMovement.angular_acceleration_eci = {0.0, 0.0, 0.0};
+
+
+        // Create the test software component. 
+        // TODO: THIS IS JUST FOR TESTING. THIS SHOULD BE REMOVED WHEN NECESSARY
+        CreateTestSoftwareComponent(missileEntity);
+
+        // Create the clock component for the missile.
+        CreateClockComponent(missileEntity);
+    }
 }
 
 SolidRocketMotorComponent& Simulation::CreateFirstStageBoosterComponent(Entity &entity)

@@ -22,6 +22,7 @@ class Constants
     inline static const char *EXECUTION_ORDER_EARTH_SYSTEM = "Earth System Execution Order";
     inline static const char *EXECUTION_ORDER_TEST_SOFTWARE_SYSTEM = "Test Software System Execution Order";
     inline static const char *INTEGRATION_SYSTEM_TYPE = "Integration System Type";
+    inline static const char *RESERVED_ATTRIBUTE_MISSILE_STARTING_LOCATIONS = "Missile Starting Locations";
     inline static const char *SIMULATION_MAX_TIME = "Simulation Max Time";
     inline static const char *SIMULATION_TOP_RATE = "Simulation Top Rate";
 };

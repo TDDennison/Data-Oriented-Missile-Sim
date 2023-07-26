@@ -1,14 +1,35 @@
-Simulation Max Time: 10    // seconds
-Simulation Top Rate: 100   // Hz
+Simulation Max Time: 0    // seconds
+Simulation Top Rate: 1   // Hz
 
 Integration System Type: 1  // 1 = Euler, 2 = Runge-Kutta 2, 3 = Runge-Kutta 4
 
 Earth System Execution Order: 2
 Test Software System Execution Order: 1
 
+
+
+
+// ============================================================
+// Missile Starting Locations Table Format
+// ============================================================
+// Missile Number | Latitude | Longitude
+// ============================================================
+// NOTE: Missile Number is not used, it is only included for
+//       organizational purposes. It can be any identifier
+//       that makes this file easier to read and understand.
+
+Missile Starting Locations:
+          1       |  40.1N   |  74.1W
+//          1       |  41.2N   |  75.2W
+//          1       |  42.3N   |  76.3W
+//          1       |  43.4N   |  77.4W
+//          1       |  44.5N   |  78.5W
+
+
+
+
+
+
 Missile:
-    SolidRocketMotorComponent:
-        // inertMass: 500
-        // propellantMass:
-        // thrust:
-        // TestInt: 0000999
+    SolidRocketMotorComponent: 
+ //inertMass: 500
