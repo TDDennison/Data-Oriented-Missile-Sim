@@ -45,11 +45,6 @@ class Simulation
     void RegisterEntity_SecondStageBoosterSystem(Entity, SolidRocketMotorComponent&);
     void RegisterEntity_TestSoftwareSystem(Entity, SoftwareComponent&);
 
-    void RegisterSystem_Booster(BoosterType);
-    void RegisterSystem_Earth();
-    void RegisterSystem_Integration();
-    void RegisterSystem_TestSoftwareSystem();
-
     void Run();
     void Update();
 
@@ -65,16 +60,21 @@ class Simulation
     void CreateClockComponent(Entity &entity);
 
     // Creates the first stage booster components at the beginning of the simulation run.
-    SolidRocketMotorComponent& CreateFirstStageBooster(Entity &entity);
+    SolidRocketMotorComponent& CreateFirstStageBoosterComponent(Entity &entity);
 
     // Creates the second stage booster components at the beginning of the simulation run.
-    SolidRocketMotorComponent& CreateSecondStageBooster(Entity &entity);
+    SolidRocketMotorComponent& CreateSecondStageBoosterComponent(Entity &entity);
 
     // Creates a software component at the beginning of the simulation run.
     void CreateTestSoftwareComponent(Entity &entity);
 
     // Private instance of the Simulation class used to facilitate the singleton design pattern.
     inline static Simulation* instance = nullptr;
+
+    void RegisterSystem_Booster(BoosterType);
+    void RegisterSystem_Earth();
+    void RegisterSystem_Integration();
+    void RegisterSystem_TestSoftwareSystem();
 
     // Private class used to register attributes prior to runtime starting.
     // This is done through the use of static construction of this class.

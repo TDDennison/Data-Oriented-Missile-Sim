@@ -16,7 +16,7 @@ struct SoftwareComponent : public Component
     real executionFrequency;
 
     // The time the software component was last executed. In units of seconds.
-    real lastTimeExecuted;
+    real lastTimeExecuted = 0.0;
 };
 
 #endif //SOFTWARE_COMPONENT_H

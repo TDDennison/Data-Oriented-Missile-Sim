@@ -49,7 +49,8 @@ void Simulation::Initialize()
 
 /**
  * @brief Register an Accumulator Component with the Accumulator Manager.
- * 
+ * @param[in] entity: The entity used as an identifier for the component data.
+ * @param[in] accumulatorComponent: The component data to be managed.
  * @note This method should only ever be called by the EntityManager class when entities are created.
 */
 void Simulation::RegisterComponent_AccumulatorManager(Entity entity, AccumulatorComponent& accumulatorComponent)
@@ -59,7 +60,8 @@ void Simulation::RegisterComponent_AccumulatorManager(Entity entity, Accumulator
 
 /**
  * @brief Register a Mass Component with the Mass Manager.
- * 
+ * @param[in] entity: The entity used as an identifier for the component data.
+ * @param[in] massComponent: The component data to be managed.
  * @note This method should only ever be called by the EntityManager class when entities are created.
 */
 void Simulation::RegisterComponent_MassManager(Entity entity, MassComponent& massComponent) {
@@ -68,7 +70,8 @@ void Simulation::RegisterComponent_MassManager(Entity entity, MassComponent& mas
 
 /**
  * @brief Register a Movement Component with the Movement Manager.
- * 
+ * @param[in] entity: The entity used as an identifier for the component data.
+ * @param[in] movementComponent: The component data to be managed.
  * @note This method should only ever be called by the EntityManager class when entities are created.
 */
 void Simulation::RegisterComponent_MovementManager(Entity entity, MovementComponent& movementComponent) {
@@ -77,50 +80,82 @@ void Simulation::RegisterComponent_MovementManager(Entity entity, MovementCompon
 
 /**
  * @brief Register a Transform Component with the Transform Manager.
- * 
+ * @param[in] entity: The entity used as an identifier for the component data.
+ * @param[in] transformComponent: The component data to be managed.
  * @note This method should only ever be called by the EntityManager class when entities are created.
 */
 void Simulation::RegisterComponent_TransformManager(Entity entity, TransformComponent& transformComponent) {
     transformManager_->Add(entity, transformComponent);
 }
 
+/**
+ * @brief Register a Clock Component with the Clock Manager.
+ * @param[in] entity: The entity used as an identifier for the component data.
+ * @param[in] clockComponent: The component data to be managed.
+*/
 void Simulation::RegisterComponent_ClockManager(Entity entity, ClockComponent& clockComponent)
 {
     clockManager_->Add(entity, clockComponent);
 }
 
-// Register an entity with the Earth system.
+/**
+ * @brief Register an entity with the Earth System.
+ * @param[in] entity: The entity to be manipulated by the system.
+ * @note This method should only ever be called by the EntityManager class when entities are created.
+*/
 void Simulation::RegisterEntity_EarthSystem(Entity entity)
 {
     earthSystem_->RegisterEntity(entity);
 }
 
-// Register an entity with the first stage booster system.
+/**
+ * @brief Register an entity with the First Stage Booster System.
+ * @param[in] entity: The entity to be used as an identifier for component data and manipulated by the system.
+ * @param[in] srmComponent: The SolidRocketMotorComponent object instance to be added to the system's SolidRocketMotorManager.
+*/
 void Simulation::RegisterEntity_FirstStageBoosterSystem(Entity entity, SolidRocketMotorComponent& srmComponent)
 {   
     firstStageBoosterSystem_->AddSrmComponent(entity, srmComponent);
     firstStageBoosterSystem_->RegisterEntity(entity);
 }
 
-// Register an entity with the second stage booster system.
+/**
+ * @brief Register an entity with the Second Stage Booster System.
+ * @param[in] entity: The entity to be used as an identifier for component data and manipulated by the system.
+ * @param[in] srmComponent: The SolidRocketMotorComponent object instance to be added to the system's SolidRocketMotorManager.
+*/
 void Simulation::RegisterEntity_SecondStageBoosterSystem(Entity entity, SolidRocketMotorComponent& srmComponent)
 {
     secondStageBoosterSystem_->RegisterEntity(entity);
     secondStageBoosterSystem_->AddSrmComponent(entity, srmComponent);
 }
 
-// Register an entity with the integration system.
+/**
+ * @brief Register an entity with the Integration System.
+ * @param[in] entity: The entity to be manipulated by the system.
+ * @note This method should only ever be called by the EntityManager class when entities are created.
+*/
 void Simulation::RegisterEntity_IntegrationSystem(Entity entity)
 {
     integrationSystem_->RegisterEntity(entity);
 }
 
+/**
+ * @brief Register an entity with the Test Software System.
+ * @param[in] entity: The entity to be used as an identifier for component data and manipulated by the system.
+ * @param[in] softwareComponent: The SoftwareComponent object instance to be added to the system's SoftwareManager.
+*/
 void Simulation::RegisterEntity_TestSoftwareSystem(Entity entity, SoftwareComponent& softwareComponent)
 {
     testSoftwareSystem_->RegisterEntity(entity);
     testSoftwareSystem_->AddSoftwareComponent(entity, softwareComponent);
 }
 
+/**
+ * @brief Register a new booster system with the Simulation.
+ * @param[in] type: The type of the booster system to register.
+ * @note This method should only ever be called by the Simulation class to set up the minimum necessary systems to simulate the missile.
+*/
 void Simulation::RegisterSystem_Booster(BoosterType type)
 {
     SolidRocketMotorManager* srmManager = new SolidRocketMotorManager(type);
@@ -143,7 +178,10 @@ void Simulation::RegisterSystem_Booster(BoosterType type)
     systems.push_back(boosterSystem);
 }
 
-// Register a new earth system using the given managers.
+/**
+ * @brief Register a new Earth System with the Simulation.
+ * @note This method should only ever be called by the Simulation class to set up the minimum necessary systems to simulate the missile.
+*/
 void Simulation::RegisterSystem_Earth()
 {
     earthSystem_ = EarthSystem::GetInstance();
@@ -152,6 +190,10 @@ void Simulation::RegisterSystem_Earth()
     systems.push_back(earthSystem_);
 }
 
+/**
+ * @brief Register a new Integration System with the Simulation.
+ * @note This method should only ever be called by the Simulation class to set up the minimum necessary systems to simulate the missile.
+*/
 void Simulation::RegisterSystem_Integration()
 {
     // Set up the integration system based on inputs.
@@ -182,6 +224,10 @@ void Simulation::RegisterSystem_Integration()
     }
 }
 
+/**
+ * @brief Register a new Test Software System with the Simulation.
+ * @note This method should only ever be called by the Simulation class to set up the minimum necessary systems to simulate the missile.
+*/
 void Simulation::RegisterSystem_TestSoftwareSystem()
 {
     testSoftwareSystem_ = new TestSoftwareSystem(clockManager_, testSoftwareManager_);
@@ -196,10 +242,13 @@ void Simulation::CreateMissiles()
     Entity missileEntity = EntityManager::CreateEntity();
 
     // Create the first stage booster.
-    SolidRocketMotorComponent &firstStageComponent = CreateFirstStageBooster(missileEntity);
+    SolidRocketMotorComponent &firstStageComponent = CreateFirstStageBoosterComponent(missileEntity);
+    RegisterEntity_FirstStageBoosterSystem(missileEntity, firstStageComponent);
 
-    // Create the second stage booster.
-    SolidRocketMotorComponent &secondStageComponent = CreateSecondStageBooster(missileEntity);
+    // Create the second stage booster. 
+    // NOTE: DO NOT REGISTER THE ENTITY WITH THE SECOND STAGE SYSTEM!
+    //       THIS HAPPENS AFTER THE FIRST STAGE HAS BURNED OUT AND SEPARATED.
+    SolidRocketMotorComponent &secondStageComponent = CreateSecondStageBoosterComponent(missileEntity);
 
 
 
@@ -230,7 +279,7 @@ void Simulation::CreateMissiles()
     CreateClockComponent(missileEntity);
 }
 
-SolidRocketMotorComponent& Simulation::CreateFirstStageBooster(Entity &entity)
+SolidRocketMotorComponent& Simulation::CreateFirstStageBoosterComponent(Entity &entity)
 {
     // Set up the first booster's physical properties
     SolidRocketMotorComponent *srmComponent = new SolidRocketMotorComponent(ComponentUtilities::CreateComponentId(entity.id, ComponentUtilities::FIRST_STAGE_SRM));
@@ -240,12 +289,10 @@ SolidRocketMotorComponent& Simulation::CreateFirstStageBooster(Entity &entity)
     srmComponent->inertMass = 400.0;
     srmComponent->propellantMass = 100.0;
 
-    RegisterEntity_FirstStageBoosterSystem(entity, *srmComponent);
-
     return *srmComponent;
 }
 
-SolidRocketMotorComponent& Simulation::CreateSecondStageBooster(Entity &entity)
+SolidRocketMotorComponent& Simulation::CreateSecondStageBoosterComponent(Entity &entity)
 {
     // Set up the first booster's physical properties
     SolidRocketMotorComponent *srmComponent = new SolidRocketMotorComponent(ComponentUtilities::CreateComponentId(entity.id, ComponentUtilities::SECOND_STAGE_SRM));
@@ -254,8 +301,6 @@ SolidRocketMotorComponent& Simulation::CreateSecondStageBooster(Entity &entity)
     srmComponent->thrust = 100.0;
     srmComponent->inertMass = 400.0;
     srmComponent->propellantMass = 100.0;
-
-    RegisterEntity_SecondStageBoosterSystem(entity, *srmComponent);
 
     return *srmComponent;
 }
@@ -309,7 +354,7 @@ void Simulation::Update()
         // Tell the systems to log their data.
         loggingSystem_->WriteAllLogs(time);
 
-        // 1) Physics systems.
+        // 2) Physics systems.
         // ==================================================
         earthSystem_->Update(dt); // Earth system should always run with the physics systems, in no particular order.
 
@@ -318,6 +363,9 @@ void Simulation::Update()
         {
             system->Update(dt);
         }
+
+        // 3) Software systems.
+        // ==================================================
         
         // 4) Integration systems
         // ==================================================

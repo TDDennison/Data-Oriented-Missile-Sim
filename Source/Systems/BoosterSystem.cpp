@@ -60,6 +60,7 @@ void BoosterSystem::Update(real dt) {
             TransformComponent& oldTrans = transformManager_->Lookup(entity);
 
             if (boosterType_ == FIRST_STAGE) { 
+                std::cout << "Created new first stage entity" << std::endl;
                 newId = ComponentUtilities::CreateComponentId(entity.id, ComponentUtilities::FIRST_STAGE_SRM);
 
                 // Create the new SRM component to track in the second stage booster system.
@@ -73,6 +74,7 @@ void BoosterSystem::Update(real dt) {
             }
             else // Second Stage
             {
+                std::cout << "Created new second stage entity" << std::endl;
                 newId = ComponentUtilities::CreateComponentId(entity.id, ComponentUtilities::SECOND_STAGE_SRM);
             }
 

@@ -1,4 +1,4 @@
-Simulation Max Time: 2    // seconds
+Simulation Max Time: 10    // seconds
 Simulation Top Rate: 100   // Hz
 
 Integration System Type: 1  // 1 = Euler, 2 = Runge-Kutta 2, 3 = Runge-Kutta 4

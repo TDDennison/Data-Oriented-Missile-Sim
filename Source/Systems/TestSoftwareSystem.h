@@ -31,7 +31,7 @@ class TestSoftwareSystem : public System
             // std::cout << "Software component execution frequency: " << softwareComponent.executionFrequency << std::endl;
 
             //Check if the software entity should run.
-            if (clockComponent.time >= softwareComponent.lastTimeExecuted + softwareComponent.executionFrequency)
+            if ((float)clockComponent.time == (float)(softwareComponent.lastTimeExecuted + softwareComponent.executionFrequency))
             {
                 std::cout << "Software component executing at time: " << clockComponent.time << std::endl;
                 softwareComponent.lastTimeExecuted = clockComponent.time;
