@@ -12,20 +12,26 @@ class LoggingSystem : public System
 {
     public:
 
+    LoggingSystem() {
+        massManager_ = MassManager::GetInstance();
+        movementManager_ = MovementManager::GetInstance();
+        transformManager_ = TransformManager::GetInstance();
+    }
+
     void WriteAllLogs(float time)
     {
-        massManager->WriteToLog(time);
-        movementManager->WriteToLog(time);
+        massManager_->WriteToLog(time);
+        movementManager_->WriteToLog(time);
         // firstStageManager->WriteToLog(time);
         // secondStageManager->WriteToLog(time);
-        transformManager->WriteToLog(time);
+        transformManager_->WriteToLog(time);
     }
     
-    MassManager* massManager;
-    MovementManager* movementManager;
-    SolidRocketMotorManager* firstStageManager;
-    SolidRocketMotorManager* secondStageManager;
-    TransformManager* transformManager;
+    MassManager* massManager_;
+    MovementManager* movementManager_;
+    SolidRocketMotorManager* firstStageManager_;
+    SolidRocketMotorManager* secondStageManager_;
+    TransformManager* transformManager_;
 };
 
 #endif //LOGGING_SYSTEM_H

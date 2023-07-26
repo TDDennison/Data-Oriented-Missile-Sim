@@ -1,25 +1,12 @@
 #include <chrono>
 #include <iostream>
 
-#include "Components/AccumulatorComponent.h"
-#include "Components/MovementComponent.h"
-#include "Components/TransformComponent.h"
-#include "Components/Utilities.h"
-
 #include "Core/Configurations.h"
-
-#include "Managers/AccumulatorManager.h"
-#include "Managers/EntityManager.h"
-#include "Managers/Managers.h"
 
 #include "Parsers/CommandLineParser/CommandLineParser.h"
 #include "Parsers/InputFileParser/InputFileParser.h"
 
-#include "Systems/BoosterSystem.h"
-#include "Systems/LoggingSystem.h"
-#include "Systems/IntegrationSystem_Euler.h"
-
-void CreateBoosterWithPayload();
+#include "Simulation.h"
 
 int main(int argc, char** argv)
 {
@@ -52,9 +39,12 @@ int main(int argc, char** argv)
     // Parse the input file.
     InputFileParser inFileParser(Configurations::GetInstance()->GetInputFilePath());
 
+    // Create a timer to measure the total real time needed to run the simulation.
     auto start = std::chrono::high_resolution_clock::now();
 
-    CreateBoosterWithPayload();
+    // Run the simulation.
+    Simulation *simulation = Simulation::GetInstance();
+    simulation->Run();
 
     auto finish = std::chrono::high_resolution_clock::now();
     auto milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(finish-start);
@@ -65,92 +55,4 @@ int main(int argc, char** argv)
 
     return 0;
 }
-
-// Trying to figure out how to aggregate masses and decrement individuals masses as well.
-void CreateBoosterWithPayload()
-{
-    std::cout << "Creating Booster With Payload" << std::endl;
-
-    LoggingSystem loggingSystem;
-
-    // Create the simulation object.
-    Simulation &simulation = *Simulation::GetInstance();
-    simulation.Initialize();
-
-    // One entity per physical object and one entity for the abstract aggregate object?
-    Entity abstractMissile1 = EntityManager::CreateEntity();
-    Entity abstractMissile2 = EntityManager::CreateEntity();
-
-    // ===========================================
-
-    // Set up the first booster's physical properties
-    SolidRocketMotorComponent srmComponent11(ComponentUtilities::CreateComponentId(abstractMissile1.id, ComponentUtilities::FIRST_STAGE_SRM));
-    srmComponent11.thrust = 100.0;
-    srmComponent11.inertMass = 400.0;
-    srmComponent11.propellantMass = 100.0;
-
-    simulation.RegisterEntity_FirstStageBoosterSystem(abstractMissile1, srmComponent11);
-
-    // ============================================
-
-    // Set up the first booster's physical properties
-    SolidRocketMotorComponent srmComponent21(ComponentUtilities::CreateComponentId(abstractMissile2.id, ComponentUtilities::FIRST_STAGE_SRM));
-    srmComponent21.thrust = 100.0;
-    srmComponent21.inertMass = 400.0;
-    srmComponent21.propellantMass = 30.0;
-
-    simulation.RegisterEntity_SecondStageBoosterSystem(abstractMissile2, srmComponent21);
-
-    // ============================================
-
-    // Set up the second booster's physical properties
-    SolidRocketMotorComponent srmComponent12(ComponentUtilities::CreateComponentId(abstractMissile1.id, ComponentUtilities::SECOND_STAGE_SRM));
-    srmComponent12.thrust = 100.0;
-    srmComponent12.inertMass = 400.0;
-    srmComponent12.propellantMass = 100.0;
-
-    // =============================================
-
-    std::cout << "Setting up aggregate physical properties." << std::endl;
-
-    // Set up the aggregate physical properties
-    MassComponent &aggregateMass1 = MassManager::GetInstance()->Lookup(abstractMissile1);
-    aggregateMass1.mass = srmComponent11.inertMass + srmComponent11.propellantMass + srmComponent12.inertMass + srmComponent12.propellantMass;
-
-    TransformComponent &aggregateTrans1 = TransformManager::GetInstance()->Lookup(abstractMissile1);
-    aggregateTrans1.position_eci = {1000000.0, 0.0, 0.0};
-
-    MovementComponent &aggregateMovement1 = MovementManager::GetInstance()->Lookup(abstractMissile1);
-    aggregateMovement1.velocity_eci = {0.0, 0.0, 0.0};
-    aggregateMovement1.acceleration_eci = {0.0, 0.0, 0.0};
-
-    simulation.RegisterEntity_EarthSystem(abstractMissile1);
-    simulation.RegisterEntity_IntegrationSystem(abstractMissile1);
-
-    // ============================================
-    MassComponent &aggregateMass2 = MassManager::GetInstance()->Lookup(abstractMissile2);
-    aggregateMass2.mass = srmComponent21.inertMass + srmComponent21.propellantMass;
-
-    TransformComponent &aggregateTrans2= TransformManager::GetInstance()->Lookup(abstractMissile2);
-    aggregateTrans2.position_eci = {1000000.0, 0.0, 0.0};
-
-    MovementComponent &aggregateMovement2 = MovementManager::GetInstance()->Lookup(abstractMissile2);
-    aggregateMovement2.velocity_eci = {0.0, 0.0, 0.0};
-    aggregateMovement2.acceleration_eci = {0.0, 0.0, 0.0};
-
-    simulation.RegisterEntity_EarthSystem(abstractMissile2);
-    simulation.RegisterEntity_IntegrationSystem(abstractMissile2);
-
-    simulation.RegisterSystem_TestSoftwareSystem();
-
-    SoftwareComponent testSoftwareComponent(ComponentUtilities::CreateComponentId(abstractMissile2.id, ComponentUtilities::TEST_SOFTWARE));
-    testSoftwareComponent.executionFrequency = 0.05;
-    simulation.RegisterEntity_TestSoftwareSystem(abstractMissile1, testSoftwareComponent);
-
-    ClockComponent clockComponent(ComponentUtilities::CreateComponentId(abstractMissile1.id, ComponentUtilities::CLOCK));
-    clockComponent.time = 0.0;
-    simulation.RegisterComponent_ClockManager(abstractMissile1, clockComponent);
-
-    simulation.Update();
-};
 

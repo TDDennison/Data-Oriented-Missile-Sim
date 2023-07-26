@@ -1,6 +1,7 @@
 #include <exception>
 
 #include "Simulation.h"
+#include "Components/Utilities.h"
 
 Simulation::Simulation()
 {
@@ -39,18 +40,11 @@ void Simulation::Initialize()
     RegisterSystem_Booster(BoosterType::SECOND_STAGE);
     RegisterSystem_Earth();
     RegisterSystem_Integration();
+    RegisterSystem_TestSoftwareSystem();
 
-    // Initialize systems
-    InitializeLoggingSystem();
-}
 
-void Simulation::InitializeLoggingSystem()
-{
-    loggingSystem_->massManager = massManager_;
-    loggingSystem_->movementManager = movementManager_;
-    // loggingSystem.firstStageManager = &srmManager1;
-    // loggingSystem.secondStageManager = &srmManager2;
-    loggingSystem_->transformManager = transformManager_;
+    // Finally, create the missile objects.
+    CreateMissiles();
 }
 
 /**
@@ -196,6 +190,96 @@ void Simulation::RegisterSystem_TestSoftwareSystem()
     systems.push_back(testSoftwareSystem_);
 }
 
+void Simulation::CreateMissiles()
+{
+    // Create the abstract missile entity.
+    Entity missileEntity = EntityManager::CreateEntity();
+
+    // Create the first stage booster.
+    SolidRocketMotorComponent &firstStageComponent = CreateFirstStageBooster(missileEntity);
+
+    // Create the second stage booster.
+    SolidRocketMotorComponent &secondStageComponent = CreateSecondStageBooster(missileEntity);
+
+
+
+
+    // Aggregate the total mass of the missile.
+    MassComponent &missileMass = massManager_->Lookup(missileEntity);
+    missileMass.mass += firstStageComponent.inertMass + firstStageComponent.propellantMass;
+    missileMass.mass += secondStageComponent.inertMass + secondStageComponent.propellantMass;
+
+    // Set up the position of the missile. This is the position in the ECI frame of the origin of the missile-station frame.
+    TransformComponent &missileTrans = transformManager_->Lookup(missileEntity);
+    missileTrans.position_eci = {1000000.0, 0.0, 0.0}; // TODO: THIS NEEDS TO BE PASSED INTO THIS FUNCTION AND RETREIVED FROM THE INPUT FILES.
+    missileTrans.orientation_eci = {1.0, 1.0, 1.0, 1.0}; // TODO: THIS NEEDS TO BE CALCULATED FROM THE POSITION. THE MISSILE SHOULD BE ORIENTED NORMAL TO THE SURFACE OF THE EARTH.
+
+    // Set up the acceleration and velocity of the missile.
+    MovementComponent &missileMovement = movementManager_->Lookup(missileEntity);
+    missileMovement.velocity_eci = {0.0, 0.0, 0.0};
+    missileMovement.angular_velocity_eci = {0.0, 0.0, 0.0};
+    missileMovement.acceleration_eci = {0.0, 0.0, 0.0};
+    missileMovement.angular_acceleration_eci = {0.0, 0.0, 0.0};
+
+
+    // Create the test software component. 
+    // TODO: THIS IS JUST FOR TESTING. THIS SHOULD BE REMOVED WHEN NECESSARY
+    CreateTestSoftwareComponent(missileEntity);
+
+    // Create the clock component for the missile.
+    CreateClockComponent(missileEntity);
+}
+
+SolidRocketMotorComponent& Simulation::CreateFirstStageBooster(Entity &entity)
+{
+    // Set up the first booster's physical properties
+    SolidRocketMotorComponent *srmComponent = new SolidRocketMotorComponent(ComponentUtilities::CreateComponentId(entity.id, ComponentUtilities::FIRST_STAGE_SRM));
+
+    // TODO: Have these values come from the input files in the SolidRocketMotorComponent class.
+    srmComponent->thrust = 100.0;
+    srmComponent->inertMass = 400.0;
+    srmComponent->propellantMass = 100.0;
+
+    RegisterEntity_FirstStageBoosterSystem(entity, *srmComponent);
+
+    return *srmComponent;
+}
+
+SolidRocketMotorComponent& Simulation::CreateSecondStageBooster(Entity &entity)
+{
+    // Set up the first booster's physical properties
+    SolidRocketMotorComponent *srmComponent = new SolidRocketMotorComponent(ComponentUtilities::CreateComponentId(entity.id, ComponentUtilities::SECOND_STAGE_SRM));
+
+    // TODO: Have these values come from the input files in the SolidRocketMotorComponent class.
+    srmComponent->thrust = 100.0;
+    srmComponent->inertMass = 400.0;
+    srmComponent->propellantMass = 100.0;
+
+    RegisterEntity_SecondStageBoosterSystem(entity, *srmComponent);
+
+    return *srmComponent;
+}
+
+void Simulation::CreateTestSoftwareComponent(Entity &entity)
+{
+    SoftwareComponent testSoftwareComponent(ComponentUtilities::CreateComponentId(entity.id, ComponentUtilities::TEST_SOFTWARE));
+    testSoftwareComponent.executionFrequency = 0.05;
+    RegisterEntity_TestSoftwareSystem(entity, testSoftwareComponent);
+}
+
+void Simulation::CreateClockComponent(Entity &entity)
+{
+    ClockComponent clockComponent(ComponentUtilities::CreateComponentId(entity.id, ComponentUtilities::CLOCK));
+    clockComponent.time = 0.0;
+    RegisterComponent_ClockManager(entity, clockComponent);
+}
+
+void Simulation::Run()
+{
+    Initialize();
+    Update();
+}
+
 void Simulation::Update()
 {
     std::cout << "In simulation update" << std::endl;
@@ -223,7 +307,7 @@ void Simulation::Update()
         // ==================================================
         std::cout << "===== Time: " << time << " =====" << std::endl;
         // Tell the systems to log their data.
-        //loggingSystem_->WriteAllLogs(time);
+        loggingSystem_->WriteAllLogs(time);
 
         // 1) Physics systems.
         // ==================================================
