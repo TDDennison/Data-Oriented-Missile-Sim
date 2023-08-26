@@ -37,7 +37,9 @@ int main(int argc, char** argv)
     }
 
     // Parse the input file.
-    InputFileParser inFileParser(Configurations::GetInstance()->GetInputFilePath());
+    InputFileParser inFileParser;
+    bool inFileParseSucceeded = inFileParser.TryParse(Configurations::GetInstance()->GetInputFilePath());
+    if(!inFileParseSucceeded) { return 1; }
 
     // Create a timer to measure the total real time needed to run the simulation.
     auto start = std::chrono::high_resolution_clock::now();
