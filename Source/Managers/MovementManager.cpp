@@ -1,3 +1,4 @@
+#include "../Components/Utilities.h"
 #include "MovementManager.h"
 
 MovementManager* MovementManager::GetInstance() {
@@ -16,7 +17,8 @@ void MovementManager::WriteToLog(float time)
         MovementComponent moveComponent = componentData.data[index];
 
         std::cout << "     Entity: " << key << std::endl;
-        std::cout << "          Component ID: " << moveComponent.getId() << std::endl;
+        std::cout << "          Component ID: " << moveComponent.getIdBitset() << std::endl;
+        std::cout << "          " << ComponentUtilities::DecomposeComponentId(moveComponent.getId()) << std::endl;
         std::cout << "          velocity.x: " << moveComponent.velocity_eci.x << std::endl;
         std::cout << "          velocity.y: " << moveComponent.velocity_eci.y << std::endl;
         std::cout << "          velocity.z: " << moveComponent.velocity_eci.z << std::endl;

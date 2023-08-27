@@ -299,7 +299,7 @@ SolidRocketMotorComponent& Simulation::CreateFirstStageBoosterComponent(Entity &
     SolidRocketMotorComponent *srmComponent = new SolidRocketMotorComponent(ComponentUtilities::CreateComponentId(entity.id, ComponentUtilities::FIRST_STAGE_SRM));
 
     // TODO: Have these values come from the input files in the SolidRocketMotorComponent class.
-    srmComponent->thrust = 100.0;
+    srmComponent->thrust = 1000.0;
     srmComponent->inertMass = 400.0;
     srmComponent->propellantMass = 100.0;
 
@@ -370,7 +370,7 @@ void Simulation::Update()
 
         // 2) Physics systems.
         // ==================================================
-        earthSystem_->Update(dt); // Earth system should always run with the physics systems, in no particular order.
+        //earthSystem_->Update(dt); // Earth system should always run with the physics systems, in no particular order.
 
         // Update all of the systems whose execution order can change.
         for (System *system : systems)

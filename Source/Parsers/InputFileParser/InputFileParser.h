@@ -13,9 +13,12 @@
 #include "../../Core/AttributesManager.h"
 #include "../../Core/Configurations.h"
 
+#include "../../MathTypes/Vector3.h"
+
 const std::string WHITESPACE = " ";
 const std::string COMMENT_DELIMITER = "//";
 const std::string COLON_DELIMITER = ":";
+const std::string SEMICOLON_DELIMITER = ";";
 const std::string PIPE_DELIMITER = "|";
 
 // Parse the designated input file for simulation configuration.
@@ -25,7 +28,7 @@ class InputFileParser
 
     InputFileParser(){};
 
-        bool TryParse(std::filesystem::path filePath) 
+    bool TryParse(std::filesystem::path filePath) 
     {
         // Open the file for parsing.
         std::ifstream inFile(filePath.string());
@@ -171,6 +174,10 @@ class InputFileParser
         {
             ParseMissileStartingLocations(inFile);
         }
+        else if (attributeName == Constants::RESERVED_ATTRIBUTE_TARGET_POINTS)
+        {
+            ParseTargetPoint(inFile);
+        }
         else
         {
             std::cout << "Could not parse reserved attribute" << std::endl;
@@ -225,7 +232,58 @@ class InputFileParser
         }
     }
 
-    inline static std::string reservedAttributes_[] = {Constants::RESERVED_ATTRIBUTE_MISSILE_STARTING_LOCATIONS };
+    void ParseTargetPoint(std::ifstream &inFile)
+    {
+        std::cout << "Parsing target point" << std::endl;
+
+        std::string line;
+        while(!inFile.eof())
+        {
+            line = GetLine(inFile);
+
+            // Split the line on the | delimiter.
+            size_t semiColonIndex = line.find_first_of(SEMICOLON_DELIMITER);
+            if (!(semiColonIndex == std::string::npos)) 
+            {
+                std::string x_coordinate = line.substr(0, semiColonIndex);
+                std::string yz_coordinates = line.substr(semiColonIndex + 1, line.length() - semiColonIndex);
+
+                TrimWhitespaceFromEnds(x_coordinate);
+                TrimWhitespaceFromEnds(yz_coordinates);
+
+                // Split the line again to separate the y and z coordinate values.
+                semiColonIndex = yz_coordinates.find_first_of(SEMICOLON_DELIMITER);
+                if (!(semiColonIndex == std::string::npos)) 
+                {
+                    std::string y_coordinate = yz_coordinates.substr(0, semiColonIndex);
+                    std::string z_coordinate = yz_coordinates.substr(semiColonIndex + 1, yz_coordinates.length() - semiColonIndex);
+
+                    TrimWhitespaceFromEnds(y_coordinate);
+                    TrimWhitespaceFromEnds(z_coordinate);
+
+                    // Create a lat/lon pair and store it for later.
+                    std::stringstream x_ss(x_coordinate);
+                    std::stringstream y_ss(y_coordinate);
+                    std::stringstream z_ss(z_coordinate);
+
+                    float temp_x = std::stof(x_ss.str());
+                    float temp_y = std::stof(y_ss.str());
+                    float temp_z = std::stof(z_ss.str());
+
+                    Vector3 targetInterceptPoint(temp_x, temp_y, temp_z);
+                    Configurations::GetInstance()->AddTargetInterceptPoint(targetInterceptPoint);
+                }
+            }
+
+            // If the line is empty, that signifies that the missile starting locations section is over.
+            if (line.empty()) { return; }
+        }
+    }
+
+    inline static std::string reservedAttributes_[] = {
+        Constants::RESERVED_ATTRIBUTE_MISSILE_STARTING_LOCATIONS,
+        Constants::RESERVED_ATTRIBUTE_TARGET_POINTS
+    };
 };
 
 #endif //INPUT_FILE_PARSER_H

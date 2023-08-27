@@ -1,3 +1,4 @@
+#include "../Components/Utilities.h"
 #include "MassManager.h"
 
 MassManager* MassManager::GetInstance() {
@@ -16,7 +17,8 @@ void MassManager::WriteToLog(float time)
         MassComponent massComponent = componentData.data[index];
 
         std::cout << "     Entity: " << key << std::endl;
-        std::cout << "          Component ID: " << massComponent.getId() << std::endl;
+        std::cout << "          Component ID: " << massComponent.getIdBitset() << std::endl;
+        std::cout << "          " << ComponentUtilities::DecomposeComponentId(massComponent.getId()) << std::endl;
         std::cout << "          mass: " << massComponent.mass << std::endl;
     }
 

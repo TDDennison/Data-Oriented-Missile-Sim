@@ -1,3 +1,4 @@
+#include "../Components/Utilities.h"
 #include "TransformManager.h"
 
 TransformManager* TransformManager::GetInstance() {
@@ -16,7 +17,8 @@ void TransformManager::WriteToLog(float time)
         TransformComponent transformComponent = componentData.data[index];
 
         std::cout << "     Entity: " << key << std::endl;
-        std::cout << "          Component ID: " << transformComponent.getId() << std::endl;
+        std::cout << "          Component ID: " << transformComponent.getIdBitset() << std::endl;
+        std::cout << "          " << ComponentUtilities::DecomposeComponentId(transformComponent.getId()) << std::endl;
         std::cout << "          position.x: " << transformComponent.position_eci.x << std::endl;
         std::cout << "          position.y: " << transformComponent.position_eci.y << std::endl;
         std::cout << "          position.z: " << transformComponent.position_eci.z << std::endl;

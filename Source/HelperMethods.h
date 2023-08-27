@@ -16,6 +16,12 @@ namespace HelperMethods
         return distance;
     }
 
+    static Vector3 CalculateVectorBetweenPoints(Vector3 a, Vector3 b)
+    {
+        Vector3 diff = b - a;
+        return diff;
+    }
+
     static Vector3 LLAtoECEF(float lat, float lon, float alt)
     {
         // TODO: FIGURE OUT HOW TO ALLOW FOR NON_SPHERICAL EARTH SHAPE

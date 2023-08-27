@@ -39,6 +39,8 @@ class EarthSystem : public System
     }
     
     void Update(real dt) override {
+
+        return;
         for (auto & entity : registeredEntities) {
             // Impart the forces produced by the Earth on entities here.
             // Rotational forces

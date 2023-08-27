@@ -14,7 +14,8 @@ class Component
     Component() : id_(DEFAULT_COMPONENT_ID) {}
     Component(uint16_t id) : id_(id) {}
 
-    inline std::bitset<COMPONENT_ID_FIELD_SIZE> getId() { return id_; }
+    inline unsigned short getId() { return static_cast<unsigned short>(id_.to_ulong()); }
+    inline std::bitset<COMPONENT_ID_FIELD_SIZE> getIdBitset() { return id_; }
     void setId(uint16_t id) { id_ = id; }
 
     private:
