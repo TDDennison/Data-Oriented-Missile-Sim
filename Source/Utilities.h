@@ -15,4 +15,12 @@ enum AttributeType { BOOLEAN,
                     FLOAT, 
                     DOUBLE};
 
-#endif //UTILIES_H
+// Enumeration to hold the type designators for the intergration system.
+enum IntegrationSystemType : uint32_t
+{
+    EULER = 1,
+    RUNGE_KUTTA_2,
+    RUNGE_KUTTA_4,
+};
+
+#endif //UTILITIES_H

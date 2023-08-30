@@ -30,7 +30,9 @@ class AttributesManager
         if (dataMap.find(attributeName) == dataMap.end())
         {
             // Throw an exception because the attribute has not been defined.
-            std::cout << "Could not find attribute by name: " << attributeName << std::endl;
+            std::string error = "Could not find attribute by name: ";
+            error.append(attributeName);
+            throw std::invalid_argument(error);
         }
 
         // Cast the attribute to the desired type.
@@ -55,9 +57,10 @@ class AttributesManager
         if (dataMap.find(attributeName) == dataMap.end() ||
             typeMap.find(attributeName) == typeMap.end())
         {
-            // Throw an exception because the attribute has not been defined.
-            std::cout << "Attribute has not been registered: " << attributeName << std::endl;
-            return;
+            // Throw an exception because the attribute has not been registered.
+            std::string error = "Attribute has not been registered: ";
+            error.append(attributeName);
+            throw std::invalid_argument(error);
         }
 
         std::stringstream ss(value);
@@ -70,11 +73,75 @@ class AttributesManager
                 SetData<bool>(attributeName, temp);
                 break;
             }
+            case AttributeType::UINT8:
+            {
+                uint8_t temp;
+                ss >> temp;
+                SetData<uint8_t>(attributeName, temp);
+                break;
+            }
+            case AttributeType::UINT16:
+            {
+                uint16_t temp;
+                ss >> temp;
+                SetData<uint16_t>(attributeName, temp);
+                break;
+            }
+            case AttributeType::UINT32:
+            {
+                uint32_t temp;
+                ss >> temp;
+                SetData<uint32_t>(attributeName, temp);
+                break;
+            }
+            case AttributeType::UINT64:
+            {
+                uint64_t temp;
+                ss >> temp;
+                SetData<uint64_t>(attributeName, temp);
+                break;
+            }
+            case AttributeType::INT8:
+            {
+                int8_t temp;
+                ss >> temp;
+                SetData<int8_t>(attributeName, temp);
+                break;
+
+            }
+            case AttributeType::INT16:
+            {
+                int16_t temp;
+                ss >> temp;
+                SetData<int16_t>(attributeName, temp);
+                break;
+            }
             case AttributeType::INT32:
             {
-                int temp;
+                int32_t temp;
                 ss >> temp;
-                SetData<int>(attributeName, temp);
+                SetData<int32_t>(attributeName, temp);
+                break;
+            }
+            case AttributeType::INT64:
+            {
+                int64_t temp;
+                ss >> temp;
+                SetData<int64_t>(attributeName, temp);
+                break;
+            }
+            case AttributeType::FLOAT:
+            {
+                float temp;
+                ss >> temp;
+                SetData<float>(attributeName, temp);
+                break;
+            }
+            case AttributeType::DOUBLE:
+            {
+                double temp;
+                ss >> temp;
+                SetData<double>(attributeName, temp);
                 break;
             }
             default:
@@ -102,7 +169,10 @@ class AttributesManager
         // If the attribute is already in the map, throw an exception.
         if (dataMap.find(attributeName) != dataMap.end())
         {
-            // Throw an exception because the attribute has not been defined.
+            // Throw an exception because the attribute has already been registered.
+            std::string error = "Attribute has already been registered: ";
+            error.append(attributeName);
+            throw std::invalid_argument(error);
         }
 
         // Set the attribute name and the index into the data map.

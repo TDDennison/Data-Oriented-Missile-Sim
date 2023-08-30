@@ -4,6 +4,7 @@
 #include "../Components/AccumulatorComponent.h"
 #include "../Components/MassComponent.h"
 #include "../Components/TransformComponent.h"
+#include "../Components/Utilities.h"
 
 #include "ComponentManager.h"
 #include "Managers.h"
@@ -13,8 +14,10 @@
 class AccumulatorManager : public ComponentManager<AccumulatorComponent, MaxComponents>
 {
     public:
-
-    AccumulatorManager(MassManager *massManager, TransformManager *transformManager) : massManager_(massManager), transformManager_(transformManager) {}
+    static AccumulatorManager* GetInstance() {
+        if(instance == nullptr) { instance = new AccumulatorManager(MassManager::GetInstance(), TransformManager::GetInstance()); }
+        return instance;
+    }
 
     void WriteToLog(float time)
     {
@@ -27,7 +30,8 @@ class AccumulatorManager : public ComponentManager<AccumulatorComponent, MaxComp
             AccumulatorComponent accumulatorComponent = componentData.data[index];
 
             std::cout << "     Entity: " << key << std::endl;
-            std::cout << "          Component ID: " << accumulatorComponent.componentId << std::endl;
+            std::cout << "          Component ID: " << accumulatorComponent.getIdBitset() << std::endl;
+            std::cout << "          " << ComponentUtilities::DecomposeComponentId(accumulatorComponent.getId()) << std::endl;
             std::cout << "          Accumulated force x: " << accumulatorComponent.forceAccumulator_eci.x << std::endl;
             std::cout << "          Accumulated force y: " << accumulatorComponent.forceAccumulator_eci.y << std::endl;
             std::cout << "          Accumulated force z: " << accumulatorComponent.forceAccumulator_eci.z << std::endl;
@@ -78,6 +82,9 @@ class AccumulatorManager : public ComponentManager<AccumulatorComponent, MaxComp
     }
 
     private:
+    AccumulatorManager(MassManager *massManager, TransformManager *transformManager) : massManager_(massManager), transformManager_(transformManager) {}
+    inline static AccumulatorManager* instance = nullptr;
+
     MassManager* massManager_;
     TransformManager* transformManager_;
 };

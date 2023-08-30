@@ -8,13 +8,17 @@
 
 struct MassComponent : public Component
 {
+    // Constructors
+    MassComponent() : Component(DEFAULT_COMPONENT_ID) {}
+    MassComponent(uint16_t id) : Component(id) {}
+
     real mass; // kg
 
     // The position of the entity's center of gravity in the ECI frame.
-    Vector3 position_cg_eci;
+    Vector3 position_cg_eci{};
 
     // Inertia tensor of an entity. All values in the tensor are in the body frame.
-    Matrix3 inertiaTensor;
+    Matrix3 inertiaTensor{};
 };
 
 #endif //MASS_COMPONENT_H

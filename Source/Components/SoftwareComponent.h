@@ -8,11 +8,15 @@
 // not intended to run in every frame.
 struct SoftwareComponent : public Component
 {
+    // Constructors
+    SoftwareComponent() : Component(DEFAULT_COMPONENT_ID) {}
+    SoftwareComponent(uint16_t id) : Component(id) {}
+
     // Frequency the software model should be executed at. In units of seconds.
     real executionFrequency;
 
     // The time the software component was last executed. In units of seconds.
-    real lastTimeExecuted;
+    real lastTimeExecuted = 0.0;
 };
 
 #endif //SOFTWARE_COMPONENT_H

@@ -1,6 +1,7 @@
 #include "BoosterSystem.h"
 
 #include "../Components/Utilities.h"
+#include "../Core/Configurations.h"
 
 BoosterSystem::BoosterSystem(BoosterType type, 
                   AccumulatorManager* accumulatorManager,
@@ -22,13 +23,28 @@ void BoosterSystem::Update(real dt) {
         AccumulatorComponent& accComponent = accumulatorManager_->Lookup(entity);
         SolidRocketMotorComponent& srmComponent = srmManager_->Lookup(entity);
         MassComponent& massComponent = massManager_->Lookup(entity);
+        TransformComponent& transComponent = transformManager_->Lookup(entity);
 
-        Vector3 thrustVector = Vector3{1.0, 1.0, 1.0} * srmComponent.thrust;
-        accComponent.forceAccumulator_eci += thrustVector;
+
+        //================================================================================ 
+        // VERY BASIC TVC SYSTEM, IT ALWAYS POINTS TOWARD THE TARGET TRUTH 
+        //================================================================================ 
+        // Compute the thrust vector based on the application point of the TVC.
+        // 1) Find the application point in ECI
+        // 2) Compute the thrust vector in ECI (The vector from the CG of the missile to the target)
+        Vector3 application_point_eci = transComponent.position_eci + Constants::TVC_OFFSET_FROM_ORIGIN;
+        Vector3 target_position_eci = Configurations::GetInstance()->GetTargetInterceptPoints()[0]; // Hard-coded to attack the first target.
+        Vector3 vectorToTarget = HelperMethods::CalculateVectorBetweenPoints(transComponent.position_eci, target_position_eci); // Transform component should probably be cg position.
+        vectorToTarget.Normalize();
+
+        std::cout << "Vector to target: " << vectorToTarget.x << " " << vectorToTarget.y << " " << vectorToTarget.z << std::endl;
+        Vector3 thrustVector = vectorToTarget * srmComponent.thrust;
+        std::cout << "Thrust vector: " << thrustVector.x << " " << thrustVector.y << " " << thrustVector.z << std::endl;
+        accComponent.AddForceAtPoint(thrustVector, application_point_eci, massComponent.position_cg_eci);
 
         // Model the SRM burning its propellant mass.
-        srmComponent.propellantMass -= 10.0;
-        massComponent.mass -= 10.0;
+        srmComponent.propellantMass -= 0.01;
+        massComponent.mass -= 0.01;
 
         if (srmComponent.propellantMass <= 0.0) { 
 
@@ -51,51 +67,45 @@ void BoosterSystem::Update(real dt) {
 
             // 4) New data comes from old data
             unsigned short newId;
-            AccumulatorComponent newAcc;
-            MassComponent newMass;
-            MovementComponent newMove;
+            AccumulatorComponent &newAcc = accumulatorManager_->Lookup(newEntity);
+            MassComponent &newMass = massManager_->Lookup(newEntity);
+            MovementComponent &newMove = movementManager_->Lookup(newEntity);
+            TransformComponent &newTrans = transformManager_->Lookup(newEntity);
+
             MovementComponent& movementComponent = movementManager_->Lookup(entity);
-            TransformComponent& oldTrans = transformManager_->Lookup(entity);
-            TransformComponent newTrans;
 
             if (boosterType_ == FIRST_STAGE) { 
+                std::cout << "Created new first stage entity" << std::endl;
                 newId = ComponentUtilities::CreateComponentId(entity.id, ComponentUtilities::FIRST_STAGE_SRM);
 
                 // Create the new SRM component to track in the second stage booster system.
-                SolidRocketMotorComponent newSrmComponent;
+                SolidRocketMotorComponent newSrmComponent(ComponentUtilities::CreateComponentId(entity.id, ComponentUtilities::SECOND_STAGE_SRM));
                 newSrmComponent.thrust = 100.0;
                 newSrmComponent.inertMass = 400.0;
                 newSrmComponent.propellantMass = 100.0;
 
-                ComponentUtilities::SetComponentId(newSrmComponent, entity.id, ComponentUtilities::SECOND_STAGE_SRM);
 
                 simulation_->RegisterEntity_SecondStageBoosterSystem(entity, newSrmComponent); 
             }
             else // Second Stage
             {
+                std::cout << "Created new second stage entity" << std::endl;
                 newId = ComponentUtilities::CreateComponentId(entity.id, ComponentUtilities::SECOND_STAGE_SRM);
             }
 
             newAcc.forceAccumulator_eci = accComponent.forceAccumulator_eci;
             newAcc.torqueAccumulator_eci = accComponent.torqueAccumulator_eci;
+            newAcc.setId(newId);
 
             newMass.mass = srmComponent.inertMass;
-            newMass.componentId = newId;
+            newMass.setId(newId);
 
             newMove.velocity_eci = movementComponent.velocity_eci;
             newMove.acceleration_eci = movementComponent.acceleration_eci;
-            newMove.componentId = newId;
+            newMove.setId(newId);
 
-            newTrans.position_eci = oldTrans.position_eci;
-            newTrans.componentId = newId;
-
-            // 5) Register new entity with correct managers and systems
-            simulation_->RegisterComponent_AccumulatorManager(newEntity, newAcc);
-            simulation_->RegisterComponent_MassManager(newEntity, newMass);
-            simulation_->RegisterComponent_MovementManager(newEntity, newMove);
-            simulation_->RegisterComponent_TransformManager(newEntity, newTrans);
-            simulation_->RegisterEntity_EarthSystem(newEntity);
-            simulation_->RegisterEntity_IntegrationSystem(newEntity);
+            newTrans.position_eci = transComponent.position_eci;
+            newTrans.setId(newId);
 
             // If this is a second stage booster system, all that will be left in the abstract missile component properties
             // are the properties that apply to the payload.

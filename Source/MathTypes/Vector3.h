@@ -147,7 +147,7 @@ class Vector3
         return sqrt(x*x + y*y + z*z);
     }
 
-    // Turns a non-zero vector inot a vector of unit length.
+    // Turns a non-zero vector into a vector of unit length.
     void Normalize()
     {
         real mag = Magnitude();
