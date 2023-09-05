@@ -1,0 +1,85 @@
+<mxfile host="app.diagrams.net" modified="2023-09-05T14:14:17.691Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36 Edg/116.0.1938.62" etag="GeGmG4fEvTXcs8qJTJSj" version="21.3.8" type="device">
+  <diagram name="Page-1" id="zGMjPeZDjzTXjoyAuL-B">
+    <mxGraphModel dx="1434" dy="1896" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="kF7u4RCcWB1seZZv5WjC-1" value="Scene 1 of 3&lt;br&gt;Num AURs: X" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="120" y="160" width="160" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="kF7u4RCcWB1seZZv5WjC-2" value="Scene 2 of 3&lt;br&gt;Num AURs: X" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="320" y="160" width="160" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="kF7u4RCcWB1seZZv5WjC-3" value="Scene 3 of 3&lt;br&gt;Num AURs: X" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="520" y="160" width="160" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="kF7u4RCcWB1seZZv5WjC-5" value="Ground System" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="320" y="640" width="160" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="kF7u4RCcWB1seZZv5WjC-6" value="Shared Memory" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="120" y="400" width="560" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="kF7u4RCcWB1seZZv5WjC-8" value="" style="shape=flexArrow;endArrow=classic;startArrow=classic;html=1;rounded=0;" edge="1" parent="1">
+          <mxGeometry width="100" height="100" relative="1" as="geometry">
+            <mxPoint x="200" y="400" as="sourcePoint" />
+            <mxPoint x="200" y="320" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="kF7u4RCcWB1seZZv5WjC-9" value="" style="shape=flexArrow;endArrow=classic;startArrow=classic;html=1;rounded=0;" edge="1" parent="1">
+          <mxGeometry width="100" height="100" relative="1" as="geometry">
+            <mxPoint x="399.5" y="400" as="sourcePoint" />
+            <mxPoint x="399.5" y="320" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="kF7u4RCcWB1seZZv5WjC-10" value="" style="shape=flexArrow;endArrow=classic;startArrow=classic;html=1;rounded=0;" edge="1" parent="1">
+          <mxGeometry width="100" height="100" relative="1" as="geometry">
+            <mxPoint x="599" y="400" as="sourcePoint" />
+            <mxPoint x="599" y="320" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="kF7u4RCcWB1seZZv5WjC-11" value="" style="shape=flexArrow;endArrow=classic;startArrow=classic;html=1;rounded=0;" edge="1" parent="1">
+          <mxGeometry width="100" height="100" relative="1" as="geometry">
+            <mxPoint x="400" y="640" as="sourcePoint" />
+            <mxPoint x="400" y="560" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="kF7u4RCcWB1seZZv5WjC-13" value="Component Data" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="160" y="410" width="80" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="kF7u4RCcWB1seZZv5WjC-4" value="Threat Data" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="160" y="480" width="80" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="kF7u4RCcWB1seZZv5WjC-14" value="The number of Scenes is determined at initialization time and based on the number of AURs being simulated" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;" vertex="1" parent="1">
+          <mxGeometry x="120" y="30" width="210" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="kF7u4RCcWB1seZZv5WjC-15" value="&lt;h1&gt;FUTURE PLANS&lt;/h1&gt;" style="text;html=1;strokeColor=none;fillColor=none;spacing=5;spacingTop=-20;whiteSpace=wrap;overflow=hidden;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="325" width="200" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="kF7u4RCcWB1seZZv5WjC-16" value="Systems" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="145" y="270" width="110" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="kF7u4RCcWB1seZZv5WjC-17" value="Systems" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="345" y="270" width="110" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="kF7u4RCcWB1seZZv5WjC-18" value="Systems" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="545" y="270" width="110" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="kF7u4RCcWB1seZZv5WjC-19" value="DOMSim App" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="170" y="170" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="kF7u4RCcWB1seZZv5WjC-22" value="App" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="370" y="650" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="kF7u4RCcWB1seZZv5WjC-42" value="DOMSim App" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="370" y="170" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="kF7u4RCcWB1seZZv5WjC-43" value="DOMSim App" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="570" y="170" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="kF7u4RCcWB1seZZv5WjC-44" value="Shared memory does not come with the cost of network communications (UDP, TCP) between applications." style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="465" y="410" width="195" height="140" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
