@@ -56,7 +56,8 @@ The component data is then managed efficiently for tightly packed, non-fragmente
 # Component Management
 Component Managers keep the component data tightly stored in memory. When data is tightly packed, the CPU can accurately pre-fetch data that is soon to be used allowing for cache lines to be more efficiently used. An example of how component management works is illustrated below.
 
-![ComponentManager](https://github.com/TDDennison/DOMSim/assets/54010305/7fe2d458-e86a-4095-ab7b-48c777fc9b20)
+![ComponentManager](https://github.com/TDDennison/Data-Oriented-Missile-Sim/assets/54010305/f59f2432-76ab-476d-b295-ff21c74c18df)
+
 
 # Entities
 The core functionality of DOMSim is built using an Entity Component System (ECS). An entity is merely a unique number identifier that can represent any object (physical or non-physical) in the simulation. An entity is comprised of any number of components describing its properties. For example, an entity can be created representing a full-stack missile. The entity would have a unique identifier and be comprised of the components that describe a physical object; MassComponent, MovementComponet, TransformComponent etc. Entities can be created or destroyed at any appropriate time during the course of a simulation run. This means that if modeling an impact, where debris fields are created, each piece of debris would likely become its own unique entitiy with components to describe its physical properties.
