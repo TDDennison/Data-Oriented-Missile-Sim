@@ -4,9 +4,12 @@
 #include <array>
 #include <iostream>
 #include <map>
+#include <memory>
 #include <stdexcept>
 
 #include "../Entity.h"
+#include "../Core/ILoggable.h"
+#include "../Systems/LoggingSystem.h"
 
 typedef unsigned int EntityId;
 
@@ -15,7 +18,7 @@ struct ComponentInstance {
 };
 
 template<typename ComponentType, unsigned int MaxComponents>
-class ComponentManager
+class ComponentManager : public ILoggable
 {
     private:
 
@@ -104,10 +107,21 @@ class ComponentManager
         return false;
     }
 
+    // ILoggable Implementation
+    void WriteToLog(float time) override {
+        logger_->WriteToBuffer(componentData.data, sizeof(ComponentType) * componentData.size);
+    }
+
     protected:
-    
+
+    ComponentManager(std::string logFileName) {
+        logger_ = std::make_unique<LoggingSystem>(logFileName);
+    }
+
     ComponentData<MaxComponents> componentData;
     std::map<unsigned int, unsigned int> entityMap;
+
+    std::unique_ptr<LoggingSystem> logger_;
 };
 
 #endif //COMPONENT_MANAGER_H

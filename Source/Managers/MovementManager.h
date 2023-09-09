@@ -10,10 +10,9 @@ class MovementManager : public ComponentManager<MovementComponent, MaxComponents
     public:
 
     static MovementManager* GetInstance();
-    void WriteToLog(float time);
 
     private:
-    MovementManager(){};
+    MovementManager() : ComponentManager("MovementManager.bin") {};
     inline static MovementManager* instance = nullptr;
 };
 

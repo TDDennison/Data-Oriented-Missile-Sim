@@ -55,6 +55,8 @@
         "typeinfo": "cpp",
         "compare": "cpp",
         "concepts": "cpp",
-        "numbers": "cpp"
-    }
+        "numbers": "cpp",
+        "source_location": "cpp"
+    },
+    "cmake.configureOnOpen": false
 }

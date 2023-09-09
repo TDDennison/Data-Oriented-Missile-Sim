@@ -4,12 +4,14 @@
 #include <vector>
 
 #include "Entity.h"
+#include "Core/ILoggable.h"
 #include "Components/SolidRocketMotorComponent.h"
 #include "Components/SoftwareComponent.h"
 #include "Managers/ClockManager.h"
 #include "Managers/MassManager.h"
 #include "Managers/Managers.h"
 #include "Managers/MovementManager.h"
+#include "Managers/TestSoftwareManager.h"
 #include "Managers/TransformManager.h"
 #include "Systems/BoosterSystem.h"
 #include "Systems/EarthSystem.h"
@@ -23,6 +25,7 @@ class BoosterSystem;
 class Simulation
 {
     typedef std::vector<System*> SystemCollection;
+    typedef std::vector<ILoggable*> LoggableCollection;
 
     public:
     inline static Simulation* GetInstance() {
@@ -104,6 +107,7 @@ class Simulation
 
     // Collection of system pointers used to enforce order of execution.
     SystemCollection systems{};
+    LoggableCollection loggables{};
 
     AccumulatorManager* accumulatorManager_   = nullptr;
     ClockManager* clockManager_               = nullptr;

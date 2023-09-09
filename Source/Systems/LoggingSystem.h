@@ -1,37 +1,45 @@
 #ifndef LOGGING_SYSTEM_H
 #define LOGGING_SYSTEM_H
 
-#include "System.h"
+#include <cstring>
+#include <string>
+#include <fstream>
 
-#include "../Managers/MassManager.h"
-#include "../Managers/MovementManager.h"
-#include "../Managers/SolidRocketMotorManager.h"
-#include "../Managers/TransformManager.h"
-
-class LoggingSystem : public System
+class LoggingSystem
 {
     public:
 
-    LoggingSystem() {
-        massManager_ = MassManager::GetInstance();
-        movementManager_ = MovementManager::GetInstance();
-        transformManager_ = TransformManager::GetInstance();
-    }
+    LoggingSystem(std::string fileName) : 
+    fileName_(fileName), 
+    outputFile_(fileName_, std::ios::out | std::ios::binary), 
+    bufferIndex_(0){}
 
     void WriteAllLogs(float time)
     {
-        massManager_->WriteToLog(time);
-        movementManager_->WriteToLog(time);
-        // firstStageManager->WriteToLog(time);
-        // secondStageManager->WriteToLog(time);
-        transformManager_->WriteToLog(time);
     }
     
-    MassManager* massManager_;
-    MovementManager* movementManager_;
-    SolidRocketMotorManager* firstStageManager_;
-    SolidRocketMotorManager* secondStageManager_;
-    TransformManager* transformManager_;
+    void WriteToBuffer(void *obj, size_t numBytes)
+    {
+        // Make sure there is enough space left in the buffer to write the bytes.
+        if (sizeof(buffer_) - bufferIndex_ < numBytes)
+        {
+            // Swap out the buffer pointers and write the buffer data to disk.
+            //outputFile_.open(fileName_.c_str(), std::ios::out | std::ios::binary);
+            outputFile_.write(buffer_, bufferIndex_);
+
+            bufferIndex_ = 0;
+        }
+
+        std::memcpy(buffer_ + bufferIndex_, obj, numBytes);
+        bufferIndex_ += numBytes;
+    }
+
+    private:
+
+    std::string fileName_;
+    std::fstream outputFile_;
+    uint bufferIndex_ = 0;
+    char buffer_[1048576]{0}; // One megabyte buffer size.
 };
 
 #endif //LOGGING_SYSTEM_H

@@ -10,10 +10,9 @@ class MassManager : public ComponentManager<MassComponent, MaxComponents>
     public:
 
     static MassManager* GetInstance();
-    void WriteToLog(float time);
 
     private:
-    MassManager(){};
+    MassManager() : ComponentManager("MassManager.bin") {};
     inline static MassManager* instance = nullptr;
 };
 

@@ -1,4 +1,5 @@
 #include <exception>
+#include <memory>
 #include <vector>
 
 #include "Simulation.h"
@@ -9,14 +10,23 @@ Simulation::Simulation()
 {
     // Initialize the managers that MUST be around for the simulation to run the physics engine.
     accumulatorManager_ = AccumulatorManager::GetInstance();
+    loggables.push_back(accumulatorManager_);
+
     massManager_ = MassManager::GetInstance();
+    loggables.push_back(massManager_);
+
     movementManager_ = MovementManager::GetInstance();
+    loggables.push_back(movementManager_);
+    
     transformManager_ = TransformManager::GetInstance();
+    loggables.push_back(transformManager_);
 
-    clockManager_ = new ClockManager;
-    testSoftwareManager_ = new TestSoftwareManager;
-    loggingSystem_ = new LoggingSystem();
+    clockManager_ = new ClockManager();
+    loggables.push_back(clockManager_);
 
+    testSoftwareManager_ = new TestSoftwareManager();
+    loggables.push_back(testSoftwareManager_);
+    
     // Get needed data from attributes.
     AttributesManager *attrManager = AttributesManager::GetInstance();
     maxTime_ = attrManager->GetAttribute<int>(Constants::SIMULATION_MAX_TIME);
@@ -160,17 +170,27 @@ void Simulation::RegisterEntity_TestSoftwareSystem(Entity entity, SoftwareCompon
 */
 void Simulation::RegisterSystem_Booster(BoosterType type)
 {
-    SolidRocketMotorManager* srmManager = new SolidRocketMotorManager(type);
-    BoosterSystem* boosterSystem = new BoosterSystem(type, accumulatorManager_, massManager_, movementManager_, srmManager, transformManager_, this);
+    // Create the SRM Manager and register it with the loggables collection.
+
+    BoosterSystem* boosterSystem;
     switch(type)
     {
         case BoosterType::FIRST_STAGE:
         {
+            SolidRocketMotorManager* srmManager = new SolidRocketMotorManager("FirstStageSrmManager.bin", type);
+            loggables.push_back(srmManager);
+
+            boosterSystem = new BoosterSystem(type, accumulatorManager_, massManager_, movementManager_, srmManager, transformManager_, this);
+
             firstStageBoosterSystem_ = boosterSystem;
             break;
         }
         case BoosterType::SECOND_STAGE:
         {
+            SolidRocketMotorManager* srmManager = new SolidRocketMotorManager("SecondStageSrmManager.bin", type);
+            loggables.push_back(srmManager);
+
+            boosterSystem = new BoosterSystem(type, accumulatorManager_, massManager_, movementManager_, srmManager, transformManager_, this);
             secondStageBoosterSystem_ = boosterSystem;
             break;
         }
@@ -366,7 +386,6 @@ void Simulation::Update()
         // ==================================================
         std::cout << "===== Time: " << time << " =====" << std::endl;
         // Tell the systems to log their data.
-        loggingSystem_->WriteAllLogs(time);
 
         // 2) Physics systems.
         // ==================================================
@@ -387,6 +406,14 @@ void Simulation::Update()
 
         testSoftwareSystem_->Update(dt);
         clockManager_->UpdateClocks(dt);
+
+        // Log all necessary data.
+        // ==================================================
+        for (auto loggable : loggables)
+        {
+            loggable->WriteToLog(time);
+        }
+
         time += dt;
 
     }
