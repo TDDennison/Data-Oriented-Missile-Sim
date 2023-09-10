@@ -1,24 +1,9 @@
-#include "BoosterSystem.h"
+#include "FirstStageBoosterSystem.h"
 
-#include "../Components/Utilities.h"
-#include "../Core/Configurations.h"
+#include "../../Components/Utilities.h"
+#include "../../Core/Configurations.h"
 
-BoosterSystem::BoosterSystem(BoosterType type, 
-                  AccumulatorManager* accumulatorManager,
-                  MassManager* massManager,
-                  MovementManager* movementManager,
-                  SolidRocketMotorManager* srmManager,
-                  TransformManager* transformManager,
-                  Simulation* simulation) : 
-                  boosterType_(type),
-                  accumulatorManager_(accumulatorManager),
-                  massManager_(massManager),
-                  movementManager_(movementManager),
-                  srmManager_(srmManager),
-                  transformManager_(transformManager),
-                  simulation_(simulation) {}
-
-void BoosterSystem::Update(real dt) {
+void FirstStageBoosterSystem::Update(real dt) {
     for (auto & entity : registeredEntities) {
         AccumulatorComponent& accComponent = accumulatorManager_->Lookup(entity);
         SolidRocketMotorComponent& srmComponent = srmManager_->Lookup(entity);
@@ -74,24 +59,16 @@ void BoosterSystem::Update(real dt) {
 
             MovementComponent& movementComponent = movementManager_->Lookup(entity);
 
-            if (boosterType_ == FIRST_STAGE) { 
-                std::cout << "Created new first stage entity" << std::endl;
-                newId = ComponentUtilities::CreateComponentId(entity.id, ComponentUtilities::FIRST_STAGE_SRM);
+            std::cout << "Created new first stage entity" << std::endl;
+            newId = ComponentUtilities::CreateComponentId(entity.id, ComponentUtilities::FIRST_STAGE_SRM);
 
-                // Create the new SRM component to track in the second stage booster system.
-                SolidRocketMotorComponent newSrmComponent(ComponentUtilities::CreateComponentId(entity.id, ComponentUtilities::SECOND_STAGE_SRM));
-                newSrmComponent.thrust = 100.0;
-                newSrmComponent.inertMass = 400.0;
-                newSrmComponent.propellantMass = 100.0;
+            // Create the new SRM component to track in the second stage booster system.
+            SolidRocketMotorComponent newSrmComponent(ComponentUtilities::CreateComponentId(entity.id, ComponentUtilities::SECOND_STAGE_SRM));
+            newSrmComponent.thrust = 100.0;
+            newSrmComponent.inertMass = 400.0;
+            newSrmComponent.propellantMass = 100.0;
 
-
-                simulation_->RegisterEntity_SecondStageBoosterSystem(entity, newSrmComponent); 
-            }
-            else // Second Stage
-            {
-                std::cout << "Created new second stage entity" << std::endl;
-                newId = ComponentUtilities::CreateComponentId(entity.id, ComponentUtilities::SECOND_STAGE_SRM);
-            }
+            simulation_->RegisterEntity_SecondStageBoosterSystem(entity, newSrmComponent); 
 
             newAcc.forceAccumulator_eci = accComponent.forceAccumulator_eci;
             newAcc.torqueAccumulator_eci = accComponent.torqueAccumulator_eci;
@@ -106,17 +83,8 @@ void BoosterSystem::Update(real dt) {
 
             newTrans.position_eci = transComponent.position_eci;
             newTrans.setId(newId);
-
-            // If this is a second stage booster system, all that will be left in the abstract missile component properties
-            // are the properties that apply to the payload.
         }
     }
 
     UnregisterEntities();
 }
-
-void BoosterSystem::AddSrmComponent(Entity& entity, SolidRocketMotorComponent& srmComponent)
-{
-    srmManager_->Add(entity, srmComponent);
-}
-

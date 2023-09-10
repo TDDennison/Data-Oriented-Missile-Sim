@@ -4,7 +4,7 @@
 #include <memory>
 
 #include "../Components/AccumulatorComponent.h"
-#include "../Components/MassComponent.h"
+#include "../Components/MassComponents/MassComponent.h"
 #include "../Components/TransformComponent.h"
 #include "../Components/Utilities.h"
 

@@ -6,7 +6,7 @@
 #include "../Simulation.h"
 
 #include "../Components/AccumulatorComponent.h"
-#include "../Components/MassComponent.h"
+#include "../Components/MassComponents/MassComponent.h"
 #include "../Components/MovementComponent.h"
 #include "../Components/TransformComponent.h"
 #include "../Components/Utilities.h"

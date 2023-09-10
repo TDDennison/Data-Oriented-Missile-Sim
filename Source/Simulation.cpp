@@ -48,8 +48,8 @@ Simulation::~Simulation()
 void Simulation::Initialize()
 {
     // Register systems.
-    RegisterSystem_Booster(BoosterType::FIRST_STAGE);
-    RegisterSystem_Booster(BoosterType::SECOND_STAGE);
+    RegisterSystem_FirstStageBooster();
+    RegisterSystem_SecondStageBooster();
     RegisterSystem_Earth();
     RegisterSystem_Integration();
     RegisterSystem_TestSoftwareSystem();
@@ -168,36 +168,35 @@ void Simulation::RegisterEntity_TestSoftwareSystem(Entity entity, SoftwareCompon
  * @param[in] type: The type of the booster system to register.
  * @note This method should only ever be called by the Simulation class to set up the minimum necessary systems to simulate the missile.
 */
-void Simulation::RegisterSystem_Booster(BoosterType type)
+void Simulation::RegisterSystem_FirstStageBooster()
 {
     // Create the SRM Manager and register it with the loggables collection.
 
-    BoosterSystem* boosterSystem;
-    switch(type)
-    {
-        case BoosterType::FIRST_STAGE:
-        {
-            SolidRocketMotorManager* srmManager = new SolidRocketMotorManager("FirstStageSrmManager.bin", type);
-            loggables.push_back(srmManager);
+    SolidRocketMotorManager* srmManager = new SolidRocketMotorManager("FirstStageSrmManager.bin", BoosterType::FIRST_STAGE);
+    loggables.push_back(srmManager);
 
-            boosterSystem = new BoosterSystem(type, accumulatorManager_, massManager_, movementManager_, srmManager, transformManager_, this);
-
-            firstStageBoosterSystem_ = boosterSystem;
-            break;
-        }
-        case BoosterType::SECOND_STAGE:
-        {
-            SolidRocketMotorManager* srmManager = new SolidRocketMotorManager("SecondStageSrmManager.bin", type);
-            loggables.push_back(srmManager);
-
-            boosterSystem = new BoosterSystem(type, accumulatorManager_, massManager_, movementManager_, srmManager, transformManager_, this);
-            secondStageBoosterSystem_ = boosterSystem;
-            break;
-        }
-    }
+    firstStageBoosterSystem_ = new FirstStageBoosterSystem(accumulatorManager_, massManager_, movementManager_, srmManager, transformManager_, this);
 
     // Add the system to the collection of systems.
-    systems.push_back(boosterSystem);
+    systems.push_back(firstStageBoosterSystem_);
+}
+
+/**
+ * @brief Register a new booster system with the Simulation.
+ * @param[in] type: The type of the booster system to register.
+ * @note This method should only ever be called by the Simulation class to set up the minimum necessary systems to simulate the missile.
+*/
+void Simulation::RegisterSystem_SecondStageBooster()
+{
+    // Create the SRM Manager and register it with the loggables collection.
+
+    SolidRocketMotorManager* srmManager = new SolidRocketMotorManager("SecondStageSrmManager.bin", BoosterType::SECOND_STAGE);
+    loggables.push_back(srmManager);
+
+    secondStageBoosterSystem_ = new SecondStageBoosterSystem(accumulatorManager_, massManager_, movementManager_, srmManager, transformManager_, this);
+
+    // Add the system to the collection of systems.
+    systems.push_back(secondStageBoosterSystem_);
 }
 
 /**
@@ -406,6 +405,11 @@ void Simulation::Update()
 
         testSoftwareSystem_->Update(dt);
         clockManager_->UpdateClocks(dt);
+
+        // Update CG positions and inertia tensors based on burned mass 
+        // The integration system accounts for moving the cg position along with the missile position
+        // based on forces. This accounts for moving the cg position in the missile station frame based
+        // on burned mass.
 
         // Log all necessary data.
         // ==================================================

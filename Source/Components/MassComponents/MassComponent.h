@@ -1,10 +1,10 @@
 #ifndef MASS_COMPONENT_H
 #define MASS_COMPONENT_H
 
-#include "Component.h"
-#include "../Core/TypeDefinitions.h"
-#include "../MathTypes/Matrix3.h"
-#include "../MathTypes/Vector3.h"
+#include "../Component.h"
+#include "../../Core/TypeDefinitions.h"
+#include "../../MathTypes/Matrix3.h"
+#include "../../MathTypes/Vector3.h"
 
 struct MassComponent : public Component
 {
