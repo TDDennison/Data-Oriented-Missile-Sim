@@ -283,8 +283,24 @@ void Simulation::CreateMissiles()
 
         // Aggregate the total mass of the missile.
         MassComponent &missileMass = massManager_->Lookup(missileEntity);
-        missileMass.mass += firstStageComponent.inertMass + firstStageComponent.propellantMass;
-        missileMass.mass += secondStageComponent.inertMass + secondStageComponent.propellantMass;
+
+        // First stage mass.
+        MassComponent fsMass(ComponentUtilities::CreateComponentId(missileEntity.id, ComponentUtilities::FIRST_STAGE_SRM));
+        fsMass.mass += firstStageComponent.inertMass + firstStageComponent.propellantMass;
+        ComputeCG(fsMass);
+        missileMass.AddSubmass(ComponentUtilities::ComponentDesignators::FIRST_STAGE_SRM, fsMass);
+
+        // Second stage mass.
+        MassComponent ssMass(ComponentUtilities::CreateComponentId(missileEntity.id, ComponentUtilities::SECOND_STAGE_SRM));
+        ssMass.mass += secondStageComponent.inertMass + secondStageComponent.propellantMass;
+        ComputeCG(ssMass);
+        missileMass.AddSubmass(ComponentUtilities::ComponentDesignators::SECOND_STAGE_SRM, ssMass);
+
+
+
+
+
+
 
         // Set up the position of the missile. This is the position in the ECI frame of the origin of the missile-station frame.
         TransformComponent &missileTrans = transformManager_->Lookup(missileEntity);
@@ -360,7 +376,6 @@ void Simulation::Run()
 
 void Simulation::Update()
 {
-    std::cout << "In simulation update" << std::endl;
     // Initialize all of the systems.
     for (System *system : systems)
     {
@@ -410,6 +425,7 @@ void Simulation::Update()
         // The integration system accounts for moving the cg position along with the missile position
         // based on forces. This accounts for moving the cg position in the missile station frame based
         // on burned mass.
+        ComputeCGs();
 
         // Log all necessary data.
         // ==================================================
@@ -419,6 +435,62 @@ void Simulation::Update()
         }
 
         time += dt;
-
     }
+
+    // The simulation has reached the end.
+    // Finalize necessary components.
+    for (auto loggable : loggables)
+    {
+        loggable->FinalizeLog(time);
+    }
+}
+
+void Simulation::ComputeCGs()
+{
+    unsigned int numComponents = 0;
+    MassComponent *massComponentsStart = massManager_->GetComponentData(numComponents);
+
+    for (unsigned int i = 0; i < numComponents; ++i)
+    {
+        MassComponent &component = *(massComponentsStart + i);
+        Vector3 mass_moment_arms = Vector3::Zero();
+        if (!component.subMasses.empty())
+        {
+            component.position_cg_body = Vector3::Zero();
+            for (auto key : component.subMasses)
+            {
+                MassComponent &subMass = key.second;
+                // Don't compute cg unless it has changed since previously computed.
+                if (key.second.hasChanged)
+                {
+                    ComputeCG(key.second);
+                }
+
+                // Translate object cg to missile frame.
+                Vector3 pos_cg_missile_frame = subMass.position_cg_body + Configurations::GetInstance()->GetObjectOffset(subMass.getComponentId());
+                Vector3 mass_moment_arm = pos_cg_missile_frame * subMass.mass;
+
+                // position_cg_body is equivalent to position_cg_missile frame here for the aggregate component.
+                mass_moment_arms += mass_moment_arm;
+            }
+
+            component.position_cg_body = (mass_moment_arms * (1.0 / component.mass));
+        }
+        else // The component is not made of other masses.
+        {
+            if(component.hasChanged)
+            {
+                ComputeCG(component);
+            }
+        }
+    }
+}
+
+void Simulation::ComputeCG(MassComponent &massComponent)
+{
+    uint8_t componentId = massComponent.getComponentId();
+    Vector3 pos_cg_obj = Configurations::GetInstance()->GetObjectGeometry(componentId);
+
+    // Assume CG is at the center of the geometric shape.
+    massComponent.position_cg_body = pos_cg_obj * 0.5;
 }

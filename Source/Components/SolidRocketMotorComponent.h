@@ -4,6 +4,9 @@
 #include "Component.h"
 #include "../Core/TypeDefinitions.h"
 
+// NOTE: THIS STRUCT WILL MOST LIKELY GO AWAY ONCE A LOOKUP TABLE IS USED TO DETERMINE THRUST
+//       AT THAT TIME THE MASSES CAN BE AGGREGATED INTO A MASS COMPONENT
+
 struct SolidRocketMotorComponent : public Component
 {
     // Constructor

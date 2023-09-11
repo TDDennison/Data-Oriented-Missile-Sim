@@ -4,7 +4,7 @@
 #include <memory>
 
 #include "../Components/AccumulatorComponent.h"
-#include "../Components/MassComponents/MassComponent.h"
+#include "../Components/MassComponent.h"
 #include "../Components/TransformComponent.h"
 #include "../Components/Utilities.h"
 
@@ -52,21 +52,6 @@ class AccumulatorManager : public ComponentManager<AccumulatorComponent, MaxComp
         AccumulatorComponent& accumulatorComponent = Lookup(entity);
 
         accumulatorComponent.forceAccumulator_eci += force_eci;
-    }
-
-    // Adds a force at a point on the entity that is not located at the center of gravity of the body
-    // resulting in linear and rotational effects.
-    void AddForceAtPoint(const Entity &entity, const Vector3 &force_eci, const Vector3 &point_eci)
-    {
-        AccumulatorComponent& accumulatorComponent = Lookup(entity);
-        MassComponent& massComponent = massManager_->Lookup(entity);
-
-        // Calculate the moment arm.
-        Vector3 momentArm_eci = point_eci;
-        momentArm_eci -= massComponent.position_cg_eci;
-
-        accumulatorComponent.forceAccumulator_eci += force_eci;
-        accumulatorComponent.torqueAccumulator_eci += momentArm_eci % force_eci;
     }
 
     void ClearAccumulators()

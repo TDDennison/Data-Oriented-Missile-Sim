@@ -58,6 +58,9 @@ class Simulation
     // Private constructor used to facilitate the singleton design pattern.
     Simulation();
 
+    void ComputeCGs();
+    void ComputeCG(MassComponent &massComponent);
+
     // Creates missile entities and their components.
     void CreateMissiles();
 

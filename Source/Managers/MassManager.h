@@ -2,7 +2,7 @@
 #define MASS_MANAGER_H
 
 #include "ComponentManager.h"
-#include "../Components/MassComponents/MassComponent.h"
+#include "../Components/MassComponent.h"
 #include "Managers.h"
 
 class MassManager : public ComponentManager<MassComponent, MaxComponents>

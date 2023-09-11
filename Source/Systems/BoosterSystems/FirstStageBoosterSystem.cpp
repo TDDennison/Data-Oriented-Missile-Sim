@@ -25,11 +25,14 @@ void FirstStageBoosterSystem::Update(real dt) {
         std::cout << "Vector to target: " << vectorToTarget.x << " " << vectorToTarget.y << " " << vectorToTarget.z << std::endl;
         Vector3 thrustVector = vectorToTarget * srmComponent.thrust;
         std::cout << "Thrust vector: " << thrustVector.x << " " << thrustVector.y << " " << thrustVector.z << std::endl;
-        accComponent.AddForceAtPoint(thrustVector, application_point_eci, massComponent.position_cg_eci);
+
+        Vector3 position_cg_eci = transComponent.transformMatrix * massComponent.position_cg_body;
+        accComponent.AddForceAtPoint(thrustVector, application_point_eci, position_cg_eci);
 
         // Model the SRM burning its propellant mass.
         srmComponent.propellantMass -= 0.01;
-        massComponent.mass -= 0.01;
+
+        massComponent.DecrementSubMass(0.1, ComponentUtilities::ComponentDesignators::FIRST_STAGE_SRM);
 
         if (srmComponent.propellantMass <= 0.0) { 
 

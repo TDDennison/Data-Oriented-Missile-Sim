@@ -14,8 +14,9 @@ class LoggingSystem
     outputFile_(fileName_, std::ios::out | std::ios::binary), 
     bufferIndex_(0){}
 
-    void WriteAllLogs(float time)
+    void WriteAll(float time)
     {
+        outputFile_.write(buffer_, bufferIndex_);
     }
     
     void WriteToBuffer(void *obj, size_t numBytes)

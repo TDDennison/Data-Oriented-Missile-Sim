@@ -44,12 +44,18 @@ class ComponentManager : public ILoggable
     // Lookup the component related to an entity
     ComponentType& Lookup(Entity ent)
     {
-        if (entityMap.find(ent.id) == entityMap.end()) { 
-            printf("Entity with id: %d did not have an associated component.\n", ent.id);
+        return Lookup(ent.id);
+    }
+
+    // Lookup the component related to an entity
+    ComponentType& Lookup(uint8_t entityId)
+    {
+        if (entityMap.find(entityId) == entityMap.end()) { 
+            printf("Entity with id: %d did not have an associated component.\n", entityId);
             throw std::runtime_error("Entity did not exist!");
         }
 
-        unsigned int instance = entityMap[ent.id];
+        unsigned int instance = entityMap[entityId];
         return componentData.data[instance];
     }
 
@@ -89,6 +95,12 @@ class ComponentManager : public ILoggable
         --componentData.size;
     }
 
+    ComponentType* GetComponentData(unsigned int &outSize) 
+    { 
+        outSize = componentData.size;
+        return componentData.data; 
+    }
+
     bool GetEntityByComponentInstance(ComponentType* component, EntityId& entity)
     {
         for(std::map<unsigned int, unsigned int>::iterator iter = entityMap.begin(); iter != entityMap.end(); ++iter)
@@ -110,6 +122,10 @@ class ComponentManager : public ILoggable
     // ILoggable Implementation
     void WriteToLog(float time) override {
         logger_->WriteToBuffer(componentData.data, sizeof(ComponentType) * componentData.size);
+    }
+
+    void FinalizeLog(float time) override {
+        logger_->WriteAll(time);
     }
 
     protected:

@@ -1,5 +1,5 @@
 Simulation Max Time: 1500   // seconds
-Simulation Top Rate: 100   // Hz
+Simulation Top Rate: 500   // Hz
 
 Integration System Type: 1  // 1 = Euler, 2 = Runge-Kutta 2, 3 = Runge-Kutta 4
 
@@ -8,7 +8,7 @@ Test Software System Execution Order: 1
 
 // x, y, z in units of meters. Defined in the ECI coordinate frame.
 Target Points:
-   6478137.0; 0;  0; // target point 1
+   0; 6478137.0;  0; // target point 1
 
 
 
@@ -22,7 +22,7 @@ Target Points:
 //       that makes this file easier to read and understand.
 
 Missile Starting Locations:
-          1       |  0.0N   |  0.0W
+          1       |  90.0N   |  0.0W
 //          1       |  41.2N   |  75.2W
 //          1       |  42.3N   |  76.3W
 //          1       |  43.4N   |  77.4W

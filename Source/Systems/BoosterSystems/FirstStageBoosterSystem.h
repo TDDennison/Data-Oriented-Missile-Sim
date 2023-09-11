@@ -6,7 +6,7 @@
 
 #include "../System.h"
 
-#include "../../Components/MassComponents/MassComponent.h"
+#include "../../Components/MassComponent.h"
 #include "../../Components/MovementComponent.h"
 #include "../../Components/SolidRocketMotorComponent.h"
 #include "../../Components/TransformComponent.h"

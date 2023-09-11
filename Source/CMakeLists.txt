@@ -5,6 +5,7 @@ set(DOMSIM_SOURCES
 
     Simulation.h
     Simulation.cpp
+    Utilities.h
 
     Managers/EntityManager.h
     Managers/EntityManager.cpp

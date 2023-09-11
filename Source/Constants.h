@@ -34,6 +34,8 @@ class Constants
     // Missile component offsets.
     // These should be moved to configurations when necessary.
     inline static const Vector3 TVC_OFFSET_FROM_ORIGIN = Vector3::Zero();
+    inline static const Vector3 FIRST_STAGE_BOOSTER_OFFSET_FROM_ORIGIN = Vector3(5.0, 0.0, 0.0); // 5 units along the x-axis
+    inline static const Vector3 SECOND_STAGE_BOOSTER_OFFSET_FROM_ORIGIN = Vector3(10.0, 0.0, 0.0); // 10 units along the x-axis
 };
 
 #endif //CONSTANTS_H

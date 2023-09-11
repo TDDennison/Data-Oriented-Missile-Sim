@@ -93,7 +93,7 @@ class Matrix3
         SetInverse(*this);
     }
 
-    // Sets the matrix to be th einverse of the given matrix.
+    // Sets the matrix to be the inverse of the given matrix.
     void SetInverse(const Matrix3 &other)
     {
         real t1 = other.data[0] * other.data[4];
