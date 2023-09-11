@@ -5,6 +5,7 @@ set(DOMSIM_SOURCES
 
     Simulation.h
     Simulation.cpp
+    Utilities.h
 
     Managers/EntityManager.h
     Managers/EntityManager.cpp
@@ -18,8 +19,12 @@ set(DOMSIM_SOURCES
     Parsers/CommandLineParser/CommandLineParser.h
     Parsers/CommandLineParser/CommandLineParser.cpp
 
-    Systems/BoosterSystem.h
-    Systems/BoosterSystem.cpp)
+    Systems/BoosterSystems/FirstStageBoosterSystem.h
+    Systems/BoosterSystems/FirstStageBoosterSystem.cpp
+    Systems/BoosterSystems/SecondStageBoosterSystem.h
+    Systems/BoosterSystems/SecondStageBoosterSystem.cpp
+    
+    )
 
 add_executable(${EXECUTABLE_NAME} ${DOMSIM_SOURCES})
 target_compile_features(${EXECUTABLE_NAME} PRIVATE cxx_std_17)

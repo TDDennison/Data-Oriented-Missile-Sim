@@ -1,6 +1,9 @@
 #ifndef UTILITES_H
 #define UTILITES_H
 
+#include "MathTypes/Matrix4.h"
+#include "MathTypes/Vector3.h"
+
 enum BoosterType { FIRST_STAGE, SECOND_STAGE };
 
 enum AttributeType { BOOLEAN, 
@@ -22,5 +25,6 @@ enum IntegrationSystemType : uint32_t
     RUNGE_KUTTA_2,
     RUNGE_KUTTA_4,
 };
+
 
 #endif //UTILITIES_H

@@ -4,9 +4,12 @@
 #include <array>
 #include <iostream>
 #include <map>
+#include <memory>
 #include <stdexcept>
 
 #include "../Entity.h"
+#include "../Core/ILoggable.h"
+#include "../Systems/LoggingSystem.h"
 
 typedef unsigned int EntityId;
 
@@ -15,7 +18,7 @@ struct ComponentInstance {
 };
 
 template<typename ComponentType, unsigned int MaxComponents>
-class ComponentManager
+class ComponentManager : public ILoggable
 {
     private:
 
@@ -41,12 +44,18 @@ class ComponentManager
     // Lookup the component related to an entity
     ComponentType& Lookup(Entity ent)
     {
-        if (entityMap.find(ent.id) == entityMap.end()) { 
-            printf("Entity with id: %d did not have an associated component.\n", ent.id);
+        return Lookup(ent.id);
+    }
+
+    // Lookup the component related to an entity
+    ComponentType& Lookup(uint8_t entityId)
+    {
+        if (entityMap.find(entityId) == entityMap.end()) { 
+            printf("Entity with id: %d did not have an associated component.\n", entityId);
             throw std::runtime_error("Entity did not exist!");
         }
 
-        unsigned int instance = entityMap[ent.id];
+        unsigned int instance = entityMap[entityId];
         return componentData.data[instance];
     }
 
@@ -86,6 +95,12 @@ class ComponentManager
         --componentData.size;
     }
 
+    ComponentType* GetComponentData(unsigned int &outSize) 
+    { 
+        outSize = componentData.size;
+        return componentData.data; 
+    }
+
     bool GetEntityByComponentInstance(ComponentType* component, EntityId& entity)
     {
         for(std::map<unsigned int, unsigned int>::iterator iter = entityMap.begin(); iter != entityMap.end(); ++iter)
@@ -104,10 +119,25 @@ class ComponentManager
         return false;
     }
 
+    // ILoggable Implementation
+    void WriteToLog(float time) override {
+        logger_->WriteToBuffer(componentData.data, sizeof(ComponentType) * componentData.size);
+    }
+
+    void FinalizeLog(float time) override {
+        logger_->WriteAll(time);
+    }
+
     protected:
-    
+
+    ComponentManager(std::string logFileName) {
+        logger_ = std::make_unique<LoggingSystem>(logFileName);
+    }
+
     ComponentData<MaxComponents> componentData;
     std::map<unsigned int, unsigned int> entityMap;
+
+    std::unique_ptr<LoggingSystem> logger_;
 };
 
 #endif //COMPONENT_MANAGER_H

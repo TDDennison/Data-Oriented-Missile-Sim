@@ -1,4 +1,5 @@
 #include <exception>
+#include <memory>
 #include <vector>
 
 #include "Simulation.h"
@@ -9,14 +10,23 @@ Simulation::Simulation()
 {
     // Initialize the managers that MUST be around for the simulation to run the physics engine.
     accumulatorManager_ = AccumulatorManager::GetInstance();
+    loggables.push_back(accumulatorManager_);
+
     massManager_ = MassManager::GetInstance();
+    loggables.push_back(massManager_);
+
     movementManager_ = MovementManager::GetInstance();
+    loggables.push_back(movementManager_);
+    
     transformManager_ = TransformManager::GetInstance();
+    loggables.push_back(transformManager_);
 
-    clockManager_ = new ClockManager;
-    testSoftwareManager_ = new TestSoftwareManager;
-    loggingSystem_ = new LoggingSystem();
+    clockManager_ = new ClockManager();
+    loggables.push_back(clockManager_);
 
+    testSoftwareManager_ = new TestSoftwareManager();
+    loggables.push_back(testSoftwareManager_);
+    
     // Get needed data from attributes.
     AttributesManager *attrManager = AttributesManager::GetInstance();
     maxTime_ = attrManager->GetAttribute<int>(Constants::SIMULATION_MAX_TIME);
@@ -38,8 +48,8 @@ Simulation::~Simulation()
 void Simulation::Initialize()
 {
     // Register systems.
-    RegisterSystem_Booster(BoosterType::FIRST_STAGE);
-    RegisterSystem_Booster(BoosterType::SECOND_STAGE);
+    RegisterSystem_FirstStageBooster();
+    RegisterSystem_SecondStageBooster();
     RegisterSystem_Earth();
     RegisterSystem_Integration();
     RegisterSystem_TestSoftwareSystem();
@@ -158,26 +168,35 @@ void Simulation::RegisterEntity_TestSoftwareSystem(Entity entity, SoftwareCompon
  * @param[in] type: The type of the booster system to register.
  * @note This method should only ever be called by the Simulation class to set up the minimum necessary systems to simulate the missile.
 */
-void Simulation::RegisterSystem_Booster(BoosterType type)
+void Simulation::RegisterSystem_FirstStageBooster()
 {
-    SolidRocketMotorManager* srmManager = new SolidRocketMotorManager(type);
-    BoosterSystem* boosterSystem = new BoosterSystem(type, accumulatorManager_, massManager_, movementManager_, srmManager, transformManager_, this);
-    switch(type)
-    {
-        case BoosterType::FIRST_STAGE:
-        {
-            firstStageBoosterSystem_ = boosterSystem;
-            break;
-        }
-        case BoosterType::SECOND_STAGE:
-        {
-            secondStageBoosterSystem_ = boosterSystem;
-            break;
-        }
-    }
+    // Create the SRM Manager and register it with the loggables collection.
+
+    SolidRocketMotorManager* srmManager = new SolidRocketMotorManager("FirstStageSrmManager.bin", BoosterType::FIRST_STAGE);
+    loggables.push_back(srmManager);
+
+    firstStageBoosterSystem_ = new FirstStageBoosterSystem(accumulatorManager_, massManager_, movementManager_, srmManager, transformManager_, this);
 
     // Add the system to the collection of systems.
-    systems.push_back(boosterSystem);
+    systems.push_back(firstStageBoosterSystem_);
+}
+
+/**
+ * @brief Register a new booster system with the Simulation.
+ * @param[in] type: The type of the booster system to register.
+ * @note This method should only ever be called by the Simulation class to set up the minimum necessary systems to simulate the missile.
+*/
+void Simulation::RegisterSystem_SecondStageBooster()
+{
+    // Create the SRM Manager and register it with the loggables collection.
+
+    SolidRocketMotorManager* srmManager = new SolidRocketMotorManager("SecondStageSrmManager.bin", BoosterType::SECOND_STAGE);
+    loggables.push_back(srmManager);
+
+    secondStageBoosterSystem_ = new SecondStageBoosterSystem(accumulatorManager_, massManager_, movementManager_, srmManager, transformManager_, this);
+
+    // Add the system to the collection of systems.
+    systems.push_back(secondStageBoosterSystem_);
 }
 
 /**
@@ -264,8 +283,24 @@ void Simulation::CreateMissiles()
 
         // Aggregate the total mass of the missile.
         MassComponent &missileMass = massManager_->Lookup(missileEntity);
-        missileMass.mass += firstStageComponent.inertMass + firstStageComponent.propellantMass;
-        missileMass.mass += secondStageComponent.inertMass + secondStageComponent.propellantMass;
+
+        // First stage mass.
+        MassComponent fsMass(ComponentUtilities::CreateComponentId(missileEntity.id, ComponentUtilities::FIRST_STAGE_SRM));
+        fsMass.mass += firstStageComponent.inertMass + firstStageComponent.propellantMass;
+        ComputeCG(fsMass);
+        missileMass.AddSubmass(ComponentUtilities::ComponentDesignators::FIRST_STAGE_SRM, fsMass);
+
+        // Second stage mass.
+        MassComponent ssMass(ComponentUtilities::CreateComponentId(missileEntity.id, ComponentUtilities::SECOND_STAGE_SRM));
+        ssMass.mass += secondStageComponent.inertMass + secondStageComponent.propellantMass;
+        ComputeCG(ssMass);
+        missileMass.AddSubmass(ComponentUtilities::ComponentDesignators::SECOND_STAGE_SRM, ssMass);
+
+
+
+
+
+
 
         // Set up the position of the missile. This is the position in the ECI frame of the origin of the missile-station frame.
         TransformComponent &missileTrans = transformManager_->Lookup(missileEntity);
@@ -341,7 +376,6 @@ void Simulation::Run()
 
 void Simulation::Update()
 {
-    std::cout << "In simulation update" << std::endl;
     // Initialize all of the systems.
     for (System *system : systems)
     {
@@ -366,7 +400,6 @@ void Simulation::Update()
         // ==================================================
         std::cout << "===== Time: " << time << " =====" << std::endl;
         // Tell the systems to log their data.
-        loggingSystem_->WriteAllLogs(time);
 
         // 2) Physics systems.
         // ==================================================
@@ -387,7 +420,77 @@ void Simulation::Update()
 
         testSoftwareSystem_->Update(dt);
         clockManager_->UpdateClocks(dt);
-        time += dt;
 
+        // Update CG positions and inertia tensors based on burned mass 
+        // The integration system accounts for moving the cg position along with the missile position
+        // based on forces. This accounts for moving the cg position in the missile station frame based
+        // on burned mass.
+        ComputeCGs();
+
+        // Log all necessary data.
+        // ==================================================
+        for (auto loggable : loggables)
+        {
+            loggable->WriteToLog(time);
+        }
+
+        time += dt;
     }
+
+    // The simulation has reached the end.
+    // Finalize necessary components.
+    for (auto loggable : loggables)
+    {
+        loggable->FinalizeLog(time);
+    }
+}
+
+void Simulation::ComputeCGs()
+{
+    unsigned int numComponents = 0;
+    MassComponent *massComponentsStart = massManager_->GetComponentData(numComponents);
+
+    for (unsigned int i = 0; i < numComponents; ++i)
+    {
+        MassComponent &component = *(massComponentsStart + i);
+        Vector3 mass_moment_arms = Vector3::Zero();
+        if (!component.subMasses.empty())
+        {
+            component.position_cg_body = Vector3::Zero();
+            for (auto key : component.subMasses)
+            {
+                MassComponent &subMass = key.second;
+                // Don't compute cg unless it has changed since previously computed.
+                if (key.second.hasChanged)
+                {
+                    ComputeCG(key.second);
+                }
+
+                // Translate object cg to missile frame.
+                Vector3 pos_cg_missile_frame = subMass.position_cg_body + Configurations::GetInstance()->GetObjectOffset(subMass.getComponentId());
+                Vector3 mass_moment_arm = pos_cg_missile_frame * subMass.mass;
+
+                // position_cg_body is equivalent to position_cg_missile frame here for the aggregate component.
+                mass_moment_arms += mass_moment_arm;
+            }
+
+            component.position_cg_body = (mass_moment_arms * (1.0 / component.mass));
+        }
+        else // The component is not made of other masses.
+        {
+            if(component.hasChanged)
+            {
+                ComputeCG(component);
+            }
+        }
+    }
+}
+
+void Simulation::ComputeCG(MassComponent &massComponent)
+{
+    uint8_t componentId = massComponent.getComponentId();
+    Vector3 pos_cg_obj = Configurations::GetInstance()->GetObjectGeometry(componentId);
+
+    // Assume CG is at the center of the geometric shape.
+    massComponent.position_cg_body = pos_cg_obj * 0.5;
 }

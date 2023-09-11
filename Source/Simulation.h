@@ -4,25 +4,30 @@
 #include <vector>
 
 #include "Entity.h"
+#include "Core/ILoggable.h"
 #include "Components/SolidRocketMotorComponent.h"
 #include "Components/SoftwareComponent.h"
 #include "Managers/ClockManager.h"
 #include "Managers/MassManager.h"
 #include "Managers/Managers.h"
 #include "Managers/MovementManager.h"
+#include "Managers/TestSoftwareManager.h"
 #include "Managers/TransformManager.h"
-#include "Systems/BoosterSystem.h"
+#include "Systems/BoosterSystems/FirstStageBoosterSystem.h"
+#include "Systems/BoosterSystems/SecondStageBoosterSystem.h"
 #include "Systems/EarthSystem.h"
 #include "Systems/IntegrationSystem_Euler.h"
 #include "Systems/LoggingSystem.h"
 #include "Systems/TestSoftwareSystem.h"
 
-class BoosterSystem;
+class FirstStageBoosterSystem;
+class SecondStageBoosterSystem;
 
 // Singleton class manages the executive level of communication between systems, managers and components.
 class Simulation
 {
     typedef std::vector<System*> SystemCollection;
+    typedef std::vector<ILoggable*> LoggableCollection;
 
     public:
     inline static Simulation* GetInstance() {
@@ -53,6 +58,9 @@ class Simulation
     // Private constructor used to facilitate the singleton design pattern.
     Simulation();
 
+    void ComputeCGs();
+    void ComputeCG(MassComponent &massComponent);
+
     // Creates missile entities and their components.
     void CreateMissiles();
 
@@ -71,7 +79,8 @@ class Simulation
     // Private instance of the Simulation class used to facilitate the singleton design pattern.
     inline static Simulation* instance = nullptr;
 
-    void RegisterSystem_Booster(BoosterType);
+    void RegisterSystem_FirstStageBooster();
+    void RegisterSystem_SecondStageBooster();
     void RegisterSystem_Earth();
     void RegisterSystem_Integration();
     void RegisterSystem_TestSoftwareSystem();
@@ -104,19 +113,20 @@ class Simulation
 
     // Collection of system pointers used to enforce order of execution.
     SystemCollection systems{};
+    LoggableCollection loggables{};
 
-    AccumulatorManager* accumulatorManager_   = nullptr;
-    ClockManager* clockManager_               = nullptr;
-    MassManager* massManager_                 = nullptr;
-    MovementManager* movementManager_         = nullptr;
-    TestSoftwareManager* testSoftwareManager_ = nullptr;
-    TransformManager* transformManager_       = nullptr;
-    BoosterSystem* firstStageBoosterSystem_   = nullptr;
-    BoosterSystem* secondStageBoosterSystem_  = nullptr;
-    EarthSystem* earthSystem_                 = nullptr;
-    System* integrationSystem_                = nullptr;
-    LoggingSystem* loggingSystem_             = nullptr;
-    TestSoftwareSystem* testSoftwareSystem_   = nullptr;
+    AccumulatorManager* accumulatorManager_              = nullptr;
+    ClockManager* clockManager_                          = nullptr;
+    MassManager* massManager_                            = nullptr;
+    MovementManager* movementManager_                    = nullptr;
+    TestSoftwareManager* testSoftwareManager_            = nullptr;
+    TransformManager* transformManager_                  = nullptr;
+    FirstStageBoosterSystem* firstStageBoosterSystem_    = nullptr;
+    SecondStageBoosterSystem* secondStageBoosterSystem_  = nullptr;
+    EarthSystem* earthSystem_                            = nullptr;
+    System* integrationSystem_                           = nullptr;
+    LoggingSystem* loggingSystem_                        = nullptr;
+    TestSoftwareSystem* testSoftwareSystem_              = nullptr;
 };
 
 #endif //SIMULATION_H

@@ -5,9 +5,13 @@
 #include "../Components/ClockComponent.h"
 #include "Managers.h"
 
+#include <memory>
+
 class ClockManager : public ComponentManager<ClockComponent, MaxComponents>
 {
     public:
+
+    ClockManager() : ComponentManager("ClockManager.bin") {}
 
     void UpdateClocks(real dt)
     {

@@ -1,24 +1,9 @@
-#include "BoosterSystem.h"
+#include "SecondStageBoosterSystem.h"
 
-#include "../Components/Utilities.h"
-#include "../Core/Configurations.h"
+#include "../../Components/Utilities.h"
+#include "../../Core/Configurations.h"
 
-BoosterSystem::BoosterSystem(BoosterType type, 
-                  AccumulatorManager* accumulatorManager,
-                  MassManager* massManager,
-                  MovementManager* movementManager,
-                  SolidRocketMotorManager* srmManager,
-                  TransformManager* transformManager,
-                  Simulation* simulation) : 
-                  boosterType_(type),
-                  accumulatorManager_(accumulatorManager),
-                  massManager_(massManager),
-                  movementManager_(movementManager),
-                  srmManager_(srmManager),
-                  transformManager_(transformManager),
-                  simulation_(simulation) {}
-
-void BoosterSystem::Update(real dt) {
+void SecondStageBoosterSystem::Update(real dt) {
     for (auto & entity : registeredEntities) {
         AccumulatorComponent& accComponent = accumulatorManager_->Lookup(entity);
         SolidRocketMotorComponent& srmComponent = srmManager_->Lookup(entity);
@@ -40,11 +25,13 @@ void BoosterSystem::Update(real dt) {
         std::cout << "Vector to target: " << vectorToTarget.x << " " << vectorToTarget.y << " " << vectorToTarget.z << std::endl;
         Vector3 thrustVector = vectorToTarget * srmComponent.thrust;
         std::cout << "Thrust vector: " << thrustVector.x << " " << thrustVector.y << " " << thrustVector.z << std::endl;
-        accComponent.AddForceAtPoint(thrustVector, application_point_eci, massComponent.position_cg_eci);
+
+        Vector3 position_cg_eci = transComponent.transformMatrix * massComponent.position_cg_body;
+        accComponent.AddForceAtPoint(thrustVector, application_point_eci, position_cg_eci);
 
         // Model the SRM burning its propellant mass.
         srmComponent.propellantMass -= 0.01;
-        massComponent.mass -= 0.01;
+        massComponent.DecrementSubMass(0.1, ComponentUtilities::ComponentDesignators::SECOND_STAGE_SRM);
 
         if (srmComponent.propellantMass <= 0.0) { 
 
@@ -74,24 +61,8 @@ void BoosterSystem::Update(real dt) {
 
             MovementComponent& movementComponent = movementManager_->Lookup(entity);
 
-            if (boosterType_ == FIRST_STAGE) { 
-                std::cout << "Created new first stage entity" << std::endl;
-                newId = ComponentUtilities::CreateComponentId(entity.id, ComponentUtilities::FIRST_STAGE_SRM);
-
-                // Create the new SRM component to track in the second stage booster system.
-                SolidRocketMotorComponent newSrmComponent(ComponentUtilities::CreateComponentId(entity.id, ComponentUtilities::SECOND_STAGE_SRM));
-                newSrmComponent.thrust = 100.0;
-                newSrmComponent.inertMass = 400.0;
-                newSrmComponent.propellantMass = 100.0;
-
-
-                simulation_->RegisterEntity_SecondStageBoosterSystem(entity, newSrmComponent); 
-            }
-            else // Second Stage
-            {
-                std::cout << "Created new second stage entity" << std::endl;
-                newId = ComponentUtilities::CreateComponentId(entity.id, ComponentUtilities::SECOND_STAGE_SRM);
-            }
+            std::cout << "Created new second stage entity" << std::endl;
+            newId = ComponentUtilities::CreateComponentId(entity.id, ComponentUtilities::SECOND_STAGE_SRM);
 
             newAcc.forceAccumulator_eci = accComponent.forceAccumulator_eci;
             newAcc.torqueAccumulator_eci = accComponent.torqueAccumulator_eci;
@@ -113,10 +84,5 @@ void BoosterSystem::Update(real dt) {
     }
 
     UnregisterEntities();
-}
-
-void BoosterSystem::AddSrmComponent(Entity& entity, SolidRocketMotorComponent& srmComponent)
-{
-    srmManager_->Add(entity, srmComponent);
 }
 

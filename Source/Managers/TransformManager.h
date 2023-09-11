@@ -11,10 +11,9 @@ class TransformManager : public ComponentManager<TransformComponent, MaxComponen
     public:
 
     static TransformManager* GetInstance();
-    void WriteToLog(float time);
 
     private:
-    TransformManager(){};
+    TransformManager() : ComponentManager("TransformManager.bin") {};
     inline static TransformManager* instance = nullptr;
     std::string name_;
 };
