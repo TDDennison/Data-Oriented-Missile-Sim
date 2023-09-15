@@ -17,6 +17,7 @@
 #include "Systems/BoosterSystems/SecondStageBoosterSystem.h"
 #include "Systems/EarthSystem.h"
 #include "Systems/IntegrationSystem_Euler.h"
+#include "Systems/IntegrationSystem_RK4.h"
 #include "Systems/LoggingSystem.h"
 #include "Systems/TestSoftwareSystem.h"
 

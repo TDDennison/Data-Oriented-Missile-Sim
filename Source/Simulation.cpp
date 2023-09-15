@@ -234,7 +234,7 @@ void Simulation::RegisterSystem_Integration()
         }
         case IntegrationSystemType::RUNGE_KUTTA_4:
         {
-            throw std::invalid_argument("Runge-Kutta 4 integration system has not yet been developed.");
+            integrationSystem_ = new IntegrationSystem_RK4(accumulatorManager_, massManager_, movementManager_, transformManager_);
             break;
         }
         default:
@@ -387,19 +387,20 @@ void Simulation::Update()
 
     // Tell the systems to update
     real time = 0.0;
+    real t_n = 0.0;
     double dt = 1.0 / (double)rate_;
+    real dtOut = 0.0;
     while (time <= maxTime_ + dt) // + dt to get the final timestep logged.
     {
         // Order of execution for systems
-        // 1) Logging system
+        // 1) Integration System
         // 2) Physics systems
         // 3) Software systems
         // 4) Integration system
 
-        // 1) Logging system.
-        // ==================================================
-        std::cout << "===== Time: " << time << " =====" << std::endl;
-        // Tell the systems to log their data.
+        integrationSystem_->Update(dt, dtOut);
+
+        //std::cout << "===== Time: " << time << " =====" << std::endl;
 
         // 2) Physics systems.
         // ==================================================
@@ -413,19 +414,19 @@ void Simulation::Update()
 
         // 3) Software systems.
         // ==================================================
-        
-        // 4) Integration systems
-        // ==================================================
-        integrationSystem_->Update(dt);
-
         testSoftwareSystem_->Update(dt);
-        clockManager_->UpdateClocks(dt);
 
+        clockManager_->UpdateClocks(dtOut);
+        time += dtOut;
+
+        // NOTE: I DON"T THINK THIS NEEDS TO BE DONE IN EVERY FRAME. THAT WOULD DEPEND ON THE TYPE OF INTEGRATION SYSTEM
+        // RK4 MASS STAYS THE SAME FOR THE MIDDLE TWO FRAMES.
         // Update CG positions and inertia tensors based on burned mass 
         // The integration system accounts for moving the cg position along with the missile position
         // based on forces. This accounts for moving the cg position in the missile station frame based
         // on burned mass.
         ComputeCGs();
+
 
         // Log all necessary data.
         // ==================================================
@@ -434,7 +435,6 @@ void Simulation::Update()
             loggable->WriteToLog(time);
         }
 
-        time += dt;
     }
 
     // The simulation has reached the end.

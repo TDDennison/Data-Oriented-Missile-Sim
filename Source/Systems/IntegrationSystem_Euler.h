@@ -28,7 +28,8 @@ class IntegrationSystem_Euler : public System {
                           movementManager_(movementManager),
                           transformManager_(transformManager) {}
   
-  void Update(real dt) override {
+  void Update(real dt, real &dtOut) override {
+    dtOut = dt; // Euler integration is a single pass.
     for (auto & entity : registeredEntities) {
       AccumulatorComponent& accumulatorComponent = accumulatorManager_->Lookup(entity);
       TransformComponent& transform = transformManager_->Lookup(entity);
@@ -43,7 +44,6 @@ class IntegrationSystem_Euler : public System {
 
       // Update the linear position and velocity. Need to update the missile frame position, and missile cg by the same amount.
       transform.position_eci.AddScaledVector(movement.velocity_eci, dt);
-      //massComponent.position_cg_eci.AddScaledVector(movement.velocity_eci, dt); // HACK? Made before CGs were updated with logic
       movement.velocity_eci.AddScaledVector(lastFrameAcceleration, dt); // Update velocity to new value only after position has used the old values.
 
 
