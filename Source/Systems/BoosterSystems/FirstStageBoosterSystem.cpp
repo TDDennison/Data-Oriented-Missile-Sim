@@ -22,9 +22,9 @@ void FirstStageBoosterSystem::Update(real dt) {
         Vector3 vectorToTarget = HelperMethods::CalculateVectorBetweenPoints(transComponent.position_eci, target_position_eci); // Transform component should probably be cg position.
         vectorToTarget.Normalize();
 
-        std::cout << "Vector to target: " << vectorToTarget.x << " " << vectorToTarget.y << " " << vectorToTarget.z << std::endl;
+        //std::cout << "Vector to target: " << vectorToTarget.x << " " << vectorToTarget.y << " " << vectorToTarget.z << std::endl;
         Vector3 thrustVector = vectorToTarget * srmComponent.thrust;
-        std::cout << "Thrust vector: " << thrustVector.x << " " << thrustVector.y << " " << thrustVector.z << std::endl;
+        //std::cout << "Thrust vector: " << thrustVector.x << " " << thrustVector.y << " " << thrustVector.z << std::endl;
 
         Vector3 position_cg_eci = transComponent.transformMatrix * massComponent.position_cg_body;
         accComponent.AddForceAtPoint(thrustVector, application_point_eci, position_cg_eci);

@@ -19,9 +19,10 @@ public:
 
   // Called every game update
   virtual void Update(real dt) {};
+  virtual void Update(real dt, real &dtOut) {};
   
   // This entity fits our current requirements
-  inline void RegisterEntity(Entity entity) {
+  virtual void RegisterEntity(Entity entity) {
     registeredEntities.push_back(entity);
   }
   
@@ -72,7 +73,6 @@ protected:
   std::vector<Entity> registeredEntities{};
 
   std::vector<Entity> entitiesToRemove{};
-
 };
 
 #endif //SYSTEM_H
