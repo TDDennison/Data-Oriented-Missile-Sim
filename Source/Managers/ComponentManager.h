@@ -120,12 +120,12 @@ class ComponentManager : public ILoggable
     }
 
     // ILoggable Implementation
-    void WriteToLog(float time) override {
-        logger_->WriteToBuffer(componentData.data, sizeof(ComponentType) * componentData.size);
+    void WriteToLog(float *time) override {
+        logger_->WriteToBuffer(componentData.data, sizeof(ComponentType), componentData.size, time);
     }
 
-    void FinalizeLog(float time) override {
-        logger_->WriteAll(time);
+    void FinalizeLog() override {
+        logger_->WriteAll();
     }
 
     protected:

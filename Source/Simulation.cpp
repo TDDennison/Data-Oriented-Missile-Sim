@@ -6,6 +6,13 @@
 #include "Components/Utilities.h"
 #include "Core/Configurations.h"
 
+#include "Parsers/BinaryFileParser/BinaryFileParser.h"
+
+// Modulus for double types
+double dmod(double x, double y) {
+    return x - (int)(x/y) * y;
+}
+
 Simulation::Simulation()
 {
     // Initialize the managers that MUST be around for the simulation to run the physics engine.
@@ -386,10 +393,10 @@ void Simulation::Update()
     std::sort(systems.begin(), systems.end(), System::compareExecutionOrder);
 
     // Tell the systems to update
-    real time = 0.0;
-    real t_n = 0.0;
-    double dt = 1.0 / (double)rate_;
-    real dtOut = 0.0;
+    float time = 0.0;
+    float dt = 1.0 / (float)rate_;
+    float dtOut = 0.0;
+    bool shouldLog = false;
     while (time <= maxTime_ + dt) // + dt to get the final timestep logged.
     {
         // Order of execution for systems
@@ -398,9 +405,9 @@ void Simulation::Update()
         // 3) Software systems
         // 4) Integration system
 
-        integrationSystem_->Update(dt, dtOut);
+        integrationSystem_->Update(dt, dtOut, shouldLog);
 
-        //std::cout << "===== Time: " << time << " =====" << std::endl;
+        //std::cout << "===== Time: " << std::setprecision(8) << time << " =====" << std::endl;
 
         // 2) Physics systems.
         // ==================================================
@@ -416,9 +423,6 @@ void Simulation::Update()
         // ==================================================
         testSoftwareSystem_->Update(dt);
 
-        clockManager_->UpdateClocks(dtOut);
-        time += dtOut;
-
         // NOTE: I DON"T THINK THIS NEEDS TO BE DONE IN EVERY FRAME. THAT WOULD DEPEND ON THE TYPE OF INTEGRATION SYSTEM
         // RK4 MASS STAYS THE SAME FOR THE MIDDLE TWO FRAMES.
         // Update CG positions and inertia tensors based on burned mass 
@@ -430,10 +434,18 @@ void Simulation::Update()
 
         // Log all necessary data.
         // ==================================================
-        for (auto loggable : loggables)
+        if (shouldLog)
         {
-            loggable->WriteToLog(time);
+            for (auto loggable : loggables)
+            {
+                loggable->WriteToLog(&time);
+            }
         }
+
+
+        // Finally update the time management components.
+        clockManager_->UpdateClocks(dtOut);
+        time += dtOut;
 
     }
 
@@ -441,9 +453,13 @@ void Simulation::Update()
     // Finalize necessary components.
     for (auto loggable : loggables)
     {
-        loggable->FinalizeLog(time);
+        loggable->FinalizeLog();
     }
+
+    BinaryFileParser binParser("FirstStageSrmManager.bin");
+    binParser.Parse();
 }
+
 
 void Simulation::ComputeCGs()
 {

@@ -13,9 +13,9 @@
 #include "../Managers/MovementManager.h"
 #include "../Managers/TransformManager.h"
 
-#include "System.h"
+#include "IntegrationSystem.h"
 
-class IntegrationSystem_Euler : public System {
+class IntegrationSystem_Euler : public IntegrationSystem {
 
   public:
 
@@ -26,9 +26,17 @@ class IntegrationSystem_Euler : public System {
                           accumulatorManager_(accumulatorManager),
                           massManager_(massManager),
                           movementManager_(movementManager),
-                          transformManager_(transformManager) {}
+                          transformManager_(transformManager) {
+                          }
+
+  void Update(float dt, float &dtOut, bool &shouldLog) override
+  {
+    // Log every frame with Euler integration.
+    shouldLog = true;
+    Update(dt, dtOut);
+  }
   
-  void Update(real dt, real &dtOut) override {
+  void Update(float dt, float &dtOut) override {
     dtOut = dt; // Euler integration is a single pass.
     for (auto & entity : registeredEntities) {
       AccumulatorComponent& accumulatorComponent = accumulatorManager_->Lookup(entity);

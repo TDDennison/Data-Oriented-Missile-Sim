@@ -3,7 +3,7 @@
 #include "../../Components/Utilities.h"
 #include "../../Core/Configurations.h"
 
-void SecondStageBoosterSystem::Update(real dt) {
+void SecondStageBoosterSystem::Update(float dt) {
     for (auto & entity : registeredEntities) {
         AccumulatorComponent& accComponent = accumulatorManager_->Lookup(entity);
         SolidRocketMotorComponent& srmComponent = srmManager_->Lookup(entity);

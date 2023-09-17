@@ -38,7 +38,7 @@ class EarthSystem : public System
         std::cout << "Earth system execution order is: " << executionOrder_ << std::endl;
     }
     
-    void Update(real dt) override {
+    void Update(float dt) override {
 
         return;
         for (auto & entity : registeredEntities) {

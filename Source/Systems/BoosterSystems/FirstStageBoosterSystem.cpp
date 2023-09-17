@@ -3,7 +3,7 @@
 #include "../../Components/Utilities.h"
 #include "../../Core/Configurations.h"
 
-void FirstStageBoosterSystem::Update(real dt) {
+void FirstStageBoosterSystem::Update(float dt) {
     for (auto & entity : registeredEntities) {
         AccumulatorComponent& accComponent = accumulatorManager_->Lookup(entity);
         SolidRocketMotorComponent& srmComponent = srmManager_->Lookup(entity);
@@ -30,7 +30,7 @@ void FirstStageBoosterSystem::Update(real dt) {
         accComponent.AddForceAtPoint(thrustVector, application_point_eci, position_cg_eci);
 
         // Model the SRM burning its propellant mass.
-        srmComponent.propellantMass -= 0.01;
+        srmComponent.propellantMass -= 1.0;
 
         massComponent.DecrementSubMass(0.1, ComponentUtilities::ComponentDesignators::FIRST_STAGE_SRM);
 

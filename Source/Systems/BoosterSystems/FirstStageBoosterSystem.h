@@ -45,7 +45,7 @@ class FirstStageBoosterSystem : public System
                   transformManager_(transformManager),
                   simulation_(simulation){};
     
-    void Update(real dt) override;
+    void Update(float dt) override;
 
     void AddSrmComponent(Entity& entity, SolidRocketMotorComponent& srmComponent)
     {

@@ -18,6 +18,7 @@ set(DOMSIM_SOURCES
 
     Parsers/CommandLineParser/CommandLineParser.h
     Parsers/CommandLineParser/CommandLineParser.cpp
+    Parsers/BinaryFileParser/BinaryFileParser.h
 
     Systems/BoosterSystems/FirstStageBoosterSystem.h
     Systems/BoosterSystems/FirstStageBoosterSystem.cpp

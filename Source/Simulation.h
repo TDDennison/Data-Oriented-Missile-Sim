@@ -16,6 +16,7 @@
 #include "Systems/BoosterSystems/FirstStageBoosterSystem.h"
 #include "Systems/BoosterSystems/SecondStageBoosterSystem.h"
 #include "Systems/EarthSystem.h"
+#include "Systems/IntegrationSystem.h"
 #include "Systems/IntegrationSystem_Euler.h"
 #include "Systems/IntegrationSystem_RK4.h"
 #include "Systems/LoggingSystem.h"
@@ -125,7 +126,7 @@ class Simulation
     FirstStageBoosterSystem* firstStageBoosterSystem_    = nullptr;
     SecondStageBoosterSystem* secondStageBoosterSystem_  = nullptr;
     EarthSystem* earthSystem_                            = nullptr;
-    System* integrationSystem_                           = nullptr;
+    IntegrationSystem* integrationSystem_                = nullptr;
     LoggingSystem* loggingSystem_                        = nullptr;
     TestSoftwareSystem* testSoftwareSystem_              = nullptr;
 };

@@ -21,30 +21,6 @@ class AccumulatorManager : public ComponentManager<AccumulatorComponent, MaxComp
         return instance;
     }
 
-    // void WriteToLog(float time)
-    // {
-    //     std::cout << "===== AccumulatorComponent Log t = " << time << " =====" << std::endl;
-    //     for(std::map<unsigned int, unsigned int>::iterator iter = entityMap.begin(); iter != entityMap.end(); ++iter)
-    //     {
-    //         unsigned int key =  iter->first;
-
-    //         unsigned int index = entityMap[key];            
-    //         AccumulatorComponent accumulatorComponent = componentData.data[index];
-
-    //         std::cout << "     Entity: " << key << std::endl;
-    //         std::cout << "          Component ID: " << accumulatorComponent.getIdBitset() << std::endl;
-    //         std::cout << "          " << ComponentUtilities::DecomposeComponentId(accumulatorComponent.getId()) << std::endl;
-    //         std::cout << "          Accumulated force x: " << accumulatorComponent.forceAccumulator_eci.x << std::endl;
-    //         std::cout << "          Accumulated force y: " << accumulatorComponent.forceAccumulator_eci.y << std::endl;
-    //         std::cout << "          Accumulated force z: " << accumulatorComponent.forceAccumulator_eci.z << std::endl;
-    //         std::cout << "          Accumulated torque x: " << accumulatorComponent.torqueAccumulator_eci.x << std::endl;
-    //         std::cout << "          Accumulated torque y: " << accumulatorComponent.torqueAccumulator_eci.y << std::endl;
-    //         std::cout << "          Accumulated torque z: " << accumulatorComponent.torqueAccumulator_eci.z << std::endl;
-    //     }
-
-    //     std::cout << std::endl;
-    // }
-
     // Adds a force at a point on the entity that is located at the center of gravity. This does not
     // produce any rotational effects.
     void AddForceAtCG(const Entity &entity, const Vector3 &force_eci)

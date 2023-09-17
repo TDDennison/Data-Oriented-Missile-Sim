@@ -21,7 +21,7 @@ class TestSoftwareSystem : public System
         std::cout << "Test Software System execution order is: " << executionOrder_ << std::endl;
     }
 
-    void Update(real dt) override {
+    void Update(float dt) override {
         for (auto & entity : registeredEntities) {
             SoftwareComponent& softwareComponent = testSoftwareManager_->Lookup(entity);
             ClockComponent& clockComponent = clockManager_->Lookup(entity);

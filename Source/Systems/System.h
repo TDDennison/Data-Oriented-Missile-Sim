@@ -18,8 +18,8 @@ public:
   virtual void Initialize() {};
 
   // Called every game update
-  virtual void Update(real dt) {};
-  virtual void Update(real dt, real &dtOut) {};
+  virtual void Update(float dt) {};
+  virtual void Update(float dt, float &dtOut) {};
   
   // This entity fits our current requirements
   virtual void RegisterEntity(Entity entity) {
