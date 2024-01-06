@@ -12,7 +12,7 @@ class MovementManager : public ComponentManager<MovementComponent, MaxComponents
     static MovementManager* GetInstance();
 
     private:
-    MovementManager() : ComponentManager("MovementManager.bin") {};
+    MovementManager() : ComponentManager("MovementManager") {};
     inline static MovementManager* instance = nullptr;
 };
 

@@ -9,7 +9,7 @@ class TestSoftwareManager : public ComponentManager<SoftwareComponent, MaxCompon
 {
     public:
 
-    TestSoftwareManager() : ComponentManager("TestSoftwareManager.bin") {}
+    TestSoftwareManager() : ComponentManager("TestSoftwareManager") {}
 };
 
 #endif // TEST_SOFTWARE_MANAGER_H

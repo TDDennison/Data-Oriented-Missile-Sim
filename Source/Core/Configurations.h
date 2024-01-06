@@ -23,6 +23,9 @@ class Configurations
     std::filesystem::path GetInputFilePath() { return inputFilePath_; }
     void SetInputFilePath(std::filesystem::path inputPath) { inputFilePath_ = inputPath; }
 
+    std::filesystem::path GetOutputFilePath() { return std::filesystem::absolute(outputFilePath_); }
+    void SetOutputFilePath(std::filesystem::path outputPath) { outputFilePath_ = outputPath; }
+
     //================================================================================
     // Missile Starting Locations
     //================================================================================
@@ -132,6 +135,7 @@ class Configurations
     inline static Configurations* instance = nullptr;
 
     std::filesystem::path inputFilePath_;
+    std::filesystem::path outputFilePath_{std::filesystem::current_path() /= "Outputs"}; // Path relative to the current working directory the simulation is being run from. Converted to absolute path when retreived for use.
 
     std::vector<std::pair<float, float>> missileStartingLocations_{};
     std::vector<Vector3> targetInterceptPoints_{};

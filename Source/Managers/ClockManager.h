@@ -11,7 +11,7 @@ class ClockManager : public ComponentManager<ClockComponent, MaxComponents>
 {
     public:
 
-    ClockManager() : ComponentManager("ClockManager.bin") {}
+    ClockManager() : ComponentManager("ClockManager") {}
 
     void UpdateClocks(real dt)
     {

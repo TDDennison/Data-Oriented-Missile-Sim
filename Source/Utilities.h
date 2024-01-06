@@ -27,4 +27,12 @@ enum IntegrationSystemType : uint32_t
 };
 
 
+// Enumeration to hold the type designators for output file types.
+enum PostProcessLogType 
+{
+    CSV = 1,
+    TEXT
+};
+
+
 #endif //UTILITIES_H

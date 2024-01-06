@@ -9,6 +9,7 @@
 
 #include "../Entity.h"
 #include "../Core/ILoggable.h"
+#include "../Parsers/BinaryFileParser/BinaryFileParser.h"
 #include "../Systems/LoggingSystem.h"
 
 typedef unsigned int EntityId;
@@ -119,7 +120,8 @@ class ComponentManager : public ILoggable
         return false;
     }
 
-    // ILoggable Implementation
+    // Start: ILoggable Implementation
+    // ================================================================================
     void WriteToLog(float *time) override {
         logger_->WriteToBuffer(componentData.data, sizeof(ComponentType), componentData.size, time);
     }
@@ -127,6 +129,35 @@ class ComponentManager : public ILoggable
     void FinalizeLog() override {
         logger_->WriteAll();
     }
+
+    bool PostProcessLog(PostProcessLogType outputType) override {
+        bool returnValue = false;
+        switch(outputType)
+        {
+            case PostProcessLogType::CSV:
+            {
+                break; // Currently not handled.
+            }
+
+            case PostProcessLogType::TEXT:
+            {
+                returnValue = ParseBinaryToText(logger_->getFileName());
+                break;
+            }
+        }
+
+        return returnValue;
+    }
+
+    private:
+    virtual bool ParseBinaryToText(std::string fileName) override {
+
+        // Return false, this should be overridden on derived classes.
+        return false;
+    }
+
+    // ================================================================================
+    // End: ILoggable Implementation
 
     protected:
 

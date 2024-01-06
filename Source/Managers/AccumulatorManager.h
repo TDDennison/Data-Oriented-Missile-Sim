@@ -45,7 +45,7 @@ class AccumulatorManager : public ComponentManager<AccumulatorComponent, MaxComp
     }
 
     private:
-    AccumulatorManager(MassManager *massManager, TransformManager *transformManager) : ComponentManager("AccumulatorManager.bin"), massManager_(massManager), transformManager_(transformManager) {}
+    AccumulatorManager(MassManager *massManager, TransformManager *transformManager) : ComponentManager("AccumulatorManager"), massManager_(massManager), transformManager_(transformManager) {}
     inline static AccumulatorManager* instance = nullptr;
 
     MassManager* massManager_;

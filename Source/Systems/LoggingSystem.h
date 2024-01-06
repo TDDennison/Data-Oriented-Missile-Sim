@@ -5,14 +5,19 @@
 #include <string>
 #include <fstream>
 
+#include "../Constants.h"
+#include "../Core/Configurations.h"
+
 class LoggingSystem
 {
     public:
 
     LoggingSystem(std::string fileName) : 
     fileName_(fileName), 
-    outputFile_(fileName_, std::ios::out | std::ios::binary), 
+    outputFile_(Configurations::GetInstance()->GetOutputFilePath() / (fileName_ + Constants::LOG_FILE_EXTENSION_BINARY), std::ios::out | std::ios::binary), 
     bufferIndex_(0){}
+
+    std::string getFileName() { return fileName_; }
 
     void WriteAll()
     {

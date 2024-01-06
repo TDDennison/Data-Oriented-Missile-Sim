@@ -2,6 +2,7 @@
 #define CONSTANTS_H
 
 #include <inttypes.h>
+#include <string>
 
 #include "MathTypes/Vector3.h"
 
@@ -30,6 +31,12 @@ class Constants
     // Reserved Input File Attribute Names
     inline static const char *RESERVED_ATTRIBUTE_MISSILE_STARTING_LOCATIONS = "Missile Starting Locations";
     inline static const char *RESERVED_ATTRIBUTE_TARGET_POINTS = "Target Points";
+
+    // Logfile names
+    inline static const char *LOG_FILE_EXTENSION_BINARY = ".bin";
+    inline static const char *LOG_FILE_EXTENSION_CSV = ".csv";
+    inline static const char *LOG_FILE_EXTENSION_TXT = ".txt";
+    inline static const char *LOG_FILE_FIRST_STAGE_SRM_MANAGER = "FirstStageSrmManager" ;
 
     // Missile component offsets.
     // These should be moved to configurations when necessary.

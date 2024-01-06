@@ -13,7 +13,7 @@ class TransformManager : public ComponentManager<TransformComponent, MaxComponen
     static TransformManager* GetInstance();
 
     private:
-    TransformManager() : ComponentManager("TransformManager.bin") {};
+    TransformManager() : ComponentManager("TransformManager") {};
     inline static TransformManager* instance = nullptr;
     std::string name_;
 };

@@ -28,23 +28,23 @@ class IntegrationSystem_RK4 : public IntegrationSystem {
                           movementManager_(movementManager),
                           transformManager_(transformManager) {}
 
-    void RegisterEntity(Entity entity) override {
-        System::RegisterEntity(entity);
-        TransformComponent& transformComponent = transformManager_->Lookup(entity);
-        MovementComponent& movementComponent = movementManager_->Lookup(entity);
-        AccumulatorComponent& accumulatorComponent = accumulatorManager_->Lookup(entity);
+  void RegisterEntity(Entity entity) override {
+    System::RegisterEntity(entity);
+    TransformComponent& transformComponent = transformManager_->Lookup(entity);
+    MovementComponent& movementComponent = movementManager_->Lookup(entity);
+    AccumulatorComponent& accumulatorComponent = accumulatorManager_->Lookup(entity);
 
-        // We are attempting to calculate k1, before doing so we need to save the y_0 states.
-        // Add the state to the store objects based on its entity id.
-        entityToRk4Store[entity.id] = storeIndexTracker;
-        transformComponentStore[storeIndexTracker][0] = transformComponent;
-        movementComponentStore[storeIndexTracker][0] = movementComponent;
+    // We are attempting to calculate k1, before doing so we need to save the y_0 states.
+    // Add the state to the store objects based on its entity id.
+    entityToRk4Store[entity.id] = storeIndexTracker;
+    transformComponentStore[storeIndexTracker][0] = transformComponent;
+    movementComponentStore[storeIndexTracker][0] = movementComponent;
 
-        ++storeIndexTracker; // Increment the tracker
+    ++storeIndexTracker; // Increment the tracker
 
-        // After y_0 states have been saved the initial conditions can be run through the 
-        // simulation.
-    }
+    // After y_0 states have been saved the initial conditions can be run through the 
+    // simulation.
+  }
 
   void Update(float dt, float &dtOut, bool &shouldLog) override
   {
@@ -71,7 +71,7 @@ class IntegrationSystem_RK4 : public IntegrationSystem {
 
         // Now k1 has been calculated by running t_n and y_n conditions through the simulation.
         // Need to save k1 states for later.
-        unsigned int storeIndex = entityToRk4Store[entity.id] = storeIndexTracker;
+        unsigned int storeIndex = entityToRk4Store[entity.id];
         transformComponentStore[storeIndex][1] = transformComponent;
         movementComponentStore[storeIndex][1] = movementComponent;
 
@@ -104,7 +104,7 @@ class IntegrationSystem_RK4 : public IntegrationSystem {
 
         // Now k2 has been calculated by running t_n + dt/2 and y_n + dt/2
         // Need to save k2 states for later.
-        unsigned int storeIndex = entityToRk4Store[entity.id] = storeIndexTracker;
+        unsigned int storeIndex = entityToRk4Store[entity.id];
         transformComponentStore[storeIndex][2] = transformComponent;
         movementComponentStore[storeIndex][2] = movementComponent;
 
@@ -134,7 +134,7 @@ class IntegrationSystem_RK4 : public IntegrationSystem {
 
         // Now k3 has been calculated by running t_n + dt/2 and y_n + dt/2
         // Need to save k3 states for later.
-        unsigned int storeIndex = entityToRk4Store[entity.id] = storeIndexTracker;
+        unsigned int storeIndex = entityToRk4Store[entity.id];
         transformComponentStore[storeIndex][3] = transformComponent;
         movementComponentStore[storeIndex][3] = movementComponent;
 
@@ -163,7 +163,7 @@ class IntegrationSystem_RK4 : public IntegrationSystem {
 
         // Now k4 has been calculated by running t_n + dt/2 and y_n + dt/2
         // Need to save k4 states for later.
-        unsigned int storeIndex = entityToRk4Store[entity.id] = storeIndexTracker;
+        unsigned int storeIndex = entityToRk4Store[entity.id];
         transformComponentStore[storeIndex][4] = transformComponent;
         movementComponentStore[storeIndex][4] = movementComponent;
 

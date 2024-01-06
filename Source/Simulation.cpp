@@ -8,11 +8,6 @@
 
 #include "Parsers/BinaryFileParser/BinaryFileParser.h"
 
-// Modulus for double types
-double dmod(double x, double y) {
-    return x - (int)(x/y) * y;
-}
-
 Simulation::Simulation()
 {
     // Initialize the managers that MUST be around for the simulation to run the physics engine.
@@ -179,7 +174,7 @@ void Simulation::RegisterSystem_FirstStageBooster()
 {
     // Create the SRM Manager and register it with the loggables collection.
 
-    SolidRocketMotorManager* srmManager = new SolidRocketMotorManager("FirstStageSrmManager.bin", BoosterType::FIRST_STAGE);
+    SolidRocketMotorManager* srmManager = new SolidRocketMotorManager(Constants::LOG_FILE_FIRST_STAGE_SRM_MANAGER, BoosterType::FIRST_STAGE);
     loggables.push_back(srmManager);
 
     firstStageBoosterSystem_ = new FirstStageBoosterSystem(accumulatorManager_, massManager_, movementManager_, srmManager, transformManager_, this);
@@ -197,7 +192,7 @@ void Simulation::RegisterSystem_SecondStageBooster()
 {
     // Create the SRM Manager and register it with the loggables collection.
 
-    SolidRocketMotorManager* srmManager = new SolidRocketMotorManager("SecondStageSrmManager.bin", BoosterType::SECOND_STAGE);
+    SolidRocketMotorManager* srmManager = new SolidRocketMotorManager("SecondStageSrmManager", BoosterType::SECOND_STAGE);
     loggables.push_back(srmManager);
 
     secondStageBoosterSystem_ = new SecondStageBoosterSystem(accumulatorManager_, massManager_, movementManager_, srmManager, transformManager_, this);
@@ -456,8 +451,11 @@ void Simulation::Update()
         loggable->FinalizeLog();
     }
 
-    BinaryFileParser binParser("FirstStageSrmManager.bin");
-    binParser.Parse();
+    // After the simulation has ended and all data has been logged, begin the post-processing operations
+    for (auto loggable : loggables)
+    {
+        loggable->PostProcessLog(PostProcessLogType::TEXT);
+    }
 }
 
 

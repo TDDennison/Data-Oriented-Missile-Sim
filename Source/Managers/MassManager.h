@@ -12,7 +12,7 @@ class MassManager : public ComponentManager<MassComponent, MaxComponents>
     static MassManager* GetInstance();
 
     private:
-    MassManager() : ComponentManager("MassManager.bin") {};
+    MassManager() : ComponentManager("MassManager") {};
     inline static MassManager* instance = nullptr;
 };
 
