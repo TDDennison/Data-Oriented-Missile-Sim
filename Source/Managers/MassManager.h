@@ -13,6 +13,15 @@ class MassManager : public ComponentManager<MassComponent, MaxComponents>
 
     private:
     MassManager() : ComponentManager("MassManager") {};
+
+    // Start: ILoggable Implementation
+    // ================================================================================
+
+    bool ParseBinaryToText(std::string fileName) override;
+
+    // ================================================================================
+    // End: ILoggable Implementation
+
     inline static MassManager* instance = nullptr;
 };
 

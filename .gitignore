@@ -34,4 +34,5 @@
 # Directories
 bin/
 build/
+Outputs/
 .vscode/

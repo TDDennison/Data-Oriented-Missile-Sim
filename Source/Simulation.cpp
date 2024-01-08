@@ -287,15 +287,15 @@ void Simulation::CreateMissiles()
         MassComponent &missileMass = massManager_->Lookup(missileEntity);
 
         // First stage mass.
-        MassComponent fsMass(ComponentUtilities::CreateComponentId(missileEntity.id, ComponentUtilities::FIRST_STAGE_SRM));
-        fsMass.mass += firstStageComponent.inertMass + firstStageComponent.propellantMass;
-        ComputeCG(fsMass);
+        std::shared_ptr<MassComponent> fsMass = std::make_shared<MassComponent>(ComponentUtilities::CreateComponentId(missileEntity.id, ComponentUtilities::FIRST_STAGE_SRM));
+        fsMass->mass += firstStageComponent.inertMass + firstStageComponent.propellantMass;
+        ComputeCG(*fsMass);
         missileMass.AddSubmass(ComponentUtilities::ComponentDesignators::FIRST_STAGE_SRM, fsMass);
 
         // Second stage mass.
-        MassComponent ssMass(ComponentUtilities::CreateComponentId(missileEntity.id, ComponentUtilities::SECOND_STAGE_SRM));
-        ssMass.mass += secondStageComponent.inertMass + secondStageComponent.propellantMass;
-        ComputeCG(ssMass);
+        std::shared_ptr<MassComponent> ssMass = std::make_shared<MassComponent>(ComponentUtilities::CreateComponentId(missileEntity.id, ComponentUtilities::SECOND_STAGE_SRM));
+        ssMass->mass += secondStageComponent.inertMass + secondStageComponent.propellantMass;
+        ComputeCG(*ssMass);
         missileMass.AddSubmass(ComponentUtilities::ComponentDesignators::SECOND_STAGE_SRM, ssMass);
 
 
@@ -450,12 +450,6 @@ void Simulation::Update()
     {
         loggable->FinalizeLog();
     }
-
-    // After the simulation has ended and all data has been logged, begin the post-processing operations
-    for (auto loggable : loggables)
-    {
-        loggable->PostProcessLog(PostProcessLogType::TEXT);
-    }
 }
 
 
@@ -468,24 +462,26 @@ void Simulation::ComputeCGs()
     {
         MassComponent &component = *(massComponentsStart + i);
         Vector3 mass_moment_arms = Vector3::Zero();
-        if (!component.subMasses.empty())
+        if (component.numSubMasses)
         {
             component.position_cg_body = Vector3::Zero();
-            for (auto key : component.subMasses)
+            for (auto subMass : component.subMasses)
             {
-                MassComponent &subMass = key.second;
-                // Don't compute cg unless it has changed since previously computed.
-                if (key.second.hasChanged)
+                if(subMass)
                 {
-                    ComputeCG(key.second);
+                    // Don't compute cg unless it has changed since previously computed.
+                    if (subMass->hasChanged)
+                    {
+                        ComputeCG(*subMass);
+                    }
+
+                    // Translate object cg to missile frame.
+                    Vector3 pos_cg_missile_frame = subMass->position_cg_body + Configurations::GetInstance()->GetObjectOffset(subMass->getComponentId());
+                    Vector3 mass_moment_arm = pos_cg_missile_frame * subMass->mass;
+
+                    // position_cg_body is equivalent to position_cg_missile frame here for the aggregate component.
+                    mass_moment_arms += mass_moment_arm;
                 }
-
-                // Translate object cg to missile frame.
-                Vector3 pos_cg_missile_frame = subMass.position_cg_body + Configurations::GetInstance()->GetObjectOffset(subMass.getComponentId());
-                Vector3 mass_moment_arm = pos_cg_missile_frame * subMass.mass;
-
-                // position_cg_body is equivalent to position_cg_missile frame here for the aggregate component.
-                mass_moment_arms += mass_moment_arm;
             }
 
             component.position_cg_body = (mass_moment_arms * (1.0 / component.mass));
@@ -507,4 +503,13 @@ void Simulation::ComputeCG(MassComponent &massComponent)
 
     // Assume CG is at the center of the geometric shape.
     massComponent.position_cg_body = pos_cg_obj * 0.5;
+}
+
+void Simulation::PostProcessOutput()
+{
+    // After the simulation has ended and all data has been logged, begin the post-processing operations
+    for (auto loggable : loggables)
+    {
+        loggable->PostProcessLog(PostProcessLogType::TEXT);
+    }
 }

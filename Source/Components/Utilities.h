@@ -8,6 +8,11 @@
 
 namespace ComponentUtilities
 {
+    // Maximum number of submasses based on analysis of the system.
+    // Currently just a guess, analyze the system to find the real 
+    // number in the future.
+    static inline const uint8_t MAX_SUB_MASSES = 10;
+
     enum ComponentDesignators : uint8_t
     {
         NONE = 0,

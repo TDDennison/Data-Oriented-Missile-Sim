@@ -1,6 +1,7 @@
 project(DMSF)
 
 #add_compile_options("-O3") # Uncomment for full optimizations
+add_compile_options("-O0")
 add_compile_options("-g")
 
 IF($ENV{DOMSIM_TESTS} STREQUAL "TRUE")

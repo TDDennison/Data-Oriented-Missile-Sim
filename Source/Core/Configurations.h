@@ -135,7 +135,7 @@ class Configurations
     inline static Configurations* instance = nullptr;
 
     std::filesystem::path inputFilePath_;
-    std::filesystem::path outputFilePath_{std::filesystem::current_path() /= "Outputs"}; // Path relative to the current working directory the simulation is being run from. Converted to absolute path when retreived for use.
+    std::filesystem::path outputFilePath_{std::filesystem::path("/home/trevor/Desktop/GitRepos/DOMSim") / "Outputs"}; // Path relative to the current working directory the simulation is being run from. Converted to absolute path when retreived for use.
 
     std::vector<std::pair<float, float>> missileStartingLocations_{};
     std::vector<Vector3> targetInterceptPoints_{};

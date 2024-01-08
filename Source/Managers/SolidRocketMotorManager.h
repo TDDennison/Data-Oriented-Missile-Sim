@@ -27,13 +27,8 @@ class SolidRocketMotorManager : public ComponentManager<SolidRocketMotorComponen
     // Start: ILoggable Implementation
     // ================================================================================
     bool ParseBinaryToText(std::string fileName) override {
-        std::cout << "Parsing SRM Manager to txt" << std::endl;
-        std::cout << "File name is: " + fileName << std::endl;
-
-        std::cout << Configurations::GetInstance()->GetOutputFilePath() / (fileName + Constants::LOG_FILE_EXTENSION_BINARY) << std::endl;
         std::ifstream inFile(Configurations::GetInstance()->GetOutputFilePath() / (fileName + Constants::LOG_FILE_EXTENSION_BINARY), std::ios::in | std::ios::binary);
         if(!inFile.good()) { 
-            std::cout << "Encountered an error when opening the input file." << std::endl;
             return false; 
         }
 
@@ -41,7 +36,6 @@ class SolidRocketMotorManager : public ComponentManager<SolidRocketMotorComponen
         std::ofstream outFile(Configurations::GetInstance()->GetOutputFilePath() / (fileName + Constants::LOG_FILE_EXTENSION_TXT), std::ios::out);
         outFile.clear();
         if(!outFile.good()) { 
-            std::cout << "Encountered an error when opening the output file." << std::endl;
             return false; 
         }
 
@@ -53,13 +47,13 @@ class SolidRocketMotorManager : public ComponentManager<SolidRocketMotorComponen
 
 
         // Write the file header.
-        const std::string COLUMN_HEADER_TIME = "Time";
-        const std::string COLUMN_HEADER_SIZE_OF_COMPONENT = "Size Of Component";
-        const std::string COLUMN_HEADER_NUMBER_OF_COMPONENTS = "Number Of Components";
-        const std::string COLUMN_HEADER_COMPONENT_ID = "Component ID";
-        const std::string COLUMN_HEADER_INERT_MASS = "Inert Mass";
-        const std::string COLUMN_HEADER_PROPELLANT_MASS = "Propellant Mass";
-        const std::string COLUMN_HEADER_THRUST = "Thrust";
+        static const std::string COLUMN_HEADER_TIME = "Time";
+        static const std::string COLUMN_HEADER_SIZE_OF_COMPONENT = "Size Of Component";
+        static const std::string COLUMN_HEADER_NUMBER_OF_COMPONENTS = "Number Of Components";
+        static const std::string COLUMN_HEADER_COMPONENT_ID = "Component ID";
+        static const std::string COLUMN_HEADER_INERT_MASS = "Inert Mass";
+        static const std::string COLUMN_HEADER_PROPELLANT_MASS = "Propellant Mass";
+        static const std::string COLUMN_HEADER_THRUST = "Thrust";
 
         strStream << std::setw(COLUMN_HEADER_TIME.length() + 2) << COLUMN_HEADER_TIME ;
         strStream << std::setw(COLUMN_HEADER_SIZE_OF_COMPONENT.length() + 2) << COLUMN_HEADER_SIZE_OF_COMPONENT ;

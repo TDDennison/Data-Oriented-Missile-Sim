@@ -16,18 +16,45 @@ struct MassComponent : public Component
     MassComponent() : Component(DEFAULT_COMPONENT_ID) {}
     MassComponent(uint16_t id) : Component(id) {}
 
-    void AddSubmass(ComponentUtilities::ComponentDesignators designator, MassComponent component)
+    void AddSubmass(ComponentUtilities::ComponentDesignators designator, std::shared_ptr<MassComponent> component)
     {
-        ++numSubMasses;
-        subMasses[designator] = component;
-        mass += component.mass;
+        // Make sure the sub mass tracker isn't already full.
+        if(hasRoom)
+        {
+            ++numSubMasses;
+
+            // Find the first unoccupied submass index.
+            for(uint8_t i = 0; i < ComponentUtilities::MAX_SUB_MASSES; ++i)
+            {
+                if(subMassDesignators[i] == ComponentUtilities::ComponentDesignators::NONE)
+                {
+                    subMassDesignators[i] = designator;
+                    subMasses[i] = component;
+                    mass += component->mass;
+                    break;
+                }
+            }
+        }
+        else {
+            // TODO: Throw an exception or something better here.
+            std::cout << "Attempted to add submass but there was no room left!" << std::endl;
+        }
+
     }
 
     void RemoveSubmass(ComponentUtilities::ComponentDesignators designator)
     {
-        --numSubMasses;
-        mass -= subMasses[designator].mass;
-        subMasses.erase(designator);
+        // Find the submass with the designator
+        for(uint8_t i = 0; i < ComponentUtilities::MAX_SUB_MASSES; ++i)
+        {
+            if(subMassDesignators[i] == designator)
+            {
+                --numSubMasses;
+                mass -= subMasses[i]->mass;
+                subMassDesignators[i] = ComponentUtilities::ComponentDesignators::NONE;
+                subMasses[i].reset();
+            }
+        }
     }
 
     void DecrementMass(float number)
@@ -37,11 +64,18 @@ struct MassComponent : public Component
 
     void DecrementSubMass(float number, ComponentUtilities::ComponentDesignators designator)
     {
-        MassComponent &component = subMasses[designator];
-        component.mass -= number;
-        component.hasChanged = true;
 
-        mass -= number;
+        // Find the submass with the designator
+        for(uint8_t i = 0; i < ComponentUtilities::MAX_SUB_MASSES; ++i)
+        {
+            if(subMassDesignators[i] == designator)
+            {
+                subMasses[i]->mass -= number; // Decrement the mass of the submass
+                subMasses[i]->hasChanged = true;
+
+                mass -= number; // Decrement the mass of the total mass
+            }
+        }
     }
 
     real mass; // kg
@@ -52,11 +86,15 @@ struct MassComponent : public Component
     // Inertia tensor of an entity. All values in the tensor are in the body frame.
     Matrix3 inertiaTensor{};
 
+    bool hasRoom = true;
     bool hasChanged = false;
 
     // All sub-masses that make up this total mass.
     uint8_t numSubMasses = 0;
-    std::map<ComponentUtilities::ComponentDesignators, MassComponent> subMasses{};
+    std::shared_ptr<MassComponent> subMasses[ComponentUtilities::MAX_SUB_MASSES];
+
+    private:
+    ComponentUtilities::ComponentDesignators subMassDesignators[ComponentUtilities::MAX_SUB_MASSES]{ComponentUtilities::ComponentDesignators::NONE};
 };
 
 #endif //MASS_COMPONENT_H

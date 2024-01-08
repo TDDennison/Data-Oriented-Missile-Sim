@@ -51,7 +51,12 @@ int main(int argc, char** argv)
     auto finish = std::chrono::high_resolution_clock::now();
     auto milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(finish-start);
 
-    std::cout << "Time elapsed: " << milliseconds.count() << " milliseconds." << std::endl;
+    std::cout << "Time elapsed running simulation: " << milliseconds.count() << " milliseconds." << std::endl;
+
+    // Post-Process the simulation output
+    std::cout << "Post-processing simulation output." << std::endl;
+    simulation->PostProcessOutput();
+    std::cout << "Post-processing completed." << std::endl;
 
     #endif //RUN_UNIT_TESTS
 

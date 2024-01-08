@@ -1,3 +1,6 @@
+add_compile_options("-O0")
+add_compile_options("-g")
+
 set(EXECUTABLE_NAME DOMSim)
 
 set(DOMSIM_SOURCES 

@@ -55,6 +55,8 @@ class Simulation
     void Run();
     void Update();
 
+    void PostProcessOutput();
+
     private:
     
     // Private constructor used to facilitate the singleton design pattern.
