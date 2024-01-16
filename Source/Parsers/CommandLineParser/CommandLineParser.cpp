@@ -17,7 +17,7 @@ bool CommandLineParser::TryParse(int argc, char** argv)
     cmdLineArgs.argc = argc;
     cmdLineArgs.argv = argv;
 
-    std::cout << "Starting to parse command line arguments" << std::endl;
+    std::cout << "Starting to parse command line arguments." << std::endl;
 
     for(; cmdLineArgs.index < cmdLineArgs.argc; ++cmdLineArgs.index)
     {
@@ -31,7 +31,7 @@ bool CommandLineParser::TryParse(int argc, char** argv)
         }
     }
 
-    std::cout << "Done parsing command line arguments" << std::endl;
+    std::cout << "Done parsing command line arguments." << std::endl;
 
     return true;
 }

@@ -262,12 +262,12 @@ void Simulation::RegisterSystem_TestSoftwareSystem()
 void Simulation::CreateMissiles()
 {
     std::vector<std::pair<float, float>> missileLocations = Configurations::GetInstance()->GetMissileStartingLocations();
-    std::cout << "There are " << missileLocations.size() << " missile locations parsed." << std::endl;
+    std::cout << "There are " << missileLocations.size() << " missile locations to be parsed." << std::endl;
 
     // TODO: Convert the lat/lon pairs into ECI positions/orientations to use for instantiating missile properties here.
     for (auto location : missileLocations)
     {
-        std::cout << location.first << " " << location.second << std::endl;
+        std::cout << "Location: " << location.first << " " << location.second << std::endl;
         // Create the abstract missile entity.
         Entity missileEntity = EntityManager::CreateEntity();
 
@@ -464,7 +464,6 @@ void Simulation::ComputeCGs()
         Vector3 mass_moment_arms = Vector3::Zero();
         if (component.numSubMasses)
         {
-            component.position_cg_body = Vector3::Zero();
             for (auto subMass : component.subMasses)
             {
                 if(subMass)

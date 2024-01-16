@@ -30,6 +30,8 @@ class InputFileParser
 
     bool TryParse(std::filesystem::path filePath) 
     {
+        std::cout << "Starting to parse input set: " << filePath.generic_string() << std::endl;
+
         // Open the file for parsing.
         std::ifstream inFile(filePath.string());
         if (!inFile.is_open()) { return false; }
@@ -76,6 +78,8 @@ class InputFileParser
             }
 
         }
+
+        std::cout << "Done parsing input file." << std::endl;
 
         return true;
     };
