@@ -78,7 +78,6 @@ bool MassManager::ParseBinaryToText(std::string fileName) {
 
         for (unsigned int i = 0; i < numComponents; ++i)
         {
-            usleep(100000);
             static int counter = 1;
             MassComponent massComponent;
             inFile.read(reinterpret_cast<char *>(&massComponent), sizeof(MassComponent));
