@@ -1,4 +1,6 @@
-project(DMSF)
+cmake_minimum_required(VERSION 3.18)
+
+project(DOMSim)
 
 #add_compile_options("-O3") # Uncomment for full optimizations
 add_compile_options("-O0")

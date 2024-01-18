@@ -3,16 +3,16 @@
 
 #include "../../_Utilities/_Utilities.h"
 
-#include "../../../Components/MovementComponent.h"
-#include "../../../Components/TransformComponent.h"
+#include "MovementComponent.h"
+#include "TransformComponent.h"
 
-#include "../../../Managers/AccumulatorManager.h"
-#include "../../../Managers/EntityManager.h"
-#include "../../../Managers/MassManager.h"
-#include "../../../Managers/MovementManager.h"
-#include "../../../Managers/TransformManager.h"
+#include "AccumulatorManager.h"
+#include "EntityManager.h"
+#include "MassManager.h"
+#include "MovementManager.h"
+#include "TransformManager.h"
 
-#include "../../../Systems/IntegrationSystem_Euler.h"
+#include "IntegrationSystem_Euler.h"
 
 #include <cmath>
 

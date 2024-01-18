@@ -1,0 +1,10 @@
+#ifndef DOMSIM_ENUMERATIONS_H
+#define DOMSIM_ENUMERATIONS_H
+
+namespace DomSim::Enumerations {
+    enum BoosterType { FIRST_STAGE, SECOND_STAGE };
+
+    enum SystemType { EARTH, INTEGRATION, FIRST_STAGE_BOOSTER, SECOND_STAGE_BOOSTER };
+}
+
+#endif //DOMSIM_ENUMERATIONS_H

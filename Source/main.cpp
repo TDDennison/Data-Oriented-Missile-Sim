@@ -1,10 +1,10 @@
 #include <chrono>
 #include <iostream>
 
-#include "Core/Configurations.h"
+#include "Configurations.h"
 
-#include "Parsers/CommandLineParser/CommandLineParser.h"
-#include "Parsers/InputFileParser/InputFileParser.h"
+#include "CommandLineParser.h"
+#include "InputFileParser.h"
 
 #include "Simulation.h"
 

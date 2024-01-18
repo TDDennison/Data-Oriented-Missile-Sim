@@ -56,7 +56,7 @@
         <mxCell id="mw5Jip7o4zRynzQtI0Sn-27" value="[while time &amp;lt; maxTime]" style="shape=umlFrame;whiteSpace=wrap;html=1;pointerEvents=0;width=110;height=50;" vertex="1" parent="1">
           <mxGeometry x="20" y="360" width="1500" height="730" as="geometry" />
         </mxCell>
-        <mxCell id="mw5Jip7o4zRynzQtI0Sn-28" value="LoggingSystem : System" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;edgeStyle&quot;:&quot;elbowEdgeStyle&quot;,&quot;elbow&quot;:&quot;vertical&quot;,&quot;curved&quot;:0,&quot;rounded&quot;:0};" vertex="1" parent="1">
+        <mxCell id="mw5Jip7o4zRynzQtI0Sn-28" value="BinaryLogger : System" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;edgeStyle&quot;:&quot;elbowEdgeStyle&quot;,&quot;elbow&quot;:&quot;vertical&quot;,&quot;curved&quot;:0,&quot;rounded&quot;:0};" vertex="1" parent="1">
           <mxGeometry x="760" y="40" width="100" height="1020" as="geometry" />
         </mxCell>
         <mxCell id="mw5Jip7o4zRynzQtI0Sn-31" value="" style="html=1;points=[];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;edgeStyle&quot;:&quot;elbowEdgeStyle&quot;,&quot;elbow&quot;:&quot;vertical&quot;,&quot;curved&quot;:0,&quot;rounded&quot;:0};" vertex="1" parent="mw5Jip7o4zRynzQtI0Sn-28">

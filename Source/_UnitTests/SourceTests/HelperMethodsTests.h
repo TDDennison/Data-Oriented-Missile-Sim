@@ -15,7 +15,7 @@ class HelperMethodsTests
         Vector3 a{0.0, 0.0, 0.0};
         Vector3 b{0.0, 0.0, 0.0};
 
-        float distance = HelperMethods::CalculateDistance(a, b);
+        float distance = Utilities::CalculateDistance(a, b);
 
         ASSERT_TRUE((distance == 0.0));
         PASSED();
@@ -26,7 +26,7 @@ class HelperMethodsTests
         Vector3 a{10.0, 0.0, 0.0};
         Vector3 b{0.0, 0.0, 0.0};
 
-        float distance = HelperMethods::CalculateDistance(a, b);
+        float distance = Utilities::CalculateDistance(a, b);
 
         ASSERT_TRUE((distance == 10.0));
         PASSED();
@@ -37,7 +37,7 @@ class HelperMethodsTests
         Vector3 a{0.0, 10.0, 0.0};
         Vector3 b{0.0, 0.0, 0.0};
 
-        float distance = HelperMethods::CalculateDistance(a, b);
+        float distance = Utilities::CalculateDistance(a, b);
 
         ASSERT_TRUE((distance == 10.0));
         PASSED();
@@ -48,7 +48,7 @@ class HelperMethodsTests
         Vector3 a{0.0, 0.0, 10.0};
         Vector3 b{0.0, 0.0, 0.0};
 
-        float distance = HelperMethods::CalculateDistance(a, b);
+        float distance = Utilities::CalculateDistance(a, b);
 
         ASSERT_TRUE((distance == 10.0));
         PASSED();
@@ -59,7 +59,7 @@ class HelperMethodsTests
         Vector3 a{3.0, 4.0, 0.0};
         Vector3 b{0.0, 0.0, 0.0};
 
-        float distance = HelperMethods::CalculateDistance(a, b);
+        float distance = Utilities::CalculateDistance(a, b);
 
         ASSERT_TRUE((distance == 5.0));
         PASSED();
@@ -70,7 +70,7 @@ class HelperMethodsTests
         Vector3 a{1000000.0, 0.0, 0.0};
         Vector3 b{2000000.0, 0.0, 0.0};
 
-        float distance = HelperMethods::CalculateDistance(a, b);
+        float distance = Utilities::CalculateDistance(a, b);
 
         ASSERT_TRUE((distance == 1000000.0));
         PASSED();

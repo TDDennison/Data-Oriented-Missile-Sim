@@ -2,7 +2,7 @@
 #define MATRIX3_TESTS_H
 
 #include "../../_Utilities/_Utilities.h"
-#include "../../../MathTypes/Matrix3.h"
+#include "../../Matrix3.h"
 
 class Matrix3Tests
 {
