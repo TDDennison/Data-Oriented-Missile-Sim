@@ -6,10 +6,7 @@
 class IIntegrationSystem : public System
 {
     public:
-    virtual void Update(float dt, float &dtOut, bool &shouldLog) = 0;
-
-    protected:
-    bool shouldLog_ = false;
+    virtual void Update(float dt, float &dtOut, bool &shouldLog, bool &allowMassDecrement) = 0;
 };
 
 #endif // INTEGRATION_SYSTEM

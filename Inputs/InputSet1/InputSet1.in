@@ -1,5 +1,5 @@
 Simulation Max Time: 100  // seconds
-Simulation Top Rate: 500 // Hz
+Simulation Top Rate: 100 // Hz
 
 Integration System Type: 3 // 1 = Euler, 2 = Runge-Kutta 2, 3 = Runge-Kutta 4
 
@@ -23,7 +23,7 @@ Target Points:
 
 Missile Starting Locations:
           1       |  90.0N   |  0.0W
-          1       |  41.2N   |  75.2W
+//          1       |  41.2N   |  75.2W
 //          1       |  42.3N   |  76.3W
 //          1       |  43.4N   |  77.4W
 //          1       |  44.5N   |  78.5W

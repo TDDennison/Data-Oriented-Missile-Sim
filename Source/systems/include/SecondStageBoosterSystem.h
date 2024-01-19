@@ -41,7 +41,7 @@ class SecondStageBoosterSystem : public System
                   srmManager_(srmManager),
                   transformManager_(transformManager){};
     
-    virtual void Update(float dt) override;
+    virtual void Update(float dt, bool &allowMassDecrement) override;
 
     void AddSrmComponent(SolidRocketMotorComponent& srmComponent)
     {

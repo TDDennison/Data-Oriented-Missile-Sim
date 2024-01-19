@@ -15,7 +15,7 @@ void TestSoftwareSystem::Initialize() {
 }
 
 
-void TestSoftwareSystem::Update(float dt) {
+void TestSoftwareSystem::Update(float dt, bool &allowMassDecrement) {
     for (auto & entity : registeredEntities) {
         SoftwareComponent& softwareComponent = testSoftwareManager_->Lookup(entity);
         ClockComponent& clockComponent = clockManager_->Lookup(entity);

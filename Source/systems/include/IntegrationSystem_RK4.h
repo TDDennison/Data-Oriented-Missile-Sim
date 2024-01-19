@@ -26,9 +26,7 @@ class IntegrationSystem_RK4 : public IIntegrationSystem {
 
   void RegisterEntity(Entity entity) override;
 
-  void Update(float dt, float &dtOut, bool &shouldLog) override;
-  
-  void Update(float dt, float &dtOut) override;
+  void Update(float dt, float &dtOut, bool &shouldLog, bool& allowMassDecrement) override;
 
   private:
 

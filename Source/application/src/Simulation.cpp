@@ -1,3 +1,4 @@
+#include <chrono>
 #include <exception>
 #include <memory>
 #include <vector>
@@ -51,6 +52,8 @@ Simulation::~Simulation()
 
 void Simulation::Initialize()
 {
+    auto start = std::chrono::high_resolution_clock::now();
+
     // Register systems.
     RegisterSystem_FirstStageBooster();
     RegisterSystem_SecondStageBooster();
@@ -61,6 +64,12 @@ void Simulation::Initialize()
 
     // Finally, create the missile objects.
     CreateMissiles();
+
+    auto finish = std::chrono::high_resolution_clock::now();
+    auto milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(finish-start);
+
+    std::cout << "Time taken to initialize simulation: " << milliseconds.count() << " milliseconds" << std::endl;
+
 }
 
 /**
@@ -406,6 +415,8 @@ void Simulation::Update()
     float dt = 1.0 / (float)rate_;
     float dtOut = 0.0;
     bool shouldLog = false;
+    bool allowMassDecrement = false;
+
     while (time <= maxTime_ + dt) // + dt to get the final timestep logged.
     {
         // Order of execution for systems
@@ -414,7 +425,7 @@ void Simulation::Update()
         // 3) Software systems
         // 4) Integration system
 
-        integrationSystem_->Update(dt, dtOut, shouldLog);
+        integrationSystem_->Update(dt, dtOut, shouldLog, allowMassDecrement);
 
         //std::cout << "===== Time: " << std::setprecision(8) << time << " =====" << std::endl;
 
@@ -425,12 +436,12 @@ void Simulation::Update()
         // Update all of the systems whose execution order can change.
         for (System *system : systems)
         {
-            system->Update(dt);
+            system->Update(dt, allowMassDecrement);
         }
 
         // 3) Software systems.
         // ==================================================
-        testSoftwareSystem_->Update(dt);
+        testSoftwareSystem_->Update(dt, allowMassDecrement);
 
 
 
@@ -538,37 +549,37 @@ void Simulation::PostProcessOutput()
 void Simulation::HandleQueuedComponents()
 {
     EntityManager* entityManager = EntityManager::GetInstance();
-    
+    uint16_t i = 0;
     // Handle any queued Accumulator components.
-    for(uint16_t i = 0; i < entityManager->getAccumIndexTracker(); ++i)
+    for(i = 0; i < entityManager->getAccumIndexTracker(); ++i)
     {
         RegisterComponent_AccumulatorManager(entityManager->getQueuedAccumulatorComponent(i));
     }
     entityManager->resetAccumIndexTracker();
 
     // Handle any queued Mass components.
-    for(uint16_t i = 0; i < entityManager->getMassIndexTracker(); ++i)
+    for(i = 0; i < entityManager->getMassIndexTracker(); ++i)
     {
         RegisterComponent_MassManager(entityManager->getQueuedMassComponent(i));
     }
     entityManager->resetMassIndexTracker();
 
     // Handle any queued Movement components.
-    for(uint16_t i = 0; i < entityManager->getMovementIndexTracker(); ++i)
+    for(i = 0; i < entityManager->getMovementIndexTracker(); ++i)
     {
         RegisterComponent_MovementManager(entityManager->getQueuedMovementComponent(i));
     }
     entityManager->resetMovementIndexTracker();
 
     // Handle any queued Transform components.
-    for(uint16_t i = 0; i < entityManager->getTransformIndexTracker(); ++i)
+    for(i = 0; i < entityManager->getTransformIndexTracker(); ++i)
     {
         RegisterComponent_TransformManager(entityManager->getQueuedTransformComponent(i));
     }
     entityManager->resetTransformIndexTracker();
 
     // Handle any queud Second Stage SRM components.
-    for(uint16_t i = 0; i < entityManager->getSSSRMIndexTracker(); ++i)
+    for(i = 0; i < entityManager->getSSSRMIndexTracker(); ++i)
     {
         RegisterComponent_SecondStageSrm(entityManager->getQueuedSSSRMComponent(i));
     }

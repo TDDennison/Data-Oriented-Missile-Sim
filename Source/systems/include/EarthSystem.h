@@ -26,7 +26,7 @@ class EarthSystem : public System
 
     void Initialize() override;
     
-    void Update(float dt) override;
+    void Update(float dt, bool &allowMassDecrement) override;
 
     const Vector3 EARTH_POSITION{0.0, 0.0, 0.0};
     static constexpr real GRAVITATIONAL_CONSTANT = 0.0000000000667f;

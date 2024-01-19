@@ -3,7 +3,7 @@
 #include "Utilities.h"
 #include "Configurations.h"
 
-void SecondStageBoosterSystem::Update(float dt) {
+void SecondStageBoosterSystem::Update(float dt, bool &allowMassDecrement) {
     for (auto & entity : registeredEntities) {
         AccumulatorComponent& accComponent = accumulatorManager_->Lookup(entity);
         SolidRocketMotorComponent& srmComponent = srmManager_->Lookup(entity);
@@ -29,36 +29,48 @@ void SecondStageBoosterSystem::Update(float dt) {
         Vector3 position_cg_eci = transComponent.transformMatrix * massComponent.position_cg_body;
         accComponent.AddForceAtPoint(thrustVector, application_point_eci, position_cg_eci);
 
-        // Model the SRM burning its propellant mass.
-        srmComponent.propellantMass -= 0.01;
-        massComponent.DecrementSubMass(0.1, ComponentUtilities::ComponentDesignators::SECOND_STAGE_SRM);
+        // If the integration system is in the middle two frames of the RK4 method, no mass should be decremented.
+        // This model needs to know about the integration system and/or which frame the integration system is in.
+        // How can this be done in a data oriented fashion?
+        // Probably has to be passed in, due to library dependency chain
+        if (allowMassDecrement)
+        {
+            // Model the SRM burning its propellant mass.
+            real massBurned = 0.1;
+            srmComponent.propellantMass -= massBurned;
+            massComponent.DecrementSubMass(massBurned, ComponentUtilities::ComponentDesignators::SECOND_STAGE_SRM);
 
-        if (srmComponent.propellantMass <= 0.0) { 
+            if (srmComponent.propellantMass <= 0.0) { 
 
-            // Assume that right when the booster encounters burnout, it separates into its own entity.
-            // This means:
-            // 1) this booster system needs to stop tracking the SRM component,
-            // 2) this booster system needs to unregister the entity associated with the SRM component.
-            // 3) a new entity must be created for the burned out booster with the correct components
-            // 4) the data in the new components must come from from the other components
-            // 5) register the new entity and its components with the correct managers and systems.
+                // Assume that right when the booster encounters burnout, it separates into its own entity.
+                // This means:
+                // 1) this booster system needs to stop tracking the SRM component,
+                // 2) this booster system needs to unregister the entity associated with the SRM component.
+                // 3) a new entity must be created for the burned out booster with the correct components
+                // 4) the data in the new components must come from from the other components
+                // 5) register the new entity and its components with the correct managers and systems.
 
-            // 1) Stop tracking the SRM component.
-            srmManager_->Destroy(entity); 
+                // 1) Stop tracking the SRM component.
+                srmManager_->Destroy(entity); 
 
-            // 2) Unregister the entity associated with the component
-            entitiesToRemove.push_back(entity);
+                // 2) Unregister the entity associated with the component
+                entitiesToRemove.push_back(entity);
 
-            // 3) Create a new entity that represents the inert, separated first stage booster with the correct components
-            MassComponent newMass{};
-            newMass.mass = srmComponent.inertMass;
+                // 3) Create a new entity that represents the inert, separated first stage booster with the correct components
+                MassComponent newMass{};
+                newMass.mass = srmComponent.inertMass;
 
-            MovementComponent& movementComponent = movementManager_->Lookup(entity);
+                MovementComponent& movementComponent = movementManager_->Lookup(entity);
 
-            EntityManager::GetInstance()->CreateInertSSBoosterEntity(accComponent, newMass, movementComponent, transComponent);
-            std::cout << "Created new inert second stage entity" << std::endl;
-            // If this is a second stage booster system, all that will be left in the abstract missile component properties
-            // are the properties that apply to the payload.
+                EntityManager::GetInstance()->CreateInertSSBoosterEntity(accComponent, newMass, movementComponent, transComponent);
+                std::cout << "Created new inert second stage entity" << std::endl;
+
+                // Finally, remove the first stage submass
+                massComponent.RemoveSubmass(ComponentUtilities::ComponentDesignators::SECOND_STAGE_SRM);
+
+                // If this is a second stage booster system, all that will be left in the abstract missile component properties
+                // are the properties that apply to the payload.
+            }
         }
     }
 

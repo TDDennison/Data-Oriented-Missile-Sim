@@ -10,15 +10,15 @@ IntegrationSystem_Euler::IntegrationSystem_Euler(AccumulatorManager* accumulator
                         transformManager_(transformManager) {
                         }
 
-void IntegrationSystem_Euler::Update(float dt, float &dtOut, bool &shouldLog)
-{
+void IntegrationSystem_Euler::Update(float dt, float &dtOut, bool &shouldLog, bool &allowMassDecrement) {
+    dtOut = dt; // Euler integration is a single pass.
+    
     // Log every frame with Euler integration.
     shouldLog = true;
-    Update(dt, dtOut);
-}
 
-void IntegrationSystem_Euler::Update(float dt, float &dtOut) {
-    dtOut = dt; // Euler integration is a single pass.
+    // Mass decrementing is allowed for every frame in Euler integration.
+    allowMassDecrement = true;
+
     for (auto & entity : registeredEntities) {
         AccumulatorComponent& accumulatorComponent = accumulatorManager_->Lookup(entity);
         TransformComponent& transform = transformManager_->Lookup(entity);

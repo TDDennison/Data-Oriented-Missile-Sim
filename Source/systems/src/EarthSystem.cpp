@@ -25,7 +25,7 @@ void EarthSystem::Initialize() {
 }
 
 
-void EarthSystem::Update(float dt) {
+void EarthSystem::Update(float dt, bool &allowMassDecrement) {
 
     return;
     for (auto & entity : registeredEntities) {

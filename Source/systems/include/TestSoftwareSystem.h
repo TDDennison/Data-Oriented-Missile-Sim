@@ -17,7 +17,7 @@ class TestSoftwareSystem : public System
 
     void Initialize() override;
 
-    void Update(float dt) override;
+    void Update(float dt, bool &allowMassDecrement) override;
 
     void AddSoftwareComponent(SoftwareComponent& softwareComponent);
 

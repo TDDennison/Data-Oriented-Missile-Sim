@@ -18,8 +18,7 @@ public:
   virtual void Initialize();
 
   // Called every game update
-  virtual void Update(float dt);
-  virtual void Update(float dt, float &dtOut);
+  virtual void Update(float dt, bool &allowMassDecrement);
   
   // This entity fits our current requirements
   virtual void RegisterEntity(Entity entity);

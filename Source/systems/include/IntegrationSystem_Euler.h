@@ -24,10 +24,8 @@ class IntegrationSystem_Euler : public IIntegrationSystem {
                           MovementManager* movementManager,
                           TransformManager* transformManager);
 
-  void Update(float dt, float &dtOut, bool &shouldLog);
+  void Update(float dt, float &dtOut, bool &shouldLog, bool& allowMassDecrement) override;
   
-  void Update(float dt, float &dtOut) override;
-
   private:
 
   AccumulatorManager* accumulatorManager_;

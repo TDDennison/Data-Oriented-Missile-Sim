@@ -4,7 +4,7 @@
 #include "Utilities.h"
 #include "Configurations.h"
 
-void FirstStageBoosterSystem::Update(float dt) {
+void FirstStageBoosterSystem::Update(float dt, bool &allowMassDecrement) {
     for (auto & entity : registeredEntities) {
         AccumulatorComponent& accComponent = accumulatorManager_->Lookup(entity);
         SolidRocketMotorComponent& srmComponent = srmManager_->Lookup(entity);
@@ -30,48 +30,55 @@ void FirstStageBoosterSystem::Update(float dt) {
         Vector3 position_cg_eci = transComponent.transformMatrix * massComponent.position_cg_body;
         accComponent.AddForceAtPoint(thrustVector, application_point_eci, position_cg_eci);
 
-        // Model the SRM burning its propellant mass.
-        srmComponent.propellantMass -= 1.0;
+        if (allowMassDecrement)
+        {
 
-        massComponent.DecrementSubMass(0.1, ComponentUtilities::ComponentDesignators::FIRST_STAGE_SRM);
+            // Model the SRM burning its propellant mass.
+            real massBurned = 1.0;
+            srmComponent.propellantMass -= massBurned;
+            massComponent.DecrementSubMass(massBurned, ComponentUtilities::ComponentDesignators::FIRST_STAGE_SRM);
 
-        if (srmComponent.propellantMass <= 0.0) { 
+            if (srmComponent.propellantMass <= 0.0) { 
 
-            // Assume that right when the booster encounters burnout, it separates into its own entity.
-            // This means:
-            // 1) this booster system needs to stop tracking the SRM component,
-            // 2) this booster system needs to unregister the entity associated with the SRM component.
-            // 3) a new entity must be created for the burned out booster with the correct components
-            // 4) the data in the new components must come from from the other components
-            // 5) register the new entity and its components with the correct managers and systems.
+                // Assume that right when the booster encounters burnout, it separates into its own entity.
+                // This means:
+                // 1) this booster system needs to stop tracking the SRM component,
+                // 2) this booster system needs to unregister the entity associated with the SRM component.
+                // 3) a new entity must be created for the burned out booster with the correct components
+                // 4) the data in the new components must come from from the other components
+                // 5) register the new entity and its components with the correct managers and systems.
 
-            // 1) Stop tracking the SRM component.
-            srmManager_->Destroy(entity); 
+                // 1) Stop tracking the SRM component.
+                srmManager_->Destroy(entity); 
 
-            // 2) Unregister the entity associated with the component
-            entitiesToRemove.push_back(entity);
+                // 2) Unregister the entity associated with the component
+                entitiesToRemove.push_back(entity);
 
-            // 3) Create a new entity that represents the inert, separated first stage booster with the correct components
-            MassComponent newMass{};
-            newMass.mass = srmComponent.inertMass;
+                // 3) Create a new entity that represents the inert, separated first stage booster with the correct components
+                MassComponent newMass{};
+                newMass.mass = srmComponent.inertMass;
 
-            MovementComponent& movementComponent = movementManager_->Lookup(entity);
+                MovementComponent& movementComponent = movementManager_->Lookup(entity);
 
-            EntityManager::GetInstance()->CreateInertFSBoosterEntity(accComponent, newMass, movementComponent, transComponent);
-            std::cout << "Created new inert first stage entity" << std::endl;
+                EntityManager::GetInstance()->CreateInertFSBoosterEntity(accComponent, newMass, movementComponent, transComponent);
+                std::cout << "Created new inert first stage entity" << std::endl;
 
 
 
-            // Create the new SRM component to track in the second stage booster system.
-            SolidRocketMotorComponent newSrmComponent(ComponentUtilities::CreateComponentId(entity.id, ComponentUtilities::SECOND_STAGE_SRM));
+                // Create the new SRM component to track in the second stage booster system.
+                SolidRocketMotorComponent newSrmComponent(ComponentUtilities::CreateComponentId(entity.id, ComponentUtilities::SECOND_STAGE_SRM));
 
-            // TODO: These should come from attributes in input files now
-            newSrmComponent.thrust = 100.0;
-            newSrmComponent.inertMass = 400.0;
-            newSrmComponent.propellantMass = 100.0;
+                // TODO: These should come from attributes in input files now
+                newSrmComponent.thrust = 100.0;
+                newSrmComponent.inertMass = 400.0;
+                newSrmComponent.propellantMass = 100.0;
 
-            EntityManager::GetInstance()->QueueEntityAndComponentToRegister<SolidRocketMotorComponent>(DomSim::Enumerations::SystemType::SECOND_STAGE_BOOSTER, entity, newSrmComponent); 
+                EntityManager::GetInstance()->QueueEntityAndComponentToRegister<SolidRocketMotorComponent>(DomSim::Enumerations::SystemType::SECOND_STAGE_BOOSTER, entity, newSrmComponent); 
 
+                // Finally, remove the first stage submass
+                massComponent.RemoveSubmass(ComponentUtilities::ComponentDesignators::FIRST_STAGE_SRM);
+
+            }
         }
     }
 

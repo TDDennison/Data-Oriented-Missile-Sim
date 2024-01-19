@@ -27,15 +27,9 @@ void IntegrationSystem_RK4::RegisterEntity(Entity entity) {
     // simulation.
 }
 
-void IntegrationSystem_RK4::Update(float dt, float &dtOut, bool &shouldLog)
-{
-    Update(dt, dtOut);
-    shouldLog = shouldLog_;
-}
+void IntegrationSystem_RK4::Update(float dt, float &dtOut, bool &shouldLog, bool& allowMassDecrement){
 
-void IntegrationSystem_RK4::Update(float dt, float &dtOut) {
-
-    dtOut = dt; // In case there arr no register entities
+    dtOut = dt; // In case there ar no registered entities
 
     for (auto & entity : registeredEntities) {
         AccumulatorComponent& accumulatorComponent = accumulatorManager_->Lookup(entity);
@@ -47,129 +41,141 @@ void IntegrationSystem_RK4::Update(float dt, float &dtOut) {
 
         if(kpass == 1)
         {
-        // Log the very first frame.
-        shouldLog_ = true;
+            // Mass decrementing is allowed on the first and last frames of Rk4
+            allowMassDecrement = true;
 
-        // Now k1 has been calculated by running t_n and y_n conditions through the simulation.
-        // Need to save k1 states for later.
-        unsigned int storeIndex = entityToRk4Store[entity.id];
-        transformComponentStore[storeIndex][1] = transformComponent;
-        movementComponentStore[storeIndex][1] = movementComponent;
+            // Log the very first frame.
+            shouldLog = true;
 
-        // Update the dtOut to be half of the original dt
-        dtOut = dt * 0.5;
+            // Now k1 has been calculated by running t_n and y_n conditions through the simulation.
+            // Need to save k1 states for later.
+            unsigned int storeIndex = entityToRk4Store[entity.id];
+            transformComponentStore[storeIndex][1] = transformComponent;
+            movementComponentStore[storeIndex][1] = movementComponent;
 
-        // Update the conditions to be of the form needed to calculate k2.
-        // ============================================================
+            // Update the dtOut to be half of the original dt
+            dtOut = dt * 0.5;
 
-        // Update the linear position and velocity.
-        // get x_0
-        Vector3 &pos_0 = transformComponentStore[storeIndex][0].position_eci;
-        Vector3 &vel_0 = movementComponentStore[storeIndex][0].velocity_eci;
+            // Update the conditions to be of the form needed to calculate k2.
+            // ============================================================
 
-        transformComponent.position_eci = (movementComponent.velocity_eci * dtOut) + pos_0;
-        movementComponent.velocity_eci = (movementComponent.acceleration_eci * dtOut) + vel_0;
+            // Update the linear position and velocity.
+            // get x_0
+            Vector3 &pos_0 = transformComponentStore[storeIndex][0].position_eci;
+            Vector3 &vel_0 = movementComponentStore[storeIndex][0].velocity_eci;
 
-        // Update the acceleration.
-        real inverseMass = 1.0 / massComponent.mass;
-        movementComponent.acceleration_eci.AddScaledVector(accumulatorComponent.forceAccumulator_eci, inverseMass);
+            transformComponent.position_eci = (movementComponent.velocity_eci * dtOut) + pos_0;
+            movementComponent.velocity_eci = (movementComponent.acceleration_eci * dtOut) + vel_0;
 
-        // Now the data is ready to compute k2.
-        continue;
+            // Update the acceleration.
+            real inverseMass = 1.0 / massComponent.mass;
+            movementComponent.acceleration_eci.AddScaledVector(accumulatorComponent.forceAccumulator_eci, inverseMass);
+
+            // Now the data is ready to compute k2.
+            continue;
         }
 
         if(kpass == 2)
         {
-        // Don't log the middle frames.
-        shouldLog_ = false;
+            // Mass decrementing is only allowed on the first and last frames of Rk4
+            allowMassDecrement = false;
 
-        // Now k2 has been calculated by running t_n + dt/2 and y_n + dt/2
-        // Need to save k2 states for later.
-        unsigned int storeIndex = entityToRk4Store[entity.id];
-        transformComponentStore[storeIndex][2] = transformComponent;
-        movementComponentStore[storeIndex][2] = movementComponent;
+            // Don't log the middle frames.
+            shouldLog = false;
 
-        dtOut = 0.0;
+            // Now k2 has been calculated by running t_n + dt/2 and y_n + dt/2
+            // Need to save k2 states for later.
+            unsigned int storeIndex = entityToRk4Store[entity.id];
+            transformComponentStore[storeIndex][2] = transformComponent;
+            movementComponentStore[storeIndex][2] = movementComponent;
 
-        // Update the conditions to be of the form needed to calculate k2.
-        // ============================================================
-        // Update the linear position and velocity.
-        // get x_0
-        Vector3 &pos_0 = transformComponentStore[storeIndex][0].position_eci;
-        Vector3 &vel_0 = movementComponentStore[storeIndex][0].velocity_eci;
+            dtOut = 0.0;
 
-        transformComponent.position_eci = (movementComponent.velocity_eci * dt * 0.5) + pos_0;
-        movementComponent.velocity_eci = (movementComponent.acceleration_eci * dt * 0.5) + vel_0;
+            // Update the conditions to be of the form needed to calculate k2.
+            // ============================================================
+            // Update the linear position and velocity.
+            // get x_0
+            Vector3 &pos_0 = transformComponentStore[storeIndex][0].position_eci;
+            Vector3 &vel_0 = movementComponentStore[storeIndex][0].velocity_eci;
 
-        // Update the acceleration.
-        real inverseMass = 1.0 / massComponent.mass;
-        movementComponent.acceleration_eci.AddScaledVector(accumulatorComponent.forceAccumulator_eci, inverseMass);
+            transformComponent.position_eci = (movementComponent.velocity_eci * dt * 0.5) + pos_0;
+            movementComponent.velocity_eci = (movementComponent.acceleration_eci * dt * 0.5) + vel_0;
 
-        continue;
+            // Update the acceleration.
+            real inverseMass = 1.0 / massComponent.mass;
+            movementComponent.acceleration_eci.AddScaledVector(accumulatorComponent.forceAccumulator_eci, inverseMass);
+
+            continue;
         }
 
         if(kpass == 3)
         {
-        // Don't log the middle frames.
-        shouldLog_ = false;
+            // Mass decrementing is only allowed on the first and last frames of Rk4
+            allowMassDecrement = false;
 
-        // Now k3 has been calculated by running t_n + dt/2 and y_n + dt/2
-        // Need to save k3 states for later.
-        unsigned int storeIndex = entityToRk4Store[entity.id];
-        transformComponentStore[storeIndex][3] = transformComponent;
-        movementComponentStore[storeIndex][3] = movementComponent;
+            // Don't log the middle frames.
+            shouldLog = false;
 
-        // Update the dtOut to be zero, need to run the same point in time
-        dtOut = dt * 0.5;
+            // Now k3 has been calculated by running t_n + dt/2 and y_n + dt/2
+            // Need to save k3 states for later.
+            unsigned int storeIndex = entityToRk4Store[entity.id];
+            transformComponentStore[storeIndex][3] = transformComponent;
+            movementComponentStore[storeIndex][3] = movementComponent;
 
-        // Update the linear position and velocity.
-        // get x_0
-        Vector3 &pos_0 = transformComponentStore[storeIndex][0].position_eci;
-        Vector3 &vel_0 = movementComponentStore[storeIndex][0].velocity_eci;
+            // Update the dtOut to be zero, need to run the same point in time
+            dtOut = dt * 0.5;
 
-        transformComponent.position_eci = (movementComponent.velocity_eci * dt * 0.5) + pos_0;
-        movementComponent.velocity_eci = (movementComponent.acceleration_eci * dt * 0.5) + vel_0;
+            // Update the linear position and velocity.
+            // get x_0
+            Vector3 &pos_0 = transformComponentStore[storeIndex][0].position_eci;
+            Vector3 &vel_0 = movementComponentStore[storeIndex][0].velocity_eci;
 
-        // Update the acceleration.
-        real inverseMass = 1.0 / massComponent.mass;
-        movementComponent.acceleration_eci.AddScaledVector(accumulatorComponent.forceAccumulator_eci, inverseMass);
+            transformComponent.position_eci = (movementComponent.velocity_eci * dt * 0.5) + pos_0;
+            movementComponent.velocity_eci = (movementComponent.acceleration_eci * dt * 0.5) + vel_0;
 
-        continue;
+            // Update the acceleration.
+            real inverseMass = 1.0 / massComponent.mass;
+            movementComponent.acceleration_eci.AddScaledVector(accumulatorComponent.forceAccumulator_eci, inverseMass);
+
+            continue;
         }
 
         if(kpass == 4)
         {
-        // Log the last RK4 frame, i.e. the full timestep.
-        shouldLog_ = true;
+            // Mass decrementing is only allowed on the first and last frames of Rk4
+            allowMassDecrement = true;
 
-        // Now k4 has been calculated by running t_n + dt/2 and y_n + dt/2
-        // Need to save k4 states for later.
-        unsigned int storeIndex = entityToRk4Store[entity.id];
-        transformComponentStore[storeIndex][4] = transformComponent;
-        movementComponentStore[storeIndex][4] = movementComponent;
+            // Log the last RK4 frame, i.e. the full timestep.
+            shouldLog = true;
 
-        // Get the data needed to compute the integrated values.
-        transformComponent.position_eci = transformComponentStore[storeIndex][0].position_eci + 
-                                            (movementComponentStore[storeIndex][1].velocity_eci + 
-                                            movementComponentStore[storeIndex][2].velocity_eci * 2 + 
-                                            movementComponentStore[storeIndex][3].velocity_eci * 2 + 
-                                            movementComponentStore[storeIndex][4].velocity_eci) * (dt / 6);
+            // Now k4 has been calculated by running t_n + dt/2 and y_n + dt/2
+            // Need to save k4 states for later.
+            unsigned int storeIndex = entityToRk4Store[entity.id];
+            transformComponentStore[storeIndex][4] = transformComponent;
+            movementComponentStore[storeIndex][4] = movementComponent;
 
-        movementComponent.velocity_eci = movementComponentStore[storeIndex][0].velocity_eci + 
-                                            (movementComponentStore[storeIndex][1].acceleration_eci + 
-                                            movementComponentStore[storeIndex][2].acceleration_eci * 2 + 
-                                            movementComponentStore[storeIndex][3].acceleration_eci * 2 + 
-                                            movementComponentStore[storeIndex][4].acceleration_eci) * (dt / 6);
+            // Get the data needed to compute the integrated values.
+            transformComponent.position_eci = transformComponentStore[storeIndex][0].position_eci + 
+                                                (movementComponentStore[storeIndex][1].velocity_eci + 
+                                                movementComponentStore[storeIndex][2].velocity_eci * 2 + 
+                                                movementComponentStore[storeIndex][3].velocity_eci * 2 + 
+                                                movementComponentStore[storeIndex][4].velocity_eci) * (dt / 6);
 
-        // Update the acceleration.
-        real inverseMass = 1.0 / massComponent.mass;
-        movementComponent.acceleration_eci.AddScaledVector(accumulatorComponent.forceAccumulator_eci, inverseMass);
+            movementComponent.velocity_eci = movementComponentStore[storeIndex][0].velocity_eci + 
+                                                (movementComponentStore[storeIndex][1].acceleration_eci + 
+                                                movementComponentStore[storeIndex][2].acceleration_eci * 2 + 
+                                                movementComponentStore[storeIndex][3].acceleration_eci * 2 + 
+                                                movementComponentStore[storeIndex][4].acceleration_eci) * (dt / 6);
 
-        // Update the dtOut to be half of the original dt, because the current time is already t_n + dt / 2.
-        // adding another dt / 2 will bring us to the full dt.
-        dtOut = dt * 0.5;
+            // Update the acceleration.
+            real inverseMass = 1.0 / massComponent.mass;
+            movementComponent.acceleration_eci.AddScaledVector(accumulatorComponent.forceAccumulator_eci, inverseMass);
 
-        continue;
+            // Update the dtOut to be half of the original dt, because the current time is already t_n + dt / 2.
+            // adding another dt / 2 will bring us to the full dt.
+            dtOut = dt * 0.5;
+
+            continue;
         }
     }
 

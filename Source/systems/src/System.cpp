@@ -8,8 +8,7 @@ System::System() {}
 void System::Initialize() {};
 
 // Called every game update
-void System::Update(float dt) {};
-void System::Update(float dt, float &dtOut) {};
+void System::Update(float dt, bool &allowMassDecrement) {};
 
 // This entity fits our current requirements
 void System::RegisterEntity(Entity entity) {

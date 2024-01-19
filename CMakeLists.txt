@@ -3,8 +3,8 @@ cmake_minimum_required(VERSION 3.18)
 project(DOMSim)
 
 #add_compile_options("-O3") # Uncomment for full optimizations
-add_compile_options("-O0")
-add_compile_options("-g")
+add_compile_options("-O3")
+#add_compile_options("-g")
 
 IF($ENV{DOMSIM_TESTS} STREQUAL "TRUE")
     add_compile_definitions(RUN_UNIT_TESTS)
