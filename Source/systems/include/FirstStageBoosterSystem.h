@@ -24,7 +24,6 @@
 #include "SolidRocketMotorManager.h"
 #include "TransformManager.h"
 
-class Simulation;
 
 class FirstStageBoosterSystem : public System
 {
@@ -34,14 +33,12 @@ class FirstStageBoosterSystem : public System
                   MassManager* massManager,
                   MovementManager* movementManager,
                   SolidRocketMotorManager* srmManager,
-                  TransformManager* transformManager,
-                  Simulation* simulation) : 
+                  TransformManager* transformManager) : 
                   accumulatorManager_(accumulatorManager),
                   massManager_(massManager),
                   movementManager_(movementManager),
                   srmManager_(srmManager),
-                  transformManager_(transformManager),
-                  simulation_(simulation){};
+                  transformManager_(transformManager){};
     
     void Update(float dt, bool &allowMassDecrement) override;
 
@@ -62,8 +59,8 @@ class FirstStageBoosterSystem : public System
             std::cout << "Booster System adding attributes." << std::endl;
             AttributesManager *attributesManager = AttributesManager::GetInstance();
 
-            attributesManager->AddAttribute<bool>("FS_TestBool", Core::Enumerations::AttributeType::BOOLEAN, DomSim::Constants::DEFAULT_BOOLEAN);
-            attributesManager->AddAttribute<int>("FS_TestInt", Core::Enumerations::AttributeType::INT32, DomSim::Constants::DEFAULT_INT32);
+            attributesManager->AddAttribute<bool>("FS_TestBool", Core::Enumerations::AttributeType::BOOLEAN, Core::Constants::DEFAULT_BOOLEAN);
+            attributesManager->AddAttribute<int>("FS_TestInt", Core::Enumerations::AttributeType::INT32, Core::Constants::DEFAULT_INT32);
         }
     };
 
@@ -74,7 +71,6 @@ class FirstStageBoosterSystem : public System
     MovementManager* movementManager_;
     SolidRocketMotorManager* srmManager_;
     TransformManager* transformManager_;
-    Simulation* simulation_;
 
 };
 

@@ -32,7 +32,6 @@ void FirstStageBoosterSystem::Update(float dt, bool &allowMassDecrement) {
 
         if (allowMassDecrement)
         {
-
             // Model the SRM burning its propellant mass.
             real massBurned = 1.0;
             srmComponent.propellantMass -= massBurned;

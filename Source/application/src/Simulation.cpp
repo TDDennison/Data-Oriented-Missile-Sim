@@ -193,7 +193,7 @@ void Simulation::RegisterSystem_FirstStageBooster()
     SolidRocketMotorManager* srmManager = new SolidRocketMotorManager(DomSim::Constants::LOG_FILE_FIRST_STAGE_SRM_MANAGER, DomSim::Enumerations::BoosterType::FIRST_STAGE);
     loggables.push_back(srmManager);
 
-    firstStageBoosterSystem_ = new FirstStageBoosterSystem(accumulatorManager_, massManager_, movementManager_, srmManager, transformManager_, this);
+    firstStageBoosterSystem_ = new FirstStageBoosterSystem(accumulatorManager_, massManager_, movementManager_, srmManager, transformManager_);
 
     // Add the system to the collection of systems.
     systems.push_back(firstStageBoosterSystem_);
@@ -542,6 +542,7 @@ void Simulation::PostProcessOutput()
     // After the simulation has ended and all data has been logged, begin the post-processing operations
     for (auto loggable : loggables)
     {
+        // The post process type should come from the configuration file
         loggable->PostProcessLog(Core::Enumerations::PostProcessLogType::TEXT);
     }
 }

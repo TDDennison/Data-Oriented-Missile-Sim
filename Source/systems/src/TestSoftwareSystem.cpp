@@ -44,5 +44,5 @@ TestSoftwareSystem::Attributes::Attributes() {
     std::cout << "Test Software System adding attributes." << std::endl;
     AttributesManager *attributesManager = AttributesManager::GetInstance();
 
-    attributesManager->AddAttribute<uint16_t>(DomSim::Constants::EXECUTION_ORDER_TEST_SOFTWARE_SYSTEM, Core::Enumerations::AttributeType::UINT16, DomSim::Constants::DEFAULT_UINT16);
+    attributesManager->AddAttribute<uint16_t>(DomSim::Constants::EXECUTION_ORDER_TEST_SOFTWARE_SYSTEM, Core::Enumerations::AttributeType::UINT16, Core::Constants::DEFAULT_UINT16);
 }

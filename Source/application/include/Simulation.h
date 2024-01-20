@@ -105,9 +105,9 @@ class Simulation
             std::cout << "Configurations adding attributes." << std::endl;
             AttributesManager *attributesManager = AttributesManager::GetInstance();
 
-            attributesManager->AddAttribute<uint32_t>(DomSim::Constants::INTEGRATION_SYSTEM_TYPE, Core::Enumerations::AttributeType::UINT32, DomSim::Constants::DEFAULT_UINT8);
-            attributesManager->AddAttribute<int>(DomSim::Constants::SIMULATION_MAX_TIME, Core::Enumerations::AttributeType::INT32, DomSim::Constants::DEFAULT_INT32);
-            attributesManager->AddAttribute<double>(DomSim::Constants::SIMULATION_TOP_RATE, Core::Enumerations::AttributeType::DOUBLE, DomSim::Constants::DEFAULT_DOUBLE);
+            attributesManager->AddAttribute<uint32_t>(DomSim::Constants::INTEGRATION_SYSTEM_TYPE, Core::Enumerations::AttributeType::UINT32, Core::Constants::DEFAULT_UINT8);
+            attributesManager->AddAttribute<int>(DomSim::Constants::SIMULATION_MAX_TIME, Core::Enumerations::AttributeType::INT32, Core::Constants::DEFAULT_INT32);
+            attributesManager->AddAttribute<double>(DomSim::Constants::SIMULATION_TOP_RATE, Core::Enumerations::AttributeType::DOUBLE, Core::Constants::DEFAULT_DOUBLE);
         }
     };
 

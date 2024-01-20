@@ -60,5 +60,5 @@ EarthSystem::Attributes::Attributes() {
     std::cout << "Earth System adding attributes." << std::endl;
     AttributesManager *attributesManager = AttributesManager::GetInstance();
 
-    attributesManager->AddAttribute<uint16_t>(DomSim::Constants::EXECUTION_ORDER_EARTH_SYSTEM, Core::Enumerations::AttributeType::UINT16, DomSim::Constants::DEFAULT_UINT16);
+    attributesManager->AddAttribute<uint16_t>(DomSim::Constants::EXECUTION_ORDER_EARTH_SYSTEM, Core::Enumerations::AttributeType::UINT16, Core::Constants::DEFAULT_UINT16);
 }

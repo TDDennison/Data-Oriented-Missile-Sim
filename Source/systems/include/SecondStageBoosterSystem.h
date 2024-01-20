@@ -60,8 +60,8 @@ class SecondStageBoosterSystem : public System
             std::cout << "Booster System adding attributes." << std::endl;
             AttributesManager *attributesManager = AttributesManager::GetInstance();
 
-            attributesManager->AddAttribute<bool>("SS_TestBool", Core::Enumerations::AttributeType::BOOLEAN, DomSim::Constants::DEFAULT_BOOLEAN);
-            attributesManager->AddAttribute<int>("SS_TestInt", Core::Enumerations::AttributeType::INT32, DomSim::Constants::DEFAULT_INT32);
+            attributesManager->AddAttribute<bool>("SS_TestBool", Core::Enumerations::AttributeType::BOOLEAN, Core::Constants::DEFAULT_BOOLEAN);
+            attributesManager->AddAttribute<int>("SS_TestInt", Core::Enumerations::AttributeType::INT32, Core::Constants::DEFAULT_INT32);
         }
     };
 

@@ -5,6 +5,7 @@
 #include <iostream>
 #include <vector>
 
+#include "CoreConstants.h"
 #include "DomSimConstants.h"
 #include "Entity.h"
 
@@ -32,7 +33,7 @@ public:
   // Compares two intervals according to starting times.
   static bool compareExecutionOrder(System *s1, System *s2);
 
-  uint16_t executionOrder_ = DomSim::Constants::DEFAULT_UINT16;
+  uint16_t executionOrder_ = Core::Constants::DEFAULT_UINT16;
 
 protected:
   // Specifies which components our system cares about — its size should = the number of different components
